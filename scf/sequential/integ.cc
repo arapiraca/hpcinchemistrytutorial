@@ -4,12 +4,16 @@
 
 using namespace std;
 
+#include "scfdata.h"
+#include "integ.h"
 
-// Stuff for computing F0 (was class member data)
-static const double delta = 28.0/2000.0;
+
+// Stuff for computing F0, etc
+static const double delta = 28.0/2000.0; // spacing of interpolation grid
 static const double delo2 = delta*0.5;
 static const double rdelta = 1.0/delta;
-static double fm[2001*5];
+static double fm[2001*5]; // fm[i,m] = d^m f0 / dx^m
+static const double PI = 3.1415926535897932385;
     
 // initalize computation of f0 by recursion down from f200
 void setfm() {
@@ -38,7 +42,7 @@ void setfm() {
 }
 
 // Computes f0
-double f0(double t) {
+static double f0(double t) {
     const double fac0=0.8862269254527580; // 0.5*sqrt(pi) 
     const double t0 = 28.0;
     
@@ -58,41 +62,39 @@ double f0(double t) {
 }
 
 // compute the two-electon integral (ij|kl) over primitive 1s gaussians
-double g(double xi, double yi, double zi, double expnti, double coeffi,
-         double xj, double yj, double zj, double expntj, double coeffj,
-         double xk, double yk, double zk, double expntk, double coeffk,
-         double xl, double yl, double zl, double expntl, double coeffl)
+double g(const BasisFunction& bfi, const BasisFunction& bfj, 
+         const BasisFunction& bfk, const BasisFunction& bfl) 
 {
     const double twopi25 = 34.986836655249725694; // 2 * pi^2.5
 
-    const double xij = xi - xj;
-    const double yij = yi - yj;
-    const double zij = zi - zj;
+    const double xij = bfi.x - bfj.x;
+    const double yij = bfi.y - bfj.y;
+    const double zij = bfi.z - bfj.z;
     const double rij2 = xij*xij + yij*yij + zij*zij;
-    const double expntij = expnti*expntj/(expnti+expntj);
+    const double expntij = bfi.expnt*bfj.expnt/(bfi.expnt+bfj.expnt);
     const double argij = rij2*expntij;
     if (argij > 46.0) return 0.0;
 
-    const double xkl = xk - xl;
-    const double ykl = yk - yl;
-    const double zkl = zk - zl;
+    const double xkl = bfk.x - bfl.x;
+    const double ykl = bfk.y - bfl.y;
+    const double zkl = bfk.z - bfl.z;
     const double rkl2 = xkl*xkl + ykl*ykl + zkl*zkl;
-    const double expntkl = expntk*expntl/(expntk+expntl);
+    const double expntkl = bfk.expnt*bfl.expnt/(bfk.expnt+bfl.expnt);
     const double argkl = rkl2*expntkl;
 
     const double argijkl = argij + argkl;
     if (argijkl > 46.0) return 0.0;
 
     const double exijkl = exp(-argijkl);
-    const double denom = (expnti+expntj)*(expntk+expntl)*sqrt(expnti+expntj+expntk+expntl);
-    const double fac = (expnti+expntj)*(expntk+expntl) / (expnti+expntj+expntk+expntl);
+    const double denom = (bfi.expnt+bfj.expnt)*(bfk.expnt+bfl.expnt)*sqrt(bfi.expnt+bfj.expnt+bfk.expnt+bfl.expnt);
+    const double fac = (bfi.expnt+bfj.expnt)*(bfk.expnt+bfl.expnt) / (bfi.expnt+bfj.expnt+bfk.expnt+bfl.expnt);
 
-    const double xp = (xi*expnti + xj*expntj)/(expnti+expntj);
-    const double yp = (yi*expnti + yj*expntj)/(expnti+expntj);
-    const double zp = (zi*expnti + zj*expntj)/(expnti+expntj);
-    const double xq = (xk*expntk + xl*expntl)/(expntk+expntl);
-    const double yq = (yk*expntk + yl*expntl)/(expntk+expntl);
-    const double zq = (zk*expntk + zl*expntl)/(expntk+expntl);
+    const double xp = (bfi.x*bfi.expnt + bfj.x*bfj.expnt)/(bfi.expnt+bfj.expnt);
+    const double yp = (bfi.y*bfi.expnt + bfj.y*bfj.expnt)/(bfi.expnt+bfj.expnt);
+    const double zp = (bfi.z*bfi.expnt + bfj.z*bfj.expnt)/(bfi.expnt+bfj.expnt);
+    const double xq = (bfk.x*bfk.expnt + bfl.x*bfl.expnt)/(bfk.expnt+bfl.expnt);
+    const double yq = (bfk.y*bfk.expnt + bfl.y*bfl.expnt)/(bfk.expnt+bfl.expnt);
+    const double zq = (bfk.z*bfk.expnt + bfl.z*bfl.expnt)/(bfk.expnt+bfl.expnt);
 
     const double xpq = xp - xq;
     const double ypq = yp - yq;
@@ -101,78 +103,63 @@ double g(double xi, double yi, double zi, double expnti, double coeffi,
 
     const double f0val = f0(fac*rpq2);
 
-    return (twopi25 / denom) * exijkl * f0val * coeffi * coeffj * coeffk * coeffl;
+    return (twopi25 / denom) * exijkl * f0val * bfi.coeff * bfj.coeff * bfk.coeff * bfl.coeff;
 }
 
 
 // Compute the one-particle Hamiltonian matrix element over primitive 1s gaussians
-double h(double xi, double yi, double zi, double expnti, double coeffi,
-         double xj, double yj, double zj, double expntj, double coeffj,
-         int natom, const double* coords, const double* charges)
+double h(const BasisFunction& bfi, const BasisFunction& bfj,
+         int natom, const Atom* atoms)
 {
-    const double xij = xi - xj;
-    const double yij = yi - yj;
-    const double zij = zi - zj;
+    const double xij = bfi.x - bfj.x;
+    const double yij = bfi.y - bfj.y;
+    const double zij = bfi.z - bfj.z;
     const double rij2 = xij*xij + yij*yij + zij*zij;
-    const double eipej = expnti+expntj;
-    const double expntij = expnti*expntj/eipj;
+    const double reipej = 1.0/(bfi.expnt+bfj.expnt);
+    const double expntij = bfi.expnt*bfj.expnt*reipej;
     const double argij = rij2*expntij;
     if (argij > 46.0) return 0.0;
 
-    const double expij = exprjh(-argij);
+    const double expij = exp(-argij);
 
-    const double twopi = 2.0*3.1415926535897932385;
-    const double repij = twopi * expij / eipej;
+    const double twopi = 2.0*PI;
+    const double repij = twopi * expij * reipej;
 
-    const double xp = (xi*expnti + xj*expntj)/(expnti+expntj);
-    const double yp = (yi*expnti + yj*expntj)/(expnti+expntj);
-    const double zp = (zi*expnti + zj*expntj)/(expnti+expntj);
+    const double xp = (bfi.x*bfi.expnt + bfj.x*bfj.expnt)*reipej;
+    const double yp = (bfi.y*bfi.expnt + bfj.y*bfj.expnt)*reipej;
+    const double zp = (bfi.z*bfi.expnt + bfj.z*bfj.expnt)*reipej;
     
     // first do the nuclear attraction integrals
     double sum = 0.0;
     for (int iat=0; iat<natom; iat++) {
-        const double xpa = xp - coords[iat*3  ];
-        const double ypa = yp - coords[iat*3+1];
-        const double zpa = zp - coords[iat*3+2];
+        const double xpa = xp - atoms[iat].x;
+        const double ypa = yp - atoms[iat].y;
+        const double zpa = zp - atoms[iat].z;
         const double rpa2 = xpa*xpa + ypa*ypa + zpa*zpa;
  
-        sum += charges(iat) * f0(eipej*rpa2);
+        sum += atoms[iat].q * f0((bfi.expnt+bfj.expnt)*rpa2);
     }
     sum = - repij*sum;
 
     // add on the kinetic energy term
-    sum += expntij*(3.0d0-2.0d0*expntij*rij2) * (pi/(expnti+expntj))**1.5d0 * expij;
+    sum += expntij*(3.0-2.0*expntij*rij2) * pow(PI*reipej,1.5) * expij;
 
-    // finally multiply by the normalization constants
-    return sum * coeffi * coeffj;
+    // multiply by the normalization constants
+    return sum * bfi.coeff * bfj.coeff;
 }
 
 // Compute the overlap matrix element over primitive 1s gaussians
-double s(double xi, double yi, double zi, double expnti, double coeffi,
-         double xj, double yj, double zj, double expntj, double coeffj) {
-    const double xij = xi - xj;
-    const double yij = yi - yj;
-    const double zij = zi - zj;
+double s(const BasisFunction& bfi, const BasisFunction& bfj) 
+{
+    const double xij = bfi.x - bfj.x;
+    const double yij = bfi.y - bfj.y;
+    const double zij = bfi.z - bfj.z;
     const double rij2 = xij*xij + yij*yij + zij*zij;
-    const double reipej = 1.0/(expnti+expntj);
-    const double expntij = expnti*expntj*eipej;
+    const double reipej = 1.0/(bfi.expnt+bfj.expnt);
+    const double expntij = bfi.expnt*bfj.expnt*(bfi.expnt+bfj.expnt);
     const double argij = rij2*expntij;
     if (argij > 46.0) return 0.0;
 
-    return (pi*reipej)**1.5d0 * exprjh(-argij) * coeffi * coeffj;
+    return pow(PI*reipej,1.5) * exp(-argij) * bfi.coeff * bfj.coeff;
 }
 
-int main() {
-    cout.precision(12);
-    setfm();
-    cout << f0(3.14159) << endl;
-
-
-    cout << g(
-              1.1,1.2,1.3,1.4,1.5,
-              1.6,1.7,1.8,1.9,2.0,
-              2.1,2.2,2.3,2.4,2.5,
-              2.6,2.7,2.8,2.9,3.0) << endl;
-
-    return 0;
-}

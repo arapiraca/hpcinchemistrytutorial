@@ -2,39 +2,22 @@
 #include <string>
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
 using namespace std;
 
-static const int MAX_NATOM = 100;
-static const int MAX_NBF_PER_ATOM = 30;
-static const int MAX_NBF = MAX_NATOM * MAX_NBF_PER_ATOM;
-
-static int natom=0;             // No. of atoms
-static int nbf=0;               // No. of basis functions
-static int nbf_tag=0;           // No. of unique basis centers/atoms
-
-struct Atom {
-    double x, y, z, q;          // coordinates and charge
-    int lo, hi;                 // inclusive range of basis functions on atom a
-    string tag;
-};
-
-struct AtomicBasis {            // Basis functions associated with atom of type tag
-    string types[MAX_NBF_PER_ATOM];
-    double expnts[MAX_NBF_PER_ATOM];
-    string tag;
-    int n;
-};
-    
-
-struct BasisFunction {    // a single atomic basis function (s primitive)
-    double x, y, z, coeff, expnt;
-};
+#include "scfdata.h"
+#include "integ.h"
 
 
-static Atom atoms[MAX_NATOM];
-static AtomicBasis bfset[MAX_NATOM];
-static BasisFunction bfns[MAX_NBF];
+static int natom = 0;                // No. of atoms
+static int nbf = 0;                  // No. of basis functions
+static int nbf_tag = 0;              // No. of unique basis centers/atoms
+static int nelec = 0;                // No. of electrons
+
+static Atom atoms[MAX_NATOM];        // Atoms in the calculation
+static AtomicBasis bfset[MAX_NATOM]; // Sets of atom-centered basis functions
+static BasisFunction bfns[MAX_NBF];  // Actual basis functions and coordinates
 
 void read_geometry() {
     /*
@@ -55,7 +38,9 @@ void read_geometry() {
         cin >> tag;
         if (tag == "end") break;
 
-        atoms[natom].tag = tag;
+        if (tag.size()>7) throw "Atom tags must be 7 chars or less";
+        strcpy(atoms[natom].tag,tag.c_str());
+
         cin >> atoms[natom].q >> atoms[natom].x >> atoms[natom].y >> atoms[natom].z;
         printf("%3d  %12s  %6.2f     %12.6f  %12.6f  %12.6f\n",
                natom, tag.c_str(), atoms[natom].q,
@@ -81,7 +66,9 @@ void read_basis_set() {
     cin >> tag;
     while (1) {
         if (tag == "end") break;
-        bfset[nbf_tag].tag = tag;
+
+        if (tag.size()>7) throw "Atom tags must be 7 chars or less";
+        strcpy(bfset[nbf_tag].tag, tag.c_str());
 
         printf("    %s\n", tag.c_str());
 
@@ -95,7 +82,8 @@ void read_basis_set() {
 
                 printf("        %2d  %4s  %12.6f\n", n, bftag.c_str(), expnt);
 
-                bfset[nbf_tag].types[n] = bftag;
+                if (bftag.size()>7) throw "BFN tags must be 7 chars or less";
+                strcpy(bfset[nbf_tag].types[n], bftag.c_str());
                 bfset[nbf_tag].expnts[n] = expnt;
                 n++;
                 bfset[nbf_tag].n = n;
@@ -125,14 +113,13 @@ void add_bfn(double x, double y, double z, double expnt) {
 
 // After reading the basis set and the geometry must join the data structures
 void build_full_basis() {
-    
     printf("\n Atom basis function ranges\n");
     nbf = 0;
     for (int a=0; a<natom; a++) {
         // Find the matching basis set for this atom
         bool found = false;
         for (int b=0; b<nbf_tag; b++) {
-            if (bfset[b].tag == atoms[a].tag) {
+            if (!strcmp(bfset[b].tag,atoms[a].tag)) {
 
                 printf("bfset n %d\n", bfset[b].n);
 
@@ -140,10 +127,10 @@ void build_full_basis() {
 
                 atoms[a].lo = nbf;
                 for (int i=0; i<bfset[b].n; i++) {
-                    if (bfset[b].types[i] == "s") {
+                    if (!strcmp(bfset[b].types[i],"s")) {
                         add_bfn(atoms[a].x, atoms[a].y, atoms[a].z, bfset[b].expnts[i]);
                     }
-                    else if (bfset[b].types[i] == "sp") {
+                    else if (!strcmp(bfset[b].types[i],"sp")) {
                         double s = 0.25/sqrt(bfset[b].expnts[i]);
                         add_bfn(atoms[a].x  , atoms[a].y  , atoms[a].z  , bfset[b].expnts[i]);
                         add_bfn(atoms[a].x+s, atoms[a].y  , atoms[a].z  , bfset[b].expnts[i]);
@@ -153,7 +140,7 @@ void build_full_basis() {
                         add_bfn(atoms[a].x  , atoms[a].y  , atoms[a].z+s, bfset[b].expnts[i]);
                         add_bfn(atoms[a].x  , atoms[a].y  , atoms[a].z-s, bfset[b].expnts[i]);
                     }
-                    else if (bfset[b].types[i] == "spd") {
+                    else if (!strcmp(bfset[b].types[i],"spd")) {
                         double s = 0.25/sqrt(bfset[b].expnts[i]);
                         add_bfn(atoms[a].x  , atoms[a].y  , atoms[a].z  , bfset[b].expnts[i]);
                         add_bfn(atoms[a].x+s, atoms[a].y+s, atoms[a].z+s, bfset[b].expnts[i]);
@@ -166,7 +153,7 @@ void build_full_basis() {
                         add_bfn(atoms[a].x-s, atoms[a].y-s, atoms[a].z-s, bfset[b].expnts[i]);
                     }
                     else {
-                        throw "bad atom type building full basis?";
+                        throw "bad basis function type building full basis?";
                     }
                 }
                 atoms[a].hi = nbf-1;
@@ -180,6 +167,23 @@ void build_full_basis() {
     printf("\nTotal number of basis function %d\n", nbf);
 }
 
+void read_scf() {
+    nelec = 0;
+
+    string tag;
+    while (cin >> tag) {
+        if (tag == "end") {
+            break;
+        }
+        else if (tag == "nelec") {
+            cin >> nelec;
+        }
+        else {
+            throw "unkown directive reading scf input";
+        }
+    }
+}
+
 void read_input() {
     string tag;
     while (cin >> tag) {
@@ -189,16 +193,61 @@ void read_input() {
         else if (tag == "basis") {
             read_basis_set();
         }
+        else if (tag == "scf") {
+            read_scf();
+        }
         else {
             throw "unknown directive";
         }
     }
+
     build_full_basis();
+
+    // If nelec was not specified, default is a neutral molecule
+    if (nelec == 0) {
+        for (int i=0; i<natom; i++) {
+            nelec += atoms[i].q;
+        }
+    }
+
+    printf("\nNumber of electrons %d\n\n", nelec);
 }
 
-int main() {
-    read_input();
-    return 0;
+double g(int i, int j, int k, int l) {
+    return g(get_bfn(i), get_bfn(j), get_bfn(k), get_bfn(k));
 }
-        
+
+double h(int i, int j) {
+    return h(get_bfn(i), get_bfn(j), natom, atoms);
+}
+
+double s(int i, int j) {
+    return s(get_bfn(i), get_bfn(j));
+}
+
+int num_atoms() {
+    return natom;
+}
+
+int num_basis_functions() {
+    return nbf;
+}
+
+int num_electrons() {
+    return nelec;
+}
+
+const Atom& get_atom(int i) {
+    if (i<0 || i>=natom) throw "Bad i in get_atom";
+    return atoms[i];
+}
+
+const Atom* get_atoms() {
+    return atoms;
+}
+
+const BasisFunction& get_bfn(int i) {
+    if (i<0 || i>=nbf) throw "Bad i in get_bfn";
+    return bfns[i];
+}
 
