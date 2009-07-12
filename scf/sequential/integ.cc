@@ -156,7 +156,7 @@ double s(const BasisFunction& bfi, const BasisFunction& bfj)
     const double zij = bfi.z - bfj.z;
     const double rij2 = xij*xij + yij*yij + zij*zij;
     const double reipej = 1.0/(bfi.expnt+bfj.expnt);
-    const double expntij = bfi.expnt*bfj.expnt*(bfi.expnt+bfj.expnt);
+    const double expntij = bfi.expnt*bfj.expnt*reipej;
     const double argij = rij2*expntij;
     if (argij > 46.0) return 0.0;
 
