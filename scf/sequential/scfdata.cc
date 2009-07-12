@@ -164,6 +164,10 @@ static void build_full_basis() {
             printf("No basis functions on center %d?\n", a);
     }
     printf("\nTotal number of basis function %d\n", nbf);
+
+    for (int i=0; i<nbf; i++) {
+        printf("%4d   %12.6f %12.6f     %12.6f %12.6f %12.6f\n", i, bfns[i].expnt, bfns[i].coeff, bfns[i].x, bfns[i].y, bfns[i].z);
+    }
 }
 
 static void read_scf() {

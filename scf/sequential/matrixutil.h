@@ -12,7 +12,7 @@ double* copy(int n, int m, const double* a);
 
 
 
-/// Real symmetric generalized diagonalization using dsygev() ... solves F C = S C E
+/// Real symmetric generalized diagonalization using dsygv() ... solves F C = S C E
 
 /// n = matrix dimension
 ///
@@ -24,8 +24,24 @@ double* copy(int n, int m, const double* a);
 ///
 /// E[n] = output vector ... E[i] = i'th eigenvalue
 ///
-/// Solution satisfies   sum[k] F[i,k] S[k,j] = sum[k] S[i,k] C[k,j] E[j]
+/// Solution satisfies   sum[k] F[i,k] C[j,k] = sum[k] S[i,k] C[j,k] E[j]
 ///
 void real_sym_gen_diag(int n, const double* F, const double* S, double* C, double* E);
+
+
+/// Real symmetric diagonalization using dsyev() ... solves A C = C E
+
+/// n = matrix dimension
+///
+/// A[n*n] = input matrix ... unchanged on output
+///
+/// C[n*n] = output matrix ... i'th row of C contains i'th eigenvector
+///
+/// E[n] = output vector ... E[i] = i'th eigenvalue
+///
+/// Solution satisfies   sum[k] A[i,k] C[j,k] = C[i,j] E[j]
+///
+void real_sym_diag(int n, const double* A, double* C, double* E);
+
 
 #endif

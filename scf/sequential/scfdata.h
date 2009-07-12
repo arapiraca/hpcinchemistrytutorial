@@ -1,6 +1,8 @@
 #ifndef SCF_DATA_H
 #define SCF_DATA_H
 
+#include <iostream>
+
 static const int MAX_NATOM = 100;
 static const int MAX_NBF_PER_ATOM = 30;
 static const int MAX_NBF = MAX_NATOM * MAX_NBF_PER_ATOM;

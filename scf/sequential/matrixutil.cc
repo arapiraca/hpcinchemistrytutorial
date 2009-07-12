@@ -55,8 +55,20 @@ extern "C"  void dsygv_(const integer* ITYPE,
                         int joblen, 
                         int ulolen);
 
+extern "C"  void dsyev_(const char* JOB,
+                        const char* UPLO,
+                        integer* N, 
+                        double* A, 
+                        const integer* LDA, 
+                        double* E, 
+                        double* WORK, 
+                        const integer* LWORK, 
+                        integer* INFO, 
+                        int joblen, 
+                        int ulolen);
 
-/// Real symmetric generalized diagonalization using dsygev() ... solves F C = S C E
+
+/// Real symmetric generalized diagonalization using dsygv() ... solves F C = S C E
 
 /// n = matrix dimension
 ///
@@ -68,7 +80,7 @@ extern "C"  void dsygv_(const integer* ITYPE,
 ///
 /// E[n] = output vector ... E[i] = i'th eigenvalue
 ///
-/// Solution satisfies   sum[k] F[i,k] S[k,j] = sum[k] S[i,k] C[k,j] E[j]
+/// Solution satisfies   sum[k] F[i,k] C[j,k] = sum[k] S[i,k] C[j,k] E[j]
 ///
 void real_sym_gen_diag(int n, const double* F, const double* S, double* C, double* E) {
     memcpy(C, F, n*n*sizeof(double));
@@ -92,4 +104,37 @@ void real_sym_gen_diag(int n, const double* F, const double* S, double* C, doubl
 
     delete [] WORK;
     delete [] B;
+}
+
+
+/// Real symmetric diagonalization using dsyev() ... solves A C = C E
+
+/// n = matrix dimension
+///
+/// A[n*n] = input matrix ... unchanged on output
+///
+/// C[n*n] = output matrix ... i'th row of C contains i'th eigenvector
+///
+/// E[n] = output vector ... E[i] = i'th eigenvalue
+///
+/// Solution satisfies   sum[k] A[i,k] C[j,k] = C[i,j] E[j]
+///
+void real_sym_diag(int n, const double* A, double* C, double* E) {
+    memcpy(C, A, n*n*sizeof(double));
+    double* WORK = new double[n*32];
+    
+    integer N = n;
+    integer LDA = n;
+    integer LWORK = n*32;
+    integer INFO=0;
+
+    dsyev_("V", "U", &N, C, &LDA, E, WORK, &LWORK, &INFO, 1, 1);
+
+    if (INFO != 0) {
+        printf("!!! info from dsyev = %ld\n", INFO);
+        fflush(stdout);
+        throw "LAPACK dsyev returned non-zero info";
+    }
+
+    delete [] WORK;
 }
