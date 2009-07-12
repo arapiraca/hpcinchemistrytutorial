@@ -9,7 +9,6 @@ using namespace std;
 #include "scfdata.h"
 #include "integ.h"
 
-
 static int natom = 0;                // No. of atoms
 static int nbf = 0;                  // No. of basis functions
 static int nbf_tag = 0;              // No. of unique basis centers/atoms
@@ -19,7 +18,7 @@ static Atom atoms[MAX_NATOM];        // Atoms in the calculation
 static AtomicBasis bfset[MAX_NATOM]; // Sets of atom-centered basis functions
 static BasisFunction bfns[MAX_NBF];  // Actual basis functions and coordinates
 
-void read_geometry() {
+static void read_geometry() {
     /*
       atomic units
 
@@ -50,7 +49,7 @@ void read_geometry() {
     cout << "\n";
 }
         
-void read_basis_set() {
+static void read_basis_set() {
     /*
       basis
          tag
@@ -99,7 +98,7 @@ void read_basis_set() {
 }
 
 // Add a single primitive s function to the basis set
-void add_bfn(double x, double y, double z, double expnt) {
+static void add_bfn(double x, double y, double z, double expnt) {
     if (nbf > MAX_NBF)
         throw "Too many basis functions";
     const double PI = 3.1415926535897932385;
@@ -107,12 +106,12 @@ void add_bfn(double x, double y, double z, double expnt) {
     bfns[nbf].y = y;
     bfns[nbf].z = z;
     bfns[nbf].expnt = expnt;
-    bfns[nbf].coeff = pow(expnt*2.0*PI,0.75);
+    bfns[nbf].coeff = pow(expnt*2.0/PI,0.75);
     nbf++;
 }
 
 // After reading the basis set and the geometry must join the data structures
-void build_full_basis() {
+static void build_full_basis() {
     printf("\n Atom basis function ranges\n");
     nbf = 0;
     for (int a=0; a<natom; a++) {
@@ -167,7 +166,7 @@ void build_full_basis() {
     printf("\nTotal number of basis function %d\n", nbf);
 }
 
-void read_scf() {
+static void read_scf() {
     nelec = 0;
 
     string tag;
