@@ -1,5 +1,5 @@
 
-CXXFLAGS = -g -O0 -Wall
+CXXFLAGS = -g -O3 -ffast-math -Wall
 
 # Default lapack and blas ... broken on most linuxen
 #LIBS = -llapack -lblas -lgfortran -lm

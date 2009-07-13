@@ -1,6 +1,8 @@
 #ifndef MATRIX_UTIL_H
 #define MATRIX_UTIL_H
 
+typedef long integer;           // C type of Fortran integers
+
 // Prints a matrix[n,m] in a vaguely human-readable form
 void print(int n, int m, const double* s);
 
@@ -43,5 +45,26 @@ void real_sym_gen_diag(int n, const double* F, const double* S, double* C, doubl
 ///
 void real_sym_diag(int n, const double* A, double* C, double* E);
 
+
+/// Matrix * matrix transpose 
+
+/// The C[i,j] = sum(k) A[i,k] * B[j,k]
+void mxmT(int dimi, int dimj, int dimk, const double* A, const double* B, double* C);
+
+
+/// Matrix transpose * matrix
+
+/// The C[i,j] = sum(k) A[k,i] * B[k,j]
+void mTxm(int dimi, int dimj, int dimk, const double* A, const double* B, double* C);
+
+
+/// Fills vector with value
+void fill(int n, double s, double* v);
+
+/// Computes inner or dot product between two vectors
+double dot_product(int n, const double* a, const double* b);
+
+/// Symmetrizes a square matrix
+void symmetrize(int n, double* a);
 
 #endif

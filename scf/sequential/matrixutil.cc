@@ -1,9 +1,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
 using namespace std;
 
-// Prints a matrix[n,m] in a vaguely human-readable form
+#include "matrixutil.h"
+
 void print(int n, int m, const double* s) {
     printf("    ");
     for (int j=0; j<m; j++) 
@@ -23,22 +25,15 @@ void print(int n, int m, const double* s) {
     }
 }
 
-// Prints a vector[n] in a vaguely human-readable form
 void print(int n, const double* s) {
     print(1, n, s);
 }
 
-// Makes a new copy of a matrix[n,m] .. result will be allocated with new double[n*m]
 double* copy(int n, int m, const double* a) {
     double* b = new double[n*m];
     memcpy((void *) b, (void *) a, n*m*sizeof(double));
     return b;
 }
-
-
-
-
-typedef long integer;           // C type of Fortran integers
 
 extern "C"  void dsygv_(const integer* ITYPE, 
                         const char* JOB,
@@ -68,20 +63,6 @@ extern "C"  void dsyev_(const char* JOB,
                         int ulolen);
 
 
-/// Real symmetric generalized diagonalization using dsygv() ... solves F C = S C E
-
-/// n = matrix dimension
-///
-/// F[n*n] = input matrix ... unchanged on output
-///
-/// S[n*n] = input matrix ... unchanged on output
-///
-/// C[n*n] = output matrix ... i'th row of C contains i'th eigenvector
-///
-/// E[n] = output vector ... E[i] = i'th eigenvalue
-///
-/// Solution satisfies   sum[k] F[i,k] C[j,k] = sum[k] S[i,k] C[j,k] E[j]
-///
 void real_sym_gen_diag(int n, const double* F, const double* S, double* C, double* E) {
     memcpy(C, F, n*n*sizeof(double));
     double* B = copy(n, n, S);
@@ -107,18 +88,6 @@ void real_sym_gen_diag(int n, const double* F, const double* S, double* C, doubl
 }
 
 
-/// Real symmetric diagonalization using dsyev() ... solves A C = C E
-
-/// n = matrix dimension
-///
-/// A[n*n] = input matrix ... unchanged on output
-///
-/// C[n*n] = output matrix ... i'th row of C contains i'th eigenvector
-///
-/// E[n] = output vector ... E[i] = i'th eigenvalue
-///
-/// Solution satisfies   sum[k] A[i,k] C[j,k] = C[i,j] E[j]
-///
 void real_sym_diag(int n, const double* A, double* C, double* E) {
     memcpy(C, A, n*n*sizeof(double));
     double* WORK = new double[n*32];
@@ -138,3 +107,54 @@ void real_sym_diag(int n, const double* A, double* C, double* E) {
 
     delete [] WORK;
 }
+
+
+void mxmT(int dimi, int dimj, int dimk, const double* A, const double* B, double* C) {
+    for (int i=0; i<dimi; i++) {
+        for (int j=0; j<dimj; j++) {
+            double sum = 0.0;
+            for (int k=0; k<dimk; k++) {
+                sum += A[i*dimk + k] * B[j*dimk + k];
+            }
+            C[i*dimj + j] = sum;
+        }
+    }
+}
+
+
+void mTxm(int dimi, int dimj, int dimk, const double* A, const double* B, double* C) {
+    for (int i=0; i<dimi; i++) {
+        for (int j=0; j<dimj; j++) 
+            C[i*dimj + j] = 0.0;
+
+        for (int k=0; k<dimk; k++) {
+            double aki = A[k*dimi + i];
+            for (int j=0; j<dimj; j++) {
+                C[i*dimj + j] += aki * B[k*dimj + j];
+            }
+        }
+    }
+}
+
+
+void fill(int n, double s, double* v) {
+    for (int i=0; i<n; i++)
+        v[i] = s;
+}
+
+double dot_product(int n, const double* a, const double* b) {
+    double sum = 0.0;
+    for (int i=0; i<n; i++) sum += a[i]*b[i];
+    return sum;
+}
+
+void symmetrize(int n, double* a) {
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<i; j++) {
+            int ij = i*n + j;
+            int ji = j*n + i;
+            a[ij] = a[ji] = 0.5*(a[ij] + a[ji]);
+        }
+    }
+}
+

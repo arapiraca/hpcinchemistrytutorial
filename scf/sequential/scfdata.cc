@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -13,6 +14,8 @@ static int natom = 0;                // No. of atoms
 static int nbf = 0;                  // No. of basis functions
 static int nbf_tag = 0;              // No. of unique basis centers/atoms
 static int nelec = 0;                // No. of electrons
+static int ndamp = 5;                // No. of iterations to apply damping
+static double damp = 0.3;            // Damping factor
 
 static Atom atoms[MAX_NATOM];        // Atoms in the calculation
 static AtomicBasis bfset[MAX_NATOM]; // Sets of atom-centered basis functions
@@ -120,8 +123,6 @@ static void build_full_basis() {
         for (int b=0; b<nbf_tag; b++) {
             if (!strcmp(bfset[b].tag,atoms[a].tag)) {
 
-                printf("bfset n %d\n", bfset[b].n);
-
                 found = true;
 
                 atoms[a].lo = nbf;
@@ -165,9 +166,10 @@ static void build_full_basis() {
     }
     printf("\nTotal number of basis function %d\n", nbf);
 
-    for (int i=0; i<nbf; i++) {
-        printf("%4d   %12.6f %12.6f     %12.6f %12.6f %12.6f\n", i, bfns[i].expnt, bfns[i].coeff, bfns[i].x, bfns[i].y, bfns[i].z);
-    }
+    // Print the basis
+    //for (int i=0; i<nbf; i++) {
+    //    printf("%4d   %12.6f %12.6f     %12.6f %12.6f %12.6f\n", i, bfns[i].expnt, bfns[i].coeff, bfns[i].x, bfns[i].y, bfns[i].z);
+    //}
 }
 
 static void read_scf() {
@@ -180,6 +182,12 @@ static void read_scf() {
         }
         else if (tag == "nelec") {
             cin >> nelec;
+        }
+        else if (tag == "damp") {
+            cin >> damp;
+        }
+        else if (tag == "ndamp") {
+            cin >> ndamp;
         }
         else {
             throw "unkown directive reading scf input";
@@ -217,7 +225,7 @@ void read_input() {
 }
 
 double g(int i, int j, int k, int l) {
-    return g(get_bfn(i), get_bfn(j), get_bfn(k), get_bfn(k));
+    return g(get_bfn(i), get_bfn(j), get_bfn(k), get_bfn(l));
 }
 
 double h(int i, int j) {
@@ -254,3 +262,38 @@ const BasisFunction& get_bfn(int i) {
     return bfns[i];
 }
 
+double nuclear_repulsion_energy() {
+    double sum = 0.0;
+    for (int i=0; i<natom; i++) {
+        for (int j=0; j<i; j++) {
+            double xx = atoms[i].x - atoms[j].x;
+            double yy = atoms[i].y - atoms[j].y;
+            double zz = atoms[i].z - atoms[j].z;
+            sum += atoms[i].q*atoms[j].q / sqrt(xx*xx + yy*yy + zz*zz);
+        }
+    }
+    return sum;
+}
+
+double wall_time() {
+    static bool first_call = true;
+    static double start_time;
+    
+    struct timeval tv;
+    gettimeofday(&tv,0);
+    double now = tv.tv_sec + 1e-6*tv.tv_usec;
+    
+    if (first_call) {
+        first_call = false;
+        start_time = now;
+    }
+    return now - start_time;
+}
+
+int get_ndamp() {
+    return ndamp;
+}
+
+double get_damp() {
+    return damp;
+}
