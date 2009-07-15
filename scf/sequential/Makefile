@@ -7,6 +7,8 @@ CXXFLAGS = -g -O3 -ffast-math -Wall
 # MKL intel library with 64-bit integers and pointers
 LIBS = -L/opt/intel/mkl/10.0.1.014/lib/em64t -lmkl -lguide -lpthread -lm
 
+# Apple's vecLib
+#LIBS = /System/Library/Frameworks/vecLib.framework/vecLib
 
 scf:	scf.o scfdata.o integ.o matrixutil.o
 	$(CXX) -o $@ $^ $(LIBS)
