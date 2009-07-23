@@ -23,7 +23,9 @@
 
 /***************************************************************************
  *                                                                         *
- * test1 demonstrates how to create a GA using the new API                 *
+ * test1:                                                                  *
+ *        demonstrates how to create a GA using the new API                *
+ *        demonstrates how to obtain local access to GA memory             *
  *                                                                         *
  ***************************************************************************/
 
@@ -50,7 +52,6 @@ int test1()
         chunk[i] = -1;
     }
 
-    //pg_list = (int*) ARMCI_Malloc_local(nproc*sizeof(int));
     pg_list = (int*) malloc(nproc*sizeof(int));
     for(p=0; p<nproc; p++){ pg_list[p]=p; }
     pg_world = GA_Pgroup_create(pg_list,nproc);
@@ -83,13 +84,12 @@ int test1()
     if (ndim == 2){
         for(i=0; i<range[0]; i++){
             for(j=0; j<range[1]; j++){
-                //printf("proc %d: i=%d j=%d i*ld[0]+j=%d \n",me,i,j,i*ld[0]+j);
                 p_a[ i*ld[0]+j ] = (double)(me+1);
             }
         }
     }
 
-    NGA_Release_update(g_a,lo,hi);
+    NGA_Release_update(g_a,lo,hi); /* this function does nothing as of GA 4.2 */
 
     GA_Print(g_a);
 
