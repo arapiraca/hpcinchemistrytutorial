@@ -58,6 +58,44 @@ void make_fock_very_simple(int nbf, const double* D, const double* hone, double*
     symmetrize(nbf, F);
 }
 
+/// Builds the closed-shell Fock matrix in a little more efficient manner
+
+/// F[mu,nu] = h[mu,nu] + sum[omega,lambda] D[omega,lambda]*(2*g(mu,nu,omega,lambda) - g(mu,omega,nu,lambda))
+///
+/// Computes the integrals the minimum number of times but does not use any sparsity.
+/// Algorithm for adding Fock matrix elements is slow, but it works.
+void make_fock_simple(int nbf, double* D, const double* hone, double* F) {
+#define FF(i,j) F[i*nbf + j]
+#define DD(i,j) D[i*nbf + j]
+
+    memcpy(F, hone, nbf*nbf*sizeof(double));
+    for (int mu=0; mu<nbf; mu++) {
+        for (int nu=0; nu<=mu; nu++) {
+            double facmunu = 4.0;
+            if (mu == nu) facmunu *= 0.5;
+            for (int omega=0; omega<=mu; omega++) {
+                int lambdatop = omega;
+                if (omega  ==  mu) lambdatop = nu;
+                for (int lambda=0; lambda<=lambdatop; lambda++) {
+                    double fac = facmunu;
+                    if (omega == lambda) fac *= 0.5;
+                    if (mu == omega && nu == lambda) fac *= 0.5;
+                    double gval = g(mu,nu,omega,lambda)*fac;
+                    FF(mu,nu)        += DD(omega,lambda)*gval*2.0;
+                    FF(omega,lambda) += DD(mu,nu)*gval*2.0;
+                    FF(mu,omega)     -= DD(nu,lambda)*gval*0.5;
+                    FF(mu,lambda)    -= DD(nu,omega)*gval*0.5;
+                    FF(nu,omega)     -= DD(mu,lambda)*gval*0.5;
+                    FF(nu,lambda)    -= DD(mu,omega)*gval*0.5;
+                }
+            }
+        }
+    }
+    symmetrize(nbf, F);
+#undef FF
+#undef DD
+}
+
 
 double make_energy(int nbf, const double* D, const double* hone, const double* F) {
     return nuclear_repulsion_energy() + dot_product(nbf*nbf,D,hone) + dot_product(nbf*nbf,D,F);
@@ -109,7 +147,10 @@ int main() {
         for (int iter=0; iter<50; iter++) {
             // Make the new Fock matrix and the energy
 
-            make_fock_very_simple(nbf, D, hone, F);
+            //make_fock_very_simple(nbf, D, hone, F);
+            //print(nbf,nbf,F);
+            make_fock_simple(nbf, D, hone, F);
+            //print(nbf,nbf,F);
 
             double energy = make_energy(nbf, D, hone, F);
             double deltae = energy - eprev;
@@ -141,7 +182,7 @@ int main() {
             printf("%6d %12.6f %9.1e %9.1e %6.1f %6.1f\n",
                    iter, energy, deltae, deltad, damp, wall_time());
 
-            if (deltae < 1e-6 && deltad < 1e-3) {
+            if (abs(deltae) < 1e-6 && deltad < 1e-3) {
                 printf("\n Converged!\n");
                 break;
             }
