@@ -150,10 +150,10 @@ test1.o: test1.c
 	$(AR) -r libtests.a test1.o
 	$(RM) $(RMFLAGS) test1.o
 
-#.o: .c .h
-#	$(CC) -c $(CFLAGS) .c -o .o
-#	$(AR) -r libtests.a .o
-#	$(RM) $(RMFLAGS) .o
+test2.o: test2.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) test2.c -o test2.o
+	$(AR) -r libtests.a test2.o
+	$(RM) $(RMFLAGS) test2.o
 
 clean:
 	$(RM) $(RMFLAGS) *.o

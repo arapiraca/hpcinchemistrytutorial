@@ -24,8 +24,8 @@
 /***************************************************************************
  *                                                                         *
  * test1:                                                                  *
- *        demonstrates how to create a GA using the new API                *
- *        demonstrates how to obtain local access to GA memory             *
+ *       -demonstrates how to create a GA using the new API                *
+ *       -demonstrates how to obtain local access to GA memory             *
  *                                                                         *
  ***************************************************************************/
 
