@@ -142,7 +142,7 @@ all: driver.x
 
 refresh: realclean all
 
-driver.x: driver.o test1.o
+driver.x: driver.o test1.o test2.o
 	$(LD) $(LDFLAGS) driver.o libtests.a $(LDFLAGS) -o driver.x
 
 test1.o: test1.c

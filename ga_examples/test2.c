@@ -34,7 +34,7 @@ void transpose_patch(double* input, double* output);
 
 int test2()
 {
-    int p,d,i,j;
+    int d,i,j;
     int g_a;
     int status;
     int ndim=2;
@@ -44,19 +44,19 @@ int test2()
     int hi[ndim];
     int range[ndim];
     int ld[ndim-1];
+    int offset[ndim];
     int pg_world;
-    int* pg_list;
     double val;
-    double* p_in,p_out;
+    double* p_a,p_in,p_out;
 
     for(i=0; i<ndim; i++){
-        dims[i] = 12;
+        //dims[i] = 6;
         chunk[i] = -1;
     }
+    dims[0] = 6;
+    dims[1] = 8;
 
-    pg_list = (int*) malloc(nproc*sizeof(int));
-    for(p=0; p<nproc; p++){ pg_list[p]=p; }
-    pg_world = GA_Pgroup_create(pg_list,nproc);
+    pg_world = GA_Pgroup_get_world();
 
     g_a = GA_Create_handle();
     GA_Set_array_name(g_a,"test array A");
@@ -66,16 +66,20 @@ int test2()
     status = GA_Allocate(g_a);
     if(0 != status){};
     
+#ifdef DEBUG
     GA_Zero(g_a);
-    val = -1.0;
-    GA_Fill(g_a,&val);
+#endif
 
     NGA_Distribution(g_a,me,lo,hi);
+#ifdef DEBUG
     GA_Print_distribution(g_a);
+/*
     for(p=0; p<ndim; p++){
         printf("proc %d: lo[%d] = %d hi[%d] = %d\n",me,p,lo[p],p,hi[p]);
         fflush(stdout);
     }
+*/
+#endif
 
     NGA_Access(g_a,lo,hi,&p_a,&ld[0]);
 
@@ -86,7 +90,11 @@ int test2()
     if (ndim == 2){
         for(i=0; i<range[0]; i++){
             for(j=0; j<range[1]; j++){
-                p_a[ i*ld[0]+j ] = (double)(me+1);
+                printf("lo[0] = %d ld[0] = %d i = %d\n",lo[0],ld[0],i);
+                printf("lo[1] = %d j = %d\n",lo[1],j);
+                offset[0] = lo[0] + ld[0] * i;
+                offset[1] = lo[1] + j;
+                p_a[ ld[0] * i + j ] = (double)( offset[0] + offset[1] );
             }
         }
     }
@@ -96,8 +104,6 @@ int test2()
     GA_Print(g_a);
 
     GA_Destroy(g_a);
-
-    if(0 != GA_Pgroup_destroy(pg_world)){};
 
     return(0);
 }

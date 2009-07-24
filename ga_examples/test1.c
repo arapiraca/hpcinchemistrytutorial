@@ -48,13 +48,15 @@ int test1()
     double val;
 
     for(i=0; i<ndim; i++){
-        dims[i] = 12;
+        dims[i] = 6;
         chunk[i] = -1;
     }
 
     pg_list = (int*) malloc(nproc*sizeof(int));
     for(p=0; p<nproc; p++){ pg_list[p]=p; }
     pg_world = GA_Pgroup_create(pg_list,nproc);
+    /* This is an easier way to get the world group */
+    //pg_world = GA_Pgroup_get_world();
 
     g_a = GA_Create_handle();
     GA_Set_array_name(g_a,"test array A");
@@ -95,6 +97,7 @@ int test1()
 
     GA_Destroy(g_a);
 
+    /* cannot do this if using pg_world = GA_Pgroup_get_world() */
     if(0 != GA_Pgroup_destroy(pg_world)){};
 
     return(0);

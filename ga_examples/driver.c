@@ -24,7 +24,7 @@ int test1();
 
 int main(int argc, char **argv)
 {
-
+    int test;
     int status;
 
     MPI_Init(&argc, &argv);
@@ -41,8 +41,23 @@ int main(int argc, char **argv)
     }
 #endif
 
-    status = test1();
-    if(0 != status){};
+    if (argc > 1){
+        test = atoi(argv[1]);
+    } else {
+        test =1;
+    }
+    if (me==0){
+        printf("Running test %d\n",test);
+        fflush(stdout);
+    }
+
+    if (test == 1){
+        status = test1();
+        if(0 != status){};
+    } else if (test == 2){
+        status = test2();
+        if(0 != status){};
+    }
 
     if (me==0){
         printf("*************************************\n");
