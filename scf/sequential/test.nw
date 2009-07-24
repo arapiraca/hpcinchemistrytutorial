@@ -1,0 +1,21 @@
+start
+
+scratch_dir /tmp
+permanent_dir /tmp
+
+geometry units au
+    c -0.00000000     0.00000000     0.69282134
+    h  1.36438393     1.36438393     0.01060376
+    h  0.49939918    -1.86378311     0.01060376
+    h -1.86378311     0.49939918     0.01060376
+    h  0.00000000     0.00000000     2.73946901
+end
+
+basis
+  * library sto-3g
+end
+
+task scf optimize
+
+
+
