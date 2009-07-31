@@ -37,8 +37,8 @@ int test3()
     int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
     int status;
     const int ndim = 2;
-    const int rank = 600;
-	const int blksz = 30;
+    const int rank = 6;
+	const int blksz = 3;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -52,7 +52,7 @@ int test3()
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
     double* p_d;  // pointers for local access to GAs
-    bool myturn = true;
+    bool myturn;
 
     nproc=GA_Nnodes();
     me=GA_Nodeid();
@@ -164,7 +164,14 @@ int test3()
  */
 	alpha = 1.0;
     beta  = 0.0;
+
+    start = clock();
     GA_Dgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
+    finish = clock();
+    if (me == 0){
+    	printf("GA_Dgemm took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+    }
+
     GA_Transpose(g_c1,g_c2);
 
 #ifdef DEBUG
@@ -175,7 +182,9 @@ int test3()
  * begin hand-written transposition
  */
 
-    double temp;
+    start = clock();
+
+//    double temp;
 
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
@@ -186,7 +195,7 @@ int test3()
     		memset(p_d,0,blksz * blksz * sizeof(double));
     		for (kk = 0 ; kk < nblock; kk++){
 
-    			myturn = ( me == ( (nblock * nblock * nblock) % nproc ) );
+    			myturn = true;//( me == ( (nblock * nblock * nblock) % nproc ) );
 
     			if (myturn){
 
@@ -214,12 +223,12 @@ int test3()
     				/**************************************/
     				for (i = 0 ; i < blksz ; i++){
     					for (j = 0 ; j < blksz ; j++){
-    						temp = 0.0;
+//    						temp = 0.0;
     						for (k = 0 ; k < blksz ; k++){
-    							temp += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
-//    							p_d[ blksz * i + j ] += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
+//    							temp += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
+    							p_d[ blksz * i + j ] += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
     						}
-    						p_d[ blksz * i + j ] = temp;
+//    						p_d[ blksz * i + j ] = temp;
     					}
     				}
     				/**************************************/
@@ -245,6 +254,11 @@ int test3()
     };
 
     GA_Sync();
+
+    finish = clock();
+    if (me == 0){
+    	printf("Hand-written parallel matmul took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+    }
 
 #ifdef DEBUG
 	GA_Print(g_d);
