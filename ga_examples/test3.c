@@ -32,13 +32,13 @@ void transpose_patch(double* input, double* output);
 
 int test3()
 {
-	int me,nproc;
+	int me,nproc,ntask,t;
     int i,j,k,ii,jj,kk;
     int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
     int status;
     const int ndim = 2;
     const int rank = 6;
-	const int blksz = 3;
+	const int blksz = 2;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -132,7 +132,7 @@ int test3()
     }
 
     NGA_Release_update(g_b,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
-    GA_Symmetrize(g_a);
+//    GA_Symmetrize(g_a);
 
     NGA_Distribution(g_b,me,lo_b,hi_b);
     NGA_Access(g_b,lo_b,hi_b,&p_in,&ld_b[0]);
@@ -148,7 +148,7 @@ int test3()
     }
 
     NGA_Release_update(g_b,lo_b,hi_b); /* this function does nothing as of GA 4.2 */
-    GA_Symmetrize(g_b);
+//    GA_Symmetrize(g_b);
 
 #ifdef DEBUG
 	GA_Print(g_a);
@@ -166,7 +166,8 @@ int test3()
     beta  = 0.0;
 
     start = clock();
-    GA_Dgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
+    // GA_Dgemm uses Fortran ordering, hence the double 'T'
+    GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
     finish = clock();
     if (me == 0){
     	printf("GA_Dgemm took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
@@ -184,20 +185,34 @@ int test3()
 
     start = clock();
 
-//    double temp;
+    ntask = nblock * nblock * nblock;
+
+    if (me == 0) {
+    	printf("ntask = %d\n",ntask);
+    	printf("nproc = %d\n",nproc);
+    }
+	printf("proc %d is here\n",me);
+	fflush(stdout);\
 
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
     p_d = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
+
+    t = 0;
 
     for (ii = 0 ; ii < nblock; ii++){
     	for (jj = 0 ; jj < nblock; jj++){
     		memset(p_d,0,blksz * blksz * sizeof(double));
     		for (kk = 0 ; kk < nblock; kk++){
 
-    			myturn = true;//( me == ( (nblock * nblock * nblock) % nproc ) );
+//    			printf("t mod nproc = %d\n",t % nproc);
+//    			fflush(stdout);
+    			myturn = ( me == ( t % nproc ) );
 
     			if (myturn){
+
+    				printf("proc %d doing work tuple (%d,%d,%d)\n",me,ii,jj,kk);
+    				fflush(stdout);
 
     				lo_a[0] = blksz * ii;
     				hi_a[0] = blksz * (ii + 1) - 1;
@@ -223,22 +238,22 @@ int test3()
     				/**************************************/
     				for (i = 0 ; i < blksz ; i++){
     					for (j = 0 ; j < blksz ; j++){
-//    						temp = 0.0;
     						for (k = 0 ; k < blksz ; k++){
-//    							temp += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
     							p_d[ blksz * i + j ] += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
     						}
-//    						p_d[ blksz * i + j ] = temp;
     					}
     				}
     				/**************************************/
 
     				NGA_Put(g_d,lo_d,hi_d,p_d,ld_d);
 
-    			}
-    		}
-    	}
-    }
+    			} // myturn
+
+    			t += 1;
+
+    		} // kk
+    	} // jj
+    } // ii
 
     status = ARMCI_Free_local(p_d);
     if(status != 0){
