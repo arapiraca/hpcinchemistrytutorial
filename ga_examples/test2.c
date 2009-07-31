@@ -20,7 +20,6 @@
 
 #include "driver.h"
 
-
 /***************************************************************************
  *                                                                         *
  * test2:                                                                  *
@@ -37,24 +36,20 @@ int test2()
     int d,i,j;
     int g_a;
     int status;
-    int ndim=2;
+    const int ndim=2;
     int dims[ndim];
     int chunk[ndim];
     int lo[ndim];
     int hi[ndim];
     int range[ndim];
     int ld[ndim-1];
-    int offset[ndim];
     int pg_world;
-    double val;
-    double* p_a,p_in,p_out;
+    double* p_in,p_out;
 
-    for(i=0; i<ndim; i++){
-        //dims[i] = 6;
-        chunk[i] = -1;
-    }
     dims[0] = 6;
     dims[1] = 8;
+    chunk[0] = -1;
+    chunk[1] = -1;
 
     pg_world = GA_Pgroup_get_world();
 
@@ -68,40 +63,48 @@ int test2()
     
 #ifdef DEBUG
     GA_Zero(g_a);
+    GA_Print_distribution(g_a);
 #endif
+
+/*
+ * begin nitialization with random values using local access
+ */
 
     NGA_Distribution(g_a,me,lo,hi);
-#ifdef DEBUG
-    GA_Print_distribution(g_a);
-/*
-    for(p=0; p<ndim; p++){
-        printf("proc %d: lo[%d] = %d hi[%d] = %d\n",me,p,lo[p],p,hi[p]);
-        fflush(stdout);
-    }
-*/
-#endif
-
-    NGA_Access(g_a,lo,hi,&p_a,&ld[0]);
+    NGA_Access(g_a,lo,hi,&p_in,&ld[0]);
 
     for(d=0; d<ndim; d++){
         range[d] = hi[d] - lo[d] + 1;
     }
 
-    if (ndim == 2){
-        for(i=0; i<range[0]; i++){
-            for(j=0; j<range[1]; j++){
-                printf("lo[0] = %d ld[0] = %d i = %d\n",lo[0],ld[0],i);
-                printf("lo[1] = %d j = %d\n",lo[1],j);
-                offset[0] = lo[0] + ld[0] * i;
-                offset[1] = lo[1] + j;
-                p_a[ ld[0] * i + j ] = (double)( offset[0] + offset[1] );
-            }
-        }
+    double scale = 0.001/sqrt(RAND_MAX);
+
+    for(i=0; i<range[0]; i++){
+    	for(j=0; j<range[1]; j++){
+    		p_in[ ld[0] * i + j ] = (double) ( rand() * scale );
+    	}
     }
 
     NGA_Release_update(g_a,lo,hi); /* this function does nothing as of GA 4.2 */
 
+#ifdef DEBUG
     GA_Print(g_a);
+#endif
+
+/*
+ * end initialization
+ */
+
+/*
+ * begin in-place transposition
+ */
+
+
+
+/*
+ * end in-place transposition
+ */
+
 
     GA_Destroy(g_a);
 
