@@ -37,8 +37,8 @@ int test3()
     int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
     int status;
     const int ndim = 2;
-    const int rank = 200;
-	const int blksz = 25;
+    const int rank = 2000;
+	const int blksz = 400;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -212,8 +212,10 @@ int test3()
 
     			if (myturn){
 
+#ifdef DEBUG
     				printf("proc %d doing work tuple (%d,%d,%d)\n",me,ii,jj,kk);
     				fflush(stdout);
+#endif
 
     				lo_a[0] = blksz * ii;
     				hi_a[0] = blksz * (ii + 1) - 1;
