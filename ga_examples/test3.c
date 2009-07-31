@@ -37,8 +37,8 @@ int test3()
     int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
     int status;
     const int ndim = 2;
-    const int rank = 6;
-	const int blksz = 2;
+    const int rank = 200;
+	const int blksz = 25;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -204,7 +204,6 @@ int test3()
 
     for (ii = 0 ; ii < nblock; ii++){
     	for (jj = 0 ; jj < nblock; jj++){
-    		memset(p_d,0,blksz * blksz * sizeof(double));
     		for (kk = 0 ; kk < nblock; kk++){
 
 //    			printf("t mod nproc = %d\n",t % nproc);
@@ -238,6 +237,7 @@ int test3()
     				NGA_Get(g_b,lo_b,hi_b,p_b,ld_b);
 
     				/**************************************/
+    				memset(p_d,0,blksz * blksz * sizeof(double));
     				for (i = 0 ; i < blksz ; i++){
     					for (j = 0 ; j < blksz ; j++){
     						for (k = 0 ; k < blksz ; k++){
