@@ -36,9 +36,9 @@
     clock_t start,finish;
     double timing;
 
-// start = clock();
-// ... /* Do the work. */
-// finish = clock();
-// cpu_time_used = ((double) (finish - start)) / CLOCKS_PER_SEC;
+    // start = clock();
+    // ... /* Do the work. */
+    // finish = clock();
+    // cpu_time_used = ((double) (finish - start)) / CLOCKS_PER_SEC;
 
 #endif
