@@ -21,6 +21,7 @@
 #include "driver.h"
 
 int test1();
+int test2();
 
 int main(int argc, char **argv)
 {
@@ -35,7 +36,7 @@ int main(int argc, char **argv)
     me=GA_Nodeid();
 
 #ifdef DEBUG
-    if(me==0){ 
+    if(me == 0){
        printf("The result of GA_Nnodes is %d\n",nproc);
        fflush(stdout);
     }
@@ -46,27 +47,31 @@ int main(int argc, char **argv)
     } else {
         test =1;
     }
-    if (me==0){
+    if (me == 0){
         printf("Running test %d\n",test);
         fflush(stdout);
     }
 
     if (test == 1){
         status = test1();
-        if(0 != status){};
+        if(status != 0){
+        	if (me == 0) printf("%s: test1() failed at line %d\n",__FILE__,__LINE__);
+        };
     } else if (test == 2){
         status = test2();
-        if(0 != status){};
+        if(status != 0){
+        	if (me == 0) printf("%s: test2() failed at line %d\n",__FILE__,__LINE__);
+        };
     }
 
-    if (me==0){
+    if (me == 0){
         printf("*************************************\n");
         printf("* driver has finished successfully! *\n");
         printf("*************************************\n");
         fflush(stdout);
     }
 
-    if (me==0) GA_Print_stats();
+    if (me == 0) GA_Print_stats();
 
     GA_Terminate();
     MPI_Finalize();
