@@ -175,7 +175,7 @@ int test3()
  * begin hand-written transposition
  */
 
-//    double temp;
+    double temp;
 
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
@@ -214,12 +214,12 @@ int test3()
     				/**************************************/
     				for (i = 0 ; i < blksz ; i++){
     					for (j = 0 ; j < blksz ; j++){
-    						//						temp = 0.0;
+    						temp = 0.0;
     						for (k = 0 ; k < blksz ; k++){
-    							//    						temp += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
-    							p_d[ blksz * i + j ] += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
+    							temp += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
+//    							p_d[ blksz * i + j ] += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
     						}
-    						//    					p_d[ blksz * i + j ] = temp;
+    						p_d[ blksz * i + j ] = temp;
     					}
     				}
     				/**************************************/
