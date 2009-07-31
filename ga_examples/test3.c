@@ -48,6 +48,7 @@ int test3()
     int ld_a[1],ld_b[1],ld_d[1];
     int pg_world;   // world processor group
     double alpha,beta,error;
+    double one = 1.0;
     double* p_in; // pointers for local access to GAs
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
@@ -59,8 +60,8 @@ int test3()
 
     dims[0] = rank;
     dims[1] = rank;
-    chunk[0] = 2;
-    chunk[1] = 2;
+    chunk[0] = -1;
+    chunk[1] = -1;
     nblock = rank/blksz;
 
     pg_world = GA_Pgroup_get_world();
@@ -105,7 +106,6 @@ int test3()
     GA_Zero(g_b);
     GA_Zero(g_c1);
     GA_Zero(g_c2);
-    GA_Zero(g_d);
     GA_Zero(g_error);
     if (me == 0) printf("\n");
     GA_Print_distribution(g_a);
@@ -122,12 +122,12 @@ int test3()
     rng_a[0] = hi_a[0] - lo_a[0] + 1;
     rng_a[1] = hi_a[1] - lo_a[1] + 1;
 
-    double scale = 0.00001/sqrt(RAND_MAX);
+//    double scale = 0.00001/sqrt(RAND_MAX);
 
     for(i=0; i<rng_a[0]; i++){
     	for(j=0; j<rng_a[1]; j++){
-    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
-//    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
+//    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
+    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
     	}
     }
 
@@ -142,8 +142,8 @@ int test3()
 
     for(i=0; i<rng_b[0]; i++){
     	for(j=0; j<rng_b[1]; j++){
-    		    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
-//    		    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
+//    		    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
+    		    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
     	}
     }
 
@@ -182,6 +182,8 @@ int test3()
 /*
  * begin hand-written transposition
  */
+
+    GA_Zero(g_d);
 
     start = clock();
 
@@ -245,7 +247,7 @@ int test3()
     				}
     				/**************************************/
 
-    				NGA_Put(g_d,lo_d,hi_d,p_d,ld_d);
+    				NGA_Acc(g_d,lo_d,hi_d,p_d,ld_d,&one);
 
     			} // myturn
 
