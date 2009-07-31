@@ -31,6 +31,7 @@
 
 int test1()
 {
+	int me,nproc;
     int p,d,i,j;
     int g_a;
     int status;
@@ -45,6 +46,9 @@ int test1()
     int* pg_list;
     double* p_a;
     double val;
+
+    nproc=GA_Nnodes();
+    me=GA_Nodeid();
 
     for(i=0; i<ndim; i++){
         dims[i] = 6;

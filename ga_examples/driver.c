@@ -22,9 +22,11 @@
 
 int test1();
 int test2();
+int test3();
 
 int main(int argc, char **argv)
 {
+	int me,nproc;
     int test;
     int status;
 
@@ -61,6 +63,11 @@ int main(int argc, char **argv)
         status = test2();
         if(status != 0){
         	if (me == 0) printf("%s: test2() failed at line %d\n",__FILE__,__LINE__);
+        };
+    } else if (test == 3){
+        status = test3();
+        if(status != 0){
+        	if (me == 0) printf("%s: test3() failed at line %d\n",__FILE__,__LINE__);
         };
     }
 

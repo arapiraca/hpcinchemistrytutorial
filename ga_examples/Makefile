@@ -1,5 +1,5 @@
 MY_ROOT=.
-DEBUG=YES
+#DEBUG=YES
 
 #############################################
 #
@@ -142,7 +142,7 @@ all: driver.x
 
 refresh: realclean all
 
-driver.x: driver.o test1.o test2.o
+driver.x: driver.o test1.o test2.o test3.o
 	$(LD) $(LDFLAGS) driver.o libtests.a $(LDFLAGS) -o driver.x
 
 test1.o: test1.c
@@ -154,6 +154,11 @@ test2.o: test2.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) test2.c -o test2.o
 	$(AR) -r libtests.a test2.o
 	$(RM) $(RMFLAGS) test2.o
+
+test3.o: test3.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) test3.c -o test3.o
+	$(AR) -r libtests.a test3.o
+	$(RM) $(RMFLAGS) test3.o
 
 clean:
 	$(RM) $(RMFLAGS) *.o

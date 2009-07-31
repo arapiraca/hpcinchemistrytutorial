@@ -24,14 +24,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <math.h>
 #include <time.h>
 #include "macdecls.h"
+#include "armci.h"
+#include "sndrcv.h"
 #include "ga.h"
 #include "mpi.h"
-
-    int nproc;
-    int me;
 
     clock_t start,finish;
     double timing;
