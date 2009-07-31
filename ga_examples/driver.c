@@ -35,13 +35,6 @@ int main(int argc, char **argv)
     nproc=GA_Nnodes();
     me=GA_Nodeid();
 
-#ifdef DEBUG
-    if(me == 0){
-       printf("The result of GA_Nnodes is %d\n",nproc);
-       fflush(stdout);
-    }
-#endif
-
     if (argc > 1){
         test = atoi(argv[1]);
     } else {
@@ -51,6 +44,13 @@ int main(int argc, char **argv)
         printf("Running test %d\n",test);
         fflush(stdout);
     }
+
+#ifdef DEBUG
+    if(me == 0){
+       printf("The result of GA_Nnodes is %d\n",nproc);
+       fflush(stdout);
+    }
+#endif
 
     if (test == 1){
         status = test1();
