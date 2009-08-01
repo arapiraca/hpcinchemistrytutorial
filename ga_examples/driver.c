@@ -20,9 +20,9 @@
 
 #include "driver.h"
 
-int test1();
-int test2();
-int test3();
+int test1(); // very simple test
+int test2(); // matrix transpose
+int test3(); // matrix multiplication
 
 int main(int argc, char **argv)
 {

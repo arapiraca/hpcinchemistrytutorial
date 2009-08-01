@@ -130,12 +130,12 @@ int test3()
     rng_a[0] = hi_a[0] - lo_a[0] + 1;
     rng_a[1] = hi_a[1] - lo_a[1] + 1;
 
-//    double scale = 0.00001/sqrt(RAND_MAX);
+    double scale = 0.00001/sqrt(RAND_MAX);
 
     for(i=0; i<rng_a[0]; i++){
     	for(j=0; j<rng_a[1]; j++){
-//    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
-    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
+    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
+//    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
     	}
     }
 
@@ -150,8 +150,8 @@ int test3()
 
     for(i=0; i<rng_b[0]; i++){
     	for(j=0; j<rng_b[1]; j++){
-//    		    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
-    		    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
+    		    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
+//    		    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
     	}
     }
 
@@ -293,7 +293,7 @@ int test3()
 
     finish = clock();
     if (me == 0){
-    	printf("Hand-written parallel matmul took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+    	printf("Hand-written parallel matrix multiplication took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
     }
 
 #ifdef DEBUG
