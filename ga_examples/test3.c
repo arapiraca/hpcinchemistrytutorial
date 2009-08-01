@@ -20,10 +20,7 @@
 
 #include "driver.h"
 
-void dgemm_(const char *transa, const char *transb, int *m, int *n, int *k,
-            double *alpha, double *A, int *lda, double *B, int *ldb,
-            double *beta, double *C, int *ldc);
-
+#define USE_LOOPS
 
 /***************************************************************************
  *                                                                         *
@@ -249,6 +246,7 @@ int test3()
     				/**************************************/
 
 //    				memset(p_d,0,blksz * blksz * sizeof(double));
+#ifdef USE_LOOPS
     				for (i = 0 ; i < blksz ; i++ ){
     					for (j = 0 ; j < blksz ; j++ ){
     						temp = 0;
@@ -258,11 +256,20 @@ int test3()
     						p_d[ blksz * i + j ] = temp;
     					}
     				}
+#endif
 
-//    				cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,blksz,blksz,blksz,
-//    				              one,p_a,blksz,p_b,blksz,zero,p_d,blksz);
+#ifdef USE_GSL
+    				cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,blksz,blksz,blksz,
+    				              one,p_a,blksz,p_b,blksz,zero,p_d,blksz);
+#endif
 
-//    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+#ifdef USE_ESSL
+    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+#endif
+
+#ifdef USE_MKL
+    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+#endif
 
     				/**************************************/
 

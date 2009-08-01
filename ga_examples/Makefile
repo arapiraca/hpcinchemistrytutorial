@@ -36,6 +36,11 @@ ifeq ($(TARGET),LINUX64)
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
 
+   GOTO=-L/software/goto -lgoto
+   BLAS=$(GOTO)
+
+   EXTRAS=-lgomp -lgfortran -lm -lpthread
+
    OPT = -O3 -m64 -malign-double
    OPT+= -march=core2 -mtune=core2
    OPT+= -msse -msse2 -msse3 -mssse3
@@ -44,34 +49,29 @@ ifeq ($(TARGET),LINUX64)
    OPT+= --param l2-cache-size=4096 --param l1-cache-size=64
    OPT+= -fopenmp
 
-   CC=$(MPI_PREFIX)/bin/mpicc
-   COPT = $(OPT)
-   CFLAGS=-g $(INC) $(COPT) -Wall
-   CPP=$(CC) -E
-   CPPFLAGS = $(PPFLAGS)
-
-   CXX=$(MPI_PREFIX)/bin/mpicxx
-   CXXOPT = $(OPT)
-   CXXFLAGS=-g $(INC) $(CXXOPT) -Wall
-   CXXPP=$(CXX) -E
-   CXXPPFLAGS = $(PPFLAGS)
-
    ifeq ($(DEBUG),YES)
       PPFLAGS=-DDEBUG
    else
       PPFLAGS=
    endif
 
-   GOTO=-L/software/goto -lgoto
-   BLAS=$(GOTO)
+   CC=$(MPI_PREFIX)/bin/mpicc
+   COPT = $(OPT)
+   CFLAGS=-g $(COPT) -Wall
+   CPP=$(CC) -E
+   CPPFLAGS = $(PPFLAGS)
 
-   EXTRAS=-lgomp -lgfortran -lm -lpthread
+   CXX=$(MPI_PREFIX)/bin/mpicxx
+   CXXOPT = $(OPT)
+   CXXFLAGS=-g $(CXXOPT) -Wall
+   CXXPP=$(CXX) -E
+   CXXPPFLAGS = $(PPFLAGS)
 
    LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(GSL_LIB) $(EXTRAS)
    INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(GSL_INC)
 
    LD=$(CC)
-   LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2 $(LIB)
+   LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2
 
 endif
 
@@ -92,13 +92,21 @@ ifeq ($(TARGET),BGP)
    MPI_INC=-I$(MPI_PREFIX)/include
    MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
 
-   GA_PREFIX=$(BGP_SYS)/comm
+   GA_PREFIX=/home/jhammond/ga-4-2
    GA_INC=-I$(GA_PREFIX)/include
-   GA_LIB=-L$(GA_PREFIX)/lib -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+   GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+
+   ESSL=-L/soft/apps/ESSL-4.4/lib -lesslbg
+   BLAS=$(ESSL)
+
+   EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a /opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
+
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(EXTRAS)
+   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
-   COPT=-O5 -qarch=440d -qtune=440
-
+   COPT=-O5 -qarch=440d -qtune=440 -qthreaded
+   CFLAGS=$(INC) $(COPT) $(CDEF)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
       CPPFLAGS=-DDEBUG
@@ -107,18 +115,7 @@ ifeq ($(TARGET),BGP)
    endif
 
    LD=$(CC)
-   LDFLAGS=-O5 -qstrict -qarch=440 -qtune=440
-
-   ESSL=-L/soft/apps/ESSL-4.4/lib -lesslsmpbg
-   BLAS=$(ESSL)
-
-   EXTRAS=-lgfortran
-
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(EXTRAS)
-   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC)
-
-   CFLAGS=$(INC) $(COPT) $(CDEF)
-   LDFLAGS=$(LIB)
+   LFLAGS=-O3 -qarch=440d -qtune=440 -qthreaded
 
 endif
 
@@ -143,20 +140,20 @@ all: driver.x
 refresh: realclean all
 
 driver.x: driver.o test1.o test2.o test3.o
-	$(LD) $(LDFLAGS) driver.o libtests.a $(LDFLAGS) -o driver.x
+	$(LD) $(LDFLAGS) driver.o libtests.a $(LIB) -o driver.x
 
 test1.o: test1.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) test1.c -o test1.o
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test1.c -o test1.o
 	$(AR) -r libtests.a test1.o
 	$(RM) $(RMFLAGS) test1.o
 
 test2.o: test2.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) test2.c -o test2.o
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test2.c -o test2.o
 	$(AR) -r libtests.a test2.o
 	$(RM) $(RMFLAGS) test2.o
 
 test3.o: test3.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) test3.c -o test3.o
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test3.c -o test3.o
 	$(AR) -r libtests.a test3.o
 	$(RM) $(RMFLAGS) test3.o
 

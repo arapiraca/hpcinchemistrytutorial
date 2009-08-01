@@ -34,8 +34,10 @@
 #include "ga.h"
 #include "mpi.h"
 
+#ifdef USE_GSL
 #include "gsl_math.h"
 #include "gsl_cblas.h"
+#endif
 
     clock_t start,finish;
     double timing;
