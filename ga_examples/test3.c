@@ -20,6 +20,11 @@
 
 #include "driver.h"
 
+void dgemm_(const char *transa, const char *transb, int *m, int *n, int *k,
+            double *alpha, double *A, int *lda, double *B, int *ldb,
+            double *beta, double *C, int *ldc);
+
+
 /***************************************************************************
  *                                                                         *
  * test3:                                                                  *
@@ -33,12 +38,13 @@ void transpose_patch(double* input, double* output);
 int test3()
 {
 	int me,nproc,ntask,t;
-    int i,j,k,ii,jj,kk;
+    int ii,jj,kk;
+    int i,j,k;
     int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
     int status;
-    const int ndim = 2;
-    const int rank = 2000;
-	const int blksz = 400;
+    int ndim = 2;
+    int rank = 1200;
+	int blksz = 200;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -48,7 +54,9 @@ int test3()
     int ld_a[1],ld_b[1],ld_d[1];
     int pg_world;   // world processor group
     double alpha,beta,error;
-    double one = 1.0;
+    double zero = 0.0;
+    double one  = 1.0;
+    double temp;
     double* p_in; // pointers for local access to GAs
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
@@ -235,18 +243,27 @@ int test3()
     				hi_d[1] = blksz * (jj + 1) - 1;
     				ld_d[0] = blksz;
 
-    				NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
+    			    NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
     				NGA_Get(g_b,lo_b,hi_b,p_b,ld_b);
 
     				/**************************************/
-    				memset(p_d,0,blksz * blksz * sizeof(double));
-    				for (i = 0 ; i < blksz ; i++){
-    					for (j = 0 ; j < blksz ; j++){
-    						for (k = 0 ; k < blksz ; k++){
-    							p_d[ blksz * i + j ] += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
-    						}
+
+//    				memset(p_d,0,blksz * blksz * sizeof(double));
+    				for (i = 0 ; i < blksz ; i++ ){
+    					for (j = 0 ; j < blksz ; j++ ){
+    						temp = 0;
+    						for (k = 0 ; k < blksz ; k++ ){
+    							temp += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
+      						}
+    						p_d[ blksz * i + j ] = temp;
     					}
     				}
+
+//    				cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,blksz,blksz,blksz,
+//    				              one,p_a,blksz,p_b,blksz,zero,p_d,blksz);
+
+//    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+
     				/**************************************/
 
     				NGA_Acc(g_d,lo_d,hi_d,p_d,ld_d,&one);

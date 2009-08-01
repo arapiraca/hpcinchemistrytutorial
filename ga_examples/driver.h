@@ -27,11 +27,15 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+
 #include "macdecls.h"
 #include "armci.h"
 #include "sndrcv.h"
 #include "ga.h"
 #include "mpi.h"
+
+#include "gsl_math.h"
+#include "gsl_cblas.h"
 
     clock_t start,finish;
     double timing;

@@ -33,18 +33,28 @@ ifeq ($(TARGET),LINUX64)
    GA_INC=-I$(GA_PREFIX)/include
    GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
 
+   GSL_INC=-I/usr/include/gsl
+   GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
+
    OPT = -O3 -m64 -malign-double
    OPT+= -march=core2 -mtune=core2
    OPT+= -msse -msse2 -msse3 -mssse3
    OPT+= -fprefetch-loop-arrays -funroll-loops -fvariable-expansion-in-unroller
    OPT+= -ffast-math -mfpmath=sse
    OPT+= --param l2-cache-size=4096 --param l1-cache-size=64
+   OPT+= -fopenmp
 
    CC=$(MPI_PREFIX)/bin/mpicc
    COPT = $(OPT)
+   CFLAGS=-g $(INC) $(COPT) -Wall
+   CPP=$(CC) -E
+   CPPFLAGS = $(PPFLAGS)
 
    CXX=$(MPI_PREFIX)/bin/mpicxx
    CXXOPT = $(OPT)
+   CXXFLAGS=-g $(INC) $(CXXOPT) -Wall
+   CXXPP=$(CXX) -E
+   CXXPPFLAGS = $(PPFLAGS)
 
    ifeq ($(DEBUG),YES)
       PPFLAGS=-DDEBUG
@@ -52,26 +62,16 @@ ifeq ($(TARGET),LINUX64)
       PPFLAGS=
    endif
 
-   CPP=$(CC) -E
-   CPPFLAGS = $(PPFLAGS)
-
-   CXXPP=$(CXX) -E
-   CXXPPFLAGS = $(PPFLAGS)
-
-   LD=$(CC)
-   LDFLAGS=-O3 -m64 -march=core2 -mtune=core2
-
    GOTO=-L/software/goto -lgoto
    BLAS=$(GOTO)
 
-   EXTRAS=-lgfortran -lm -lpthread
+   EXTRAS=-lgomp -lgfortran -lm -lpthread
 
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(EXTRAS)
-   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC)
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(GSL_LIB) $(EXTRAS)
+   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(GSL_INC)
 
-   CFLAGS=$(INC) $(COPT) -Wall
-   CXXFLAGS=$(INC) $(CXXOPT) -Wall
-   LDFLAGS=$(LIB)
+   LD=$(CC)
+   LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2 $(LIB)
 
 endif
 
