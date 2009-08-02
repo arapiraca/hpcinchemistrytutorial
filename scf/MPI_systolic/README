@@ -1,0 +1,127 @@
+
+
+The very simple Fock matrix construction algorithm is
+
+for mu
+   for om
+      for lam
+         for nu
+            F[mu,nu] += D[om,lam]*(2*(mu nu|om lam) - (mu om|nu lam))
+
+The loop order has been arranged so that lamba and nu are
+innermost.  This means that for given mu and omega we only need
+row mu of the Fock matrix (F[mu,*]) and row omega of the density
+matrix (D[om,*]) ... i.e., we can avoid replicating the entire
+matrices.  
+
+But the simple code is computing the integrals 16x too many
+times.  Let's derive a more efficient version.  First, let's
+split out the Coulomb and exchance contributions.
+
+            F[mu,nu] += D[om,lam]*2*(mu nu|om lam)
+            F[mu,nu] -= D[om,lam]*  (mu om|nu lam)
+
+Now we use our freedom to relabel unconstrained summation indices
+to avoid computing the integrals again for the exchance part
+(by switching om and nu in the exchange part)
+
+            F[mu,nu] += D[om,lam]*2*(mu nu|om lam)
+            F[mu,om] -= D[nu,lam]*  (mu nu|om lam)
+
+So now we are only computing the integrals 8 times.
+
+All is good for the F elements we need but notice that for the
+exchange contribution, we need row nu of the D matrix, but this is our
+inner loop and so it will be inneficient to get this from another
+process.  Noting that the integral are symmetric w.r.t. exchange of mu
+and nu, and that the Fock and density matrices are symmetric, we now
+swap indices nu and mu in the exchange term to obtain
+
+            F[mu,nu] += D[om,lam]*2*(mu nu|om lam)
+            F[om,nu] -= D[mu,lam]*  (mu nu|om lam)
+
+So we are back to needing only rows mu and om of both the Fock and
+density matrices.  Since the ranges of lambda and nu are
+unconstrained, it is also easy to use the mu-om symmetry in the
+integrals, as follows
+
+for mu
+   for om<=mu
+      fac = 1.0
+      if (om == mu) fac = 0.5
+      for lam
+         for nu
+            F[mu,nu] += D[om,lam]*2*(mu nu|om lam)*fac
+            F[om,lam]+= D[mu,nu] *2*(mu nu|om lam)*fac
+
+            F[om,nu] -= D[mu,lam]*  (mu nu|om lam)*fac
+            F[mu,lam]-= D[om,nu]*   (mu nu|om lam)*fac
+
+So now we are computing the integrals 4x too many times.
+
+For the systolic loop algorithm, this is the best we can do, but you
+might enjoy continuing the above approach and deriving the optimal
+sequential algorithm with no redundant computation of the intgerals.
+
+Thus, to build the Fock matrix, we have to 
+
+   - loop through all unique pairs mu>=om, 
+   - obtain rows om and mu of both the density and Fock matrices, and
+   - execute the kernel
+
+and we want to do this in parallel.
+
+A systolic loop algorithm passes data around a loop so that
+computation can happen in parallel driven by the data that each
+process has.  The term systolic is used in analogy to liquid (here
+data) flowing under pressure in a pipe (someone sending you data
+"pressuring" you to pass your data on).  We can use a systolic loop to
+generate unique pairs.
+
+Consider 10 elements arranged in a loop as follows
+
+   0     1     2     3     4
+   9     8     7     6     5
+
+and cyclically shift all elements *except* for number 9
+as follows
+
+   8     0     1     2     3
+   9     7     6     5     4
+
+and repeat 7 more times
+
+   7     8     0     1     2 
+   9     6     5     4     3
+
+
+   6     7     8     0     1
+   9     5     4     3     2
+
+
+   5     6     7     8     0
+   9     4     3     2     1
+
+
+   4     5     6     7     8
+   9     3     2     1     0
+
+
+   3     4     5     6     7
+   9     2     1     0     8
+
+
+   2     3     4     5     6
+   9     1     0     8     7
+
+
+   1     2     3     4     5
+   9     0     8     7     6
+
+With n numbers, at each step we are generating n/2 pairs that have no
+indices in common ... i.e., we can operate on them in parallel.  In
+n-1 steps we will generate all unique pairs.  If n is odd, add an
+extra element and at each step ignore the pair involving it.
+
+Finally, it does not matter what order we loop through the pairs,
+only that we go through all of them.
