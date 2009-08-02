@@ -121,13 +121,6 @@ int main(int argc, char **argv)
         };
     }
 
-    if (me == 0){
-        printf("*************************************\n");
-        printf("* driver has finished successfully! *\n");
-        printf("*************************************\n");
-        fflush(stdout);
-    }
-
     if (me == 0) GA_Print_stats();
 
     GA_Terminate();

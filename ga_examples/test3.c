@@ -70,7 +70,7 @@ int test3(int rank, int blksz)
     nblock = rank/blksz;
 
     if (me == 0){
-      printf("test3: rank %d matrix with block size %d\n",rank,blksz);
+      printf("! test3: rank %d matrix with block size %d\n",rank,blksz);
     }
 
     pg_world = GA_Pgroup_get_world();
@@ -176,6 +176,15 @@ int test3(int rank, int blksz)
 /*
  * GA reference matrix multiplication
  */
+
+    /* GA_Dgemm uses MA */
+    int stack = 32*1024*1024;
+    int heap  =  4*1024*1024;
+    status = MA_init(MT_C_DBL,stack,heap);
+    if(status != 0){
+    	if (me == 0) printf("%s: MA_init failed at line %d\n",__FILE__,__LINE__);
+    };
+
 	alpha = 1.0;
     beta  = 0.0;
 
@@ -191,7 +200,8 @@ int test3(int rank, int blksz)
     GA_Sync();
 
     if (me == 0){
-    	printf("GA_Dgemm took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+    	printf("! GA_Dgemm took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+	    fflush(stdout);\
     }
 
     GA_Transpose(g_c1,g_c2);
@@ -213,8 +223,10 @@ int test3(int rank, int blksz)
     ntask = nblock * nblock * nblock;
 
     if (me == 0) {
-    	printf("ntask = %d\n",ntask);
-    	printf("nproc = %d\n",nproc);
+    	printf("! nproc     = %10d\n",nproc);
+    	printf("! ntask     = %10d\n",ntask);
+    	printf("! task/proc = %8.1f\n",(1.0*ntask)/nproc);
+	    fflush(stdout);\
     }
 	//printf("proc %d is here\n",me);
 	//fflush(stdout);\
@@ -319,7 +331,8 @@ int test3(int rank, int blksz)
     finish = clock();
 
     if (me == 0){
-    	printf("My DGEMM took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+    	printf("! My DGEMM took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+	    fflush(stdout);\
     }
 
 #ifdef DEBUG
@@ -340,7 +353,7 @@ int test3(int rank, int blksz)
 
     GA_Norm1(g_error,&error);
 
-    if (me == 0) printf("error = %f\n",error);
+    if (me == 0) printf("! error = %f\n",error);
 
 
 /*
