@@ -32,7 +32,7 @@
 
 void transpose_patch(double* input, double* output);
 
-int test3()
+int test3(int rank, int blksz)
 {
 	int me,nproc,ntask,t;
     int ii,jj,kk;
@@ -40,8 +40,8 @@ int test3()
     int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
     int status;
     int ndim = 2;
-    int rank = 1200;
-	int blksz = 200;
+//    int rank = 8000;
+//    int blksz = 200;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -68,6 +68,10 @@ int test3()
     chunk[0] = -1;
     chunk[1] = -1;
     nblock = rank/blksz;
+
+    if (me == 0){
+      printf("test3: rank %d matrix with block size %d\n",rank,blksz);
+    }
 
     pg_world = GA_Pgroup_get_world();
 
@@ -198,8 +202,8 @@ int test3()
     	printf("ntask = %d\n",ntask);
     	printf("nproc = %d\n",nproc);
     }
-	printf("proc %d is here\n",me);
-	fflush(stdout);\
+	//printf("proc %d is here\n",me);
+	//fflush(stdout);\
 
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
@@ -300,7 +304,7 @@ int test3()
 
     finish = clock();
     if (me == 0){
-    	printf("Hand-written parallel matrix multiplication took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+    	printf("My DGEMM took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
     }
 
 #ifdef DEBUG

@@ -97,11 +97,13 @@ ifeq ($(TARGET),BGP)
    GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
 
    ESSL=-L/soft/apps/ESSL-4.4/lib -lesslbg
-   BLAS=$(ESSL)
+   BLAS=
 
-   EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a /opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
+   OMP=/opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
 
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(EXTRAS)
+   EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a
+
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(EXTRAS) $(OMP)
    INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r

@@ -30,6 +30,8 @@ int main(int argc, char **argv)
     int test;
     int status;
 
+    int rank,blksz; // for test3 only
+
     MPI_Init(&argc, &argv);
     GA_Initialize();
     MA_init(MT_DBL, 128*1024*1024, 8*1024*1024);
@@ -40,12 +42,26 @@ int main(int argc, char **argv)
     if (argc > 1){
         test = atoi(argv[1]);
     } else {
-        test =1;
+        test = 1;
     }
     if (me == 0){
         printf("Running test %d\n",test);
         fflush(stdout);
     }
+    if (test = 3){
+        if (argc == 4){
+            rank = atoi(argv[2]);
+            blksz = atoi(argv[3]);
+        } else {
+            if(me == 0){
+                printf("You need to specify rank and blksz for test 3\n");
+                fflush(stdout);
+            }
+            return(1);
+        }
+    }
+
+
 
 #ifdef DEBUG
     if(me == 0){
@@ -55,19 +71,40 @@ int main(int argc, char **argv)
 #endif
 
     if (test == 1){
+        if(me == 0){
+            printf("Running test1 with %d processes\n",nproc);
+            fflush(stdout);
+        }
         status = test1();
         if(status != 0){
-        	if (me == 0) printf("%s: test1() failed at line %d\n",__FILE__,__LINE__);
+        	if (me == 0){
+                printf("%s: test1() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
         };
     } else if (test == 2){
+        if(me == 0){
+            printf("Running test2 with %d processes\n",nproc);
+            fflush(stdout);
+        }
         status = test2();
         if(status != 0){
-        	if (me == 0) printf("%s: test2() failed at line %d\n",__FILE__,__LINE__);
+        	if (me == 0){
+                printf("%s: test2() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
         };
     } else if (test == 3){
-        status = test3();
+        if(me == 0){
+            printf("Running test3 with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        status = test3(rank,blksz);
         if(status != 0){
-        	if (me == 0) printf("%s: test3() failed at line %d\n",__FILE__,__LINE__);
+        	if (me == 0){
+                printf("%s: test3() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
         };
     }
 
