@@ -1,0 +1,6 @@
+#!/bin/csh
+cqsub -n   64 -t 60 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $1 $2 $3 >& /dev/null &
+cqsub -n  128 -t 60 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $1 $2 $3 >& /dev/null &
+cqsub -n  256 -t 60 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $1 $2 $3 >& /dev/null &
+cqsub -n  512 -t 60 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $1 $2 $3 >& /dev/null &
+
