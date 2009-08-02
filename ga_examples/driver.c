@@ -21,7 +21,7 @@
 #include "driver.h"
 
 int test1(); // very simple test
-int test2(); // matrix transpose
+int test2(int rank, int blksz); // matrix transpose
 int test3(int rank, int blksz); // matrix multiplication
 int test4(int rank, int blksz); // matrix multiplication for symmetric matrices
 
@@ -49,13 +49,13 @@ int main(int argc, char **argv)
         printf("Running test %d\n",test);
         fflush(stdout);
     }
-    if ((test == 3) | (test == 4)){
+    if (test > 1){
         if (argc == 4){
             rank = atoi(argv[2]);
             blksz = atoi(argv[3]);
         } else {
             if(me == 0){
-                printf("You need to specify rank and blksz for test 3\n");
+                printf("You need to specify rank and blksz for tests 2-4\n");
                 fflush(stdout);
             }
             return(1);
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
             printf("Running test2 with %d processes\n",nproc);
             fflush(stdout);
         }
-        status = test2();
+        status = test2(rank,blksz);
         if(status != 0){
         	if (me == 0){
                 printf("%s: test2() failed at line %d\n",__FILE__,__LINE__);

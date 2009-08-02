@@ -30,7 +30,7 @@
 
 void transpose_patch(double* input, double* output);
 
-int test2()
+int test2(int rank,int blksz)
 {
 	int me,nproc,ntask,t;
     int ii,jj;
@@ -38,8 +38,8 @@ int test2()
     int g_a,g_b,g_c,g_error; // GA handles
     int status;
     int ndim = 2;
-    int rank = 600;
-	int blksz = 200;
+//    int rank = 600;
+//	  int blksz = 200;
     int dims[2];
     int chunk[2];
     int nblock;
