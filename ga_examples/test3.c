@@ -170,47 +170,6 @@ int test3(int rank, int blksz)
 #endif
 
 /*
- * end initialization
- */
-
-/*
- * GA reference matrix multiplication
- */
-
-    /* GA_Dgemm uses MA */
-    int stack = 32*1024*1024;
-    int heap  =  4*1024*1024;
-    status = MA_init(MT_C_DBL,stack,heap);
-    if(status != 0){
-    	if (me == 0) printf("%s: MA_init failed at line %d\n",__FILE__,__LINE__);
-    };
-
-	alpha = 1.0;
-    beta  = 0.0;
-
-    GA_Sync();
-
-    start = clock();
-
-    // GA_Dgemm uses Fortran ordering, hence the double 'T'
-    GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
-
-    finish = clock();
-
-    GA_Sync();
-
-    if (me == 0){
-    	printf("! GA_Dgemm took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
-	    fflush(stdout);\
-    }
-
-    GA_Transpose(g_c1,g_c2);
-
-#ifdef DEBUG
-	GA_Print(g_c2);
-#endif
-
-/*
  * begin hand-written transposition
  */
 
@@ -340,8 +299,41 @@ int test3(int rank, int blksz)
 #endif
 
 /*
- * end hand-written transposition
+ * GA reference matrix multiplication
  */
+
+    /* GA_Dgemm uses MA */
+    int stack = 32*1024*1024;
+    int heap  =  4*1024*1024;
+    status = MA_init(MT_C_DBL,stack,heap);
+    if(status != 0){
+    	if (me == 0) printf("%s: MA_init failed at line %d\n",__FILE__,__LINE__);
+    };
+
+	alpha = 1.0;
+    beta  = 0.0;
+
+    GA_Sync();
+
+    start = clock();
+
+    // GA_Dgemm uses Fortran ordering, hence the double 'T'
+    GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
+
+    finish = clock();
+
+    GA_Sync();
+
+    if (me == 0){
+    	printf("! GA_Dgemm took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
+	    fflush(stdout);\
+    }
+
+    GA_Transpose(g_c1,g_c2);
+
+#ifdef DEBUG
+	GA_Print(g_c2);
+#endif
 
 /*
  * begin error evaluation
@@ -355,9 +347,8 @@ int test3(int rank, int blksz)
 
     if (me == 0) printf("! error = %f\n",error);
 
-
 /*
- * end error evaluation
+ * terminate data structures
  */
 
     GA_Destroy(g_error);
