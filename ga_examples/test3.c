@@ -302,14 +302,6 @@ int test3(int rank, int blksz)
  * GA reference matrix multiplication
  */
 
-    /* GA_Dgemm uses MA */
-    int stack = 32*1024*1024;
-    int heap  =  4*1024*1024;
-    status = MA_init(MT_C_DBL,stack,heap);
-    if(status != 0){
-    	if (me == 0) printf("%s: MA_init failed at line %d\n",__FILE__,__LINE__);
-    };
-
 	alpha = 1.0;
     beta  = 0.0;
 
