@@ -206,7 +206,7 @@ int test4(int rank, int blksz)
     	printf("nproc = %d\n",nproc);
     }
 	//printf("proc %d is here\n",me);
-	//fflush(stdout);\
+	//fflush(stdout);
 
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) blksz * blksz * sizeof(double));

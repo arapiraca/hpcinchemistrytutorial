@@ -33,6 +33,9 @@ int main(int argc, char **argv)
 
     int rank,blksz;
 
+    rank = 6;
+    blksz = 2;
+
     MPI_Init(&argc, &argv);
     GA_Initialize();
     MA_init(MT_DBL, 128*1024*1024, 8*1024*1024);
