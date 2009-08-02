@@ -22,7 +22,8 @@
 
 int test1(); // very simple test
 int test2(); // matrix transpose
-int test3(); // matrix multiplication
+int test3(int rank, int blksz); // matrix multiplication
+int test4(int rank, int blksz); // matrix multiplication for symmetric matrices
 
 int main(int argc, char **argv)
 {
@@ -30,7 +31,7 @@ int main(int argc, char **argv)
     int test;
     int status;
 
-    int rank,blksz; // for test3 only
+    int rank,blksz;
 
     MPI_Init(&argc, &argv);
     GA_Initialize();
@@ -48,7 +49,7 @@ int main(int argc, char **argv)
         printf("Running test %d\n",test);
         fflush(stdout);
     }
-    if (test = 3){
+    if ((test == 3) | (test == 4)){
         if (argc == 4){
             rank = atoi(argv[2]);
             blksz = atoi(argv[3]);
@@ -103,6 +104,18 @@ int main(int argc, char **argv)
         if(status != 0){
         	if (me == 0){
                 printf("%s: test3() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        };
+    } else if (test == 4){
+        if(me == 0){
+            printf("Running test4 with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        status = test4(rank,blksz);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: test4() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
         };

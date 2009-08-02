@@ -24,7 +24,7 @@
 
 /***************************************************************************
  *                                                                         *
- * test3:                                                                  *
+ * test4:                                                                  *
  *       -demonstrates how to create a GA using the new API                *
  *       -matrix multiplication									           *
  *                                                                         *
@@ -32,16 +32,14 @@
 
 void transpose_patch(double* input, double* output);
 
-int test3(int rank, int blksz)
+int test4(int rank, int blksz)
 {
 	int me,nproc,ntask,t;
     int ii,jj,kk;
     int i,j,k;
-    int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
+    int g_a,g_b,g_c,g_d,g_error; // GA handles
     int status;
     int ndim = 2;
-//    int rank = 8000;
-//    int blksz = 200;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -70,7 +68,7 @@ int test3(int rank, int blksz)
     nblock = rank/blksz;
 
     if (me == 0){
-      printf("test3: rank %d matrix with block size %d\n",rank,blksz);
+      printf("test4: rank %d matrix with block size %d\n",rank,blksz);
     }
 
     pg_world = GA_Pgroup_get_world();
@@ -91,13 +89,8 @@ int test3(int rank, int blksz)
     	if (me == 0) printf("%s: GA_Duplicate failed at line %d\n",__FILE__,__LINE__);
     };
 
-    g_c1  = GA_Duplicate(g_a,"matrix C1");
-    if(g_c1 == 0){
-    	if (me == 0) printf("%s: GA_Duplicate failed at line %d\n",__FILE__,__LINE__);
-    };
-
-    g_c2  = GA_Duplicate(g_a,"matrix C2");
-    if(g_c2 == 0){
+    g_c  = GA_Duplicate(g_a,"matrix C");
+    if(g_c == 0){
     	if (me == 0) printf("%s: GA_Duplicate failed at line %d\n",__FILE__,__LINE__);
     };
 
@@ -116,8 +109,7 @@ int test3(int rank, int blksz)
 /*
     GA_Zero(g_a);
     GA_Zero(g_b);
-    GA_Zero(g_c1);
-    GA_Zero(g_c2);
+    GA_Zero(g_c);
     GA_Zero(g_error);
     if (me == 0){
         printf("\n");
@@ -146,7 +138,7 @@ int test3(int rank, int blksz)
     }
 
     NGA_Release_update(g_b,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
-//    GA_Symmetrize(g_a);
+    GA_Symmetrize(g_a);
 
     NGA_Distribution(g_b,me,lo_b,hi_b);
     NGA_Access(g_b,lo_b,hi_b,&p_in,&ld_b[0]);
@@ -157,12 +149,11 @@ int test3(int rank, int blksz)
     for(i=0; i<rng_b[0]; i++){
     	for(j=0; j<rng_b[1]; j++){
     		    		p_in[ ld_a[0] * i + j ] = (double) ( rand() * scale );
-//    		    		p_in[ ld_a[0] * i + j ] = (double) ( 1 );
     	}
     }
 
     NGA_Release_update(g_b,lo_b,hi_b); /* this function does nothing as of GA 4.2 */
-//    GA_Symmetrize(g_b);
+    GA_Symmetrize(g_b);
 
 #ifdef DEBUG
 	GA_Print(g_a);
@@ -184,7 +175,7 @@ int test3(int rank, int blksz)
     start = clock();
 
     // GA_Dgemm uses Fortran ordering, hence the double 'T'
-    GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
+    GA_Dgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c);
 
     finish = clock();
 
@@ -194,10 +185,8 @@ int test3(int rank, int blksz)
     	printf("GA_Dgemm took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
     }
 
-    GA_Transpose(g_c1,g_c2);
-
 #ifdef DEBUG
-	GA_Print(g_c2);
+	GA_Print(g_c);
 #endif
 
 /*
@@ -336,7 +325,7 @@ int test3(int rank, int blksz)
 
     alpha = 1.0;
     beta = -1.0;
-    GA_Add(&alpha,g_c2,&beta,g_d,g_error);
+    GA_Add(&alpha,g_c,&beta,g_d,g_error);
 
     GA_Norm1(g_error,&error);
 
@@ -349,8 +338,7 @@ int test3(int rank, int blksz)
 
     GA_Destroy(g_error);
     GA_Destroy(g_d);
-    GA_Destroy(g_c2);
-    GA_Destroy(g_c1);
+    GA_Destroy(g_c);
     GA_Destroy(g_b);
     GA_Destroy(g_a);
 

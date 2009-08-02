@@ -141,7 +141,7 @@ all: driver.x
 
 refresh: realclean all
 
-driver.x: driver.o test1.o test2.o test3.o
+driver.x: driver.o test1.o test2.o test3.o test4.o
 	$(LD) $(LDFLAGS) driver.o libtests.a $(LIB) -o driver.x
 
 test1.o: test1.c
@@ -158,6 +158,11 @@ test3.o: test3.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test3.c -o test3.o
 	$(AR) -r libtests.a test3.o
 	$(RM) $(RMFLAGS) test3.o
+
+test4.o: test4.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test4.c -o test4.o
+	$(AR) -r libtests.a test4.o
+	$(RM) $(RMFLAGS) test4.o
 
 clean:
 	$(RM) $(RMFLAGS) *.o
