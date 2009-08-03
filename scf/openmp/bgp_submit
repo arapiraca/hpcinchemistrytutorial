@@ -1,0 +1,1 @@
+cqsub -n 1 -m smp -t 30 -e OMP_NUM_THREADS=4 scf < example_input
