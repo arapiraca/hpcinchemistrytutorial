@@ -36,7 +36,7 @@ int candy()
     nproc=GA_Nnodes();
     me=GA_Nodeid();
 
-    printf("Hello, world!  I am node %d of %d\n",me,nproc);
+    printf("Hello, world!  I am node %d of %d\n",me+1,nproc);
 
     return(0);
 }
