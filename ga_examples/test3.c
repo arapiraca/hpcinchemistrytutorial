@@ -233,8 +233,11 @@ int test3(int rank, int blksz)
     				/**************************************/
 
 //    				memset(p_d,0,blksz * blksz * sizeof(double));
+
+#define LOOP_ALG_3
+
 #ifdef USE_LOOPS
-/*
+  #ifdef LOOP_ALG_1
     				for (i = 0 ; i < blksz ; i++ ){
     					for (j = 0 ; j < blksz ; j++ ){
     						temp = 0;
@@ -244,8 +247,12 @@ int test3(int rank, int blksz)
     						p_d[ blksz * i + j ] = temp;
     					}
     				}
-*/
+  #endif
+
+  #ifdef LOOP_ALG_2
                     double aik;
+
+    				memset(p_d,0,blksz * blksz * sizeof(double));
 
     				for (i = 0 ; i < blksz ; i++ ){
     					for (k = 0 ; k < blksz ; k++ ){
@@ -255,6 +262,56 @@ int test3(int rank, int blksz)
       						}
     					}
     				}
+  #endif
+
+  #ifdef LOOP_ALG_3
+                    double aik;
+
+                    if ( 0 != (blksz % 4) ){
+    	                if (me == 0) printf("%s: blksz is not a multiple of 4\n",__FILE__);
+                        return(1);
+                    }
+
+    				memset(p_d,0,blksz * blksz * sizeof(double));
+
+    				for (i = 0 ; i < blksz ; i++ ){
+    					for (k = 0 ; k < blksz ; k++ ){
+    					    aik = p_a[ blksz * i + k ];
+    					    for (j = 0 ; j < blksz ; j+=4 ){
+    						    p_d[ blksz * i + j     ] += aik * p_b[ blksz * k + j     ];
+    						    p_d[ blksz * i + j + 1 ] += aik * p_b[ blksz * k + j + 1 ];
+    						    p_d[ blksz * i + j + 2 ] += aik * p_b[ blksz * k + j + 2 ];
+    						    p_d[ blksz * i + j + 3 ] += aik * p_b[ blksz * k + j + 3 ];
+      						}
+    					}
+    				}
+  #endif
+
+  #ifdef LOOP_ALG_4
+                    double aik;
+                    int blksz2,peel;
+
+                    peel = (blksz % 4);
+                    blksz2 = blksz - peel;
+
+                    memset(p_d,0,blksz * blksz * sizeof(double));
+
+                    for (i = 0 ; i < blksz ; i++ ){
+                        for (k = 0 ; k < blksz ; k++ ){
+                            aik = p_a[ blksz * i + k ];
+                            for (j = 0 ; j < blksz2 ; j+=4 ){
+                                p_d[ blksz * i + j     ] += aik * p_b[ blksz * k + j     ];
+                                p_d[ blksz * i + j + 1 ] += aik * p_b[ blksz * k + j + 1 ];
+                                p_d[ blksz * i + j + 2 ] += aik * p_b[ blksz * k + j + 2 ];
+                                p_d[ blksz * i + j + 3 ] += aik * p_b[ blksz * k + j + 3 ];
+                            }
+                            for (j = 0 ; j < peel ; j++ ){
+                                p_d[ blksz * i + j ] += aik * p_b[ blksz * k + j ];
+                            }
+                        }
+                    }
+  #endif
+
 #endif
 
 #ifdef USE_GSL
