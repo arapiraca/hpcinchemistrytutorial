@@ -175,7 +175,11 @@ int test3(int rank, int blksz)
 
     GA_Sync();
 
+#ifdef MPI_WTIME
+    start = MPI_Wtime(); 
+#else
     start = clock();
+#endif
 
     ntask = nblock * nblock * nblock;
 
@@ -285,7 +289,11 @@ int test3(int rank, int blksz)
 
     GA_Sync();
 
+#ifdef MPI_WTIME
+    finish = MPI_Wtime(); 
+#else
     finish = clock();
+#endif
 
     if (me == 0){
     	printf("! My DGEMM took %f seconds\n",(double) (finish - start) / CLOCKS_PER_SEC);
@@ -305,12 +313,20 @@ int test3(int rank, int blksz)
 
     GA_Sync();
 
+#ifdef MPI_WTIME
+    start = MPI_Wtime(); 
+#else
     start = clock();
+#endif
 
     // GA_Dgemm uses Fortran ordering, hence the double 'T'
     GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
 
+#ifdef MPI_WTIME
+    finish = MPI_Wtime(); 
+#else
     finish = clock();
+#endif
 
     GA_Sync();
 

@@ -19,6 +19,8 @@ endif
 
 ifeq ($(TARGET),LINUX64)
 
+   CPPFLAGS=
+
    RM = rm
    RMFLAGS = -f
 
@@ -49,17 +51,14 @@ ifeq ($(TARGET),LINUX64)
    OPT+= --param l2-cache-size=4096 --param l1-cache-size=64
    OPT+= -fopenmp
 
-   ifeq ($(DEBUG),YES)
-      PPFLAGS=-DDEBUG
-   else
-      PPFLAGS=
-   endif
-
    CC=$(MPI_PREFIX)/bin/mpicc
    COPT = $(OPT)
    CFLAGS=-g $(COPT) -Wall
    CPP=$(CC) -E
-   CPPFLAGS = $(PPFLAGS)
+   ifeq ($(DEBUG),YES)
+      CPPFLAGS+=-DDEBUG
+   endif
+
 
    CXX=$(MPI_PREFIX)/bin/mpicxx
    CXXOPT = $(OPT)
@@ -82,6 +81,8 @@ endif
 #############################################
 
 ifeq ($(TARGET),BGP)
+
+   CPPFLAGS=-DMPI_WTIME
 
    RM = rm
    RMFLAGS = -f
@@ -111,9 +112,7 @@ ifeq ($(TARGET),BGP)
    CFLAGS=$(INC) $(COPT) $(CDEF)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
-      CPPFLAGS=-DDEBUG
-   else
-      CPPFLAGS=
+      CPPFLAGS+=-DDEBUG
    endif
 
    LD=$(CC)
