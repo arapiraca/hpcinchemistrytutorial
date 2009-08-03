@@ -25,6 +25,8 @@ int test2(int rank, int blksz); // matrix transpose
 int test3(int rank, int blksz); // matrix multiplication
 int test4(int rank, int blksz); // matrix multiplication for symmetric matrices
 
+int candy(); // hello world
+
 int main(int argc, char **argv)
 {
 	int me,nproc;
@@ -122,9 +124,17 @@ int main(int argc, char **argv)
                 fflush(stdout);
             }
         };
+    } else if (test == 0){
+        status = candy();
+        if(status != 0){
+            if (me == 0){
+                printf("%s: test4() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        };
     }
 
-    if (me == 0) GA_Print_stats();
+    if ((me == 0) && (test != 0)) GA_Print_stats();
 
     GA_Terminate();
     MPI_Finalize();

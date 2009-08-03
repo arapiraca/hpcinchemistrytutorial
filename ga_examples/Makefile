@@ -95,17 +95,19 @@ ifeq ($(TARGET),BGP)
 
    GA_PREFIX=/home/jhammond/ga-4-2
    GA_INC=-I$(GA_PREFIX)/include
-   GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+   //GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+   GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
 
-   ESSL=-L/soft/apps/ESSL-4.4/lib -lesslbg
-   BLAS=
+   ESSL_PREFIX=/soft/apps/ESSL-4.4
+   ESSL_INC=-I$(ESSL_PREFIX)/include
+   ESSL_LIB=-L$(ESSL_PREFIX)/lib -lesslbg -lmass
 
    OMP=/opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
 
    EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a
 
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(EXTRAS) $(OMP)
-   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC)
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(ESSL_LIB) $(EXTRAS) $(OMP)
+   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(ESSL_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
    COPT=-O5 -qarch=440d -qtune=440 -qthreaded
@@ -140,13 +142,18 @@ all: driver.x
 
 refresh: realclean all
 
-driver.x: driver.o test1.o test2.o test3.o test4.o
+driver.x: driver.o candy.o test1.o test2.o test3.o test4.o
 	$(LD) $(LDFLAGS) libtests.a $(LIB) -o driver.x
 
 driver.o: driver.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) driver.c -o driver.o
 	$(AR) -r libtests.a driver.o
 	$(RM) $(RMFLAGS) driver.o
+
+candy.o: candy.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) candy.c -o candy.o
+	$(AR) -r libtests.a candy.o
+	$(RM) $(RMFLAGS) candy.o
 
 test1.o: test1.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test1.c -o test1.o
