@@ -146,7 +146,6 @@ int test3(int rank, int blksz)
     }
 
     NGA_Release_update(g_b,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
-//    GA_Symmetrize(g_a);
 
     NGA_Distribution(g_b,me,lo_b,hi_b);
     NGA_Access(g_b,lo_b,hi_b,&p_in,&ld_b[0]);
@@ -162,7 +161,6 @@ int test3(int rank, int blksz)
     }
 
     NGA_Release_update(g_b,lo_b,hi_b); /* this function does nothing as of GA 4.2 */
-//    GA_Symmetrize(g_b);
 
 #ifdef DEBUG
 	GA_Print(g_a);
