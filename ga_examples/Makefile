@@ -82,7 +82,7 @@ endif
 
 ifeq ($(TARGET),BGP)
 
-   CPPFLAGS=-DMPI_WTIME
+   CPPFLAGS=
 
    RM = rm
    RMFLAGS = -f

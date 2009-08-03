@@ -39,12 +39,7 @@
 #include "gsl_cblas.h"
 #endif
 
-#ifdef MPI_WTIME
-    double start,finish;
-#else
-    clock_t start,finish;
-#endif
-    double timing;
+    double start,finish,timing;
 
     // start = clock();
     // ... /* Do the work. */
