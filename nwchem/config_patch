@@ -1,0 +1,37 @@
+Index: config/make_nwchem_config
+===================================================================
+--- config/make_nwchem_config	(revision 18187)
++++ config/make_nwchem_config	(working copy)
+@@ -17,7 +17,7 @@
+ 
+ KNOWN_MODULE_SUBDIRS = NWints atomscf ddscf develop gradients moints nwdft \
+ 	rimp2 stepper mepgs tropt driver optim dftgrad scfaux cphf ccsd vib mcscf prepar \
+-        esp hessian plane_wave selci dplot mp2_grad oimp2 qhop\
++        esp hessian plane_wave selci dplot mp2_grad oimp2 qhop ncc socrates \
+         property nwpw fft rimp2_grad python analyz diana nwmd cafe space \
+         drdy vscf uccsdt qmmm qmd etrans tddft tce geninterface bq cons \
+         perfm neb dntmc transport smd nbo dangchang leps ccca
+@@ -31,7 +31,7 @@
+                     -lcphf -lscfaux -lesp -lddscf -ldangchang -lleps -lguess -lhessian \
+                     -lvib -lnwcutil -lrimp2g -lrimp2 -lproperty -lnwints \
+ 		    -lprepar -lnwmd -lnwpw -lofpw -lpaw -lpspw -lband -lnwpwlib -lsmd \
+-                    -lcafe -lspace -lanalyze -ldiana -lqhop\
++                    -lcafe -lspace -lanalyze -ldiana -lqhop -lsocrates \
+                     -lpfft -ldplot -loimp2 -lnwpython -ldrdy -lvscf -lqmmm -lqmd -letrans\
+                     -lpspw -ltce  -lgeninterface -lbq  -lcons -lperfm -lneb -lnbo -ldntmc -ltransport -lccca
+ 
+@@ -158,6 +158,8 @@
+ 
+ MODULES := $(patsubst tce,tce nwdft ddscf NWints hessian dftgrad gradients,$(MODULES) )
++MODULES := $(patsubst socrates,socrates ccsd cphf mp2_grad moints mcscf ddscf,$(MODULES) )
+ MODULES := $(patsubst nwmd,nwmd cafe space fft qhop,$(MODULES) )
+ 
+@@ -218,6 +220,8 @@
+ MOD_LIBS := $(patsubst tce,-ltce,$(MOD_LIBS) )
++MOD_LIBS := $(patsubst socrates,-lsocrates,$(MOD_LIBS) )
+ MOD_LIBS := $(patsubst cafe,-lcafe,$(MOD_LIBS) )
+ MOD_LIBS := $(patsubst space,-lspace,$(MOD_LIBS) )
+@@ -287,6 +291,8 @@
+ STUBROUTINES := $(patsubst tce,tce_energy_fragment tce_gradient tce_input tce_prop_start tce_property tce_cholesky tce_imaginary,$(STUBROUTINES) )
++STUBROUTINES := $(patsubst socrates,socrates_driver,$(STUBROUTINES) )
+ STUBROUTINES := $(patsubst nwmd,nwmd md_input,$(STUBROUTINES) )

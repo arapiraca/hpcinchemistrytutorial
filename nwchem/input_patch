@@ -1,0 +1,14 @@
+Index: input/input_parse.F
+===================================================================
+--- input/input_parse.F	(revision 18187)
++++ input/input_parse.F	(working copy)
+@@ -138,6 +138,12 @@
+                call input_unset(rtdb)
+             else if (inp_compare(.false.,test,'mcscf')) then
+                call mcscf_input(rtdb)
++            else if (inp_compare(.false.,test,'socrates')) then
++               print*,'calling socrates_input'
++               call socrates_input(rtdb)
+             else if (inp_compare(.false.,test,'plnwv')) then
+                call plnwv_input(rtdb)
+             else if (inp_compare(.false.,test,'bq')) then
