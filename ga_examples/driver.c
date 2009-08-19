@@ -24,6 +24,7 @@ int simple(); // very simple test
 int transpose(int rank, int blksz); // matrix transpose
 int matmul(int rank, int blksz); // matrix multiplication
 int matmul2(int rank, int blksz); // matrix multiplication for symmetric matrices
+int matvec(int rank, int blksz); // fake sparse matrix-vector product
 
 int hello(); // hello world
 
@@ -129,6 +130,18 @@ int main(int argc, char **argv)
         if(status != 0){
             if (me == 0){
                 printf("%s: matmul2() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
+    } else if (test == 5){
+        if(me == 0){
+            printf("Running matvec with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        status = matvec(rank,blksz);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: matvec() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
         }
