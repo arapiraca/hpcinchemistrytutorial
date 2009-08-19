@@ -20,12 +20,12 @@
 
 #include "driver.h"
 
-int test1(); // very simple test
-int test2(int rank, int blksz); // matrix transpose
-int test3(int rank, int blksz); // matrix multiplication
-int test4(int rank, int blksz); // matrix multiplication for symmetric matrices
+int simple(); // very simple test
+int transpose(int rank, int blksz); // matrix transpose
+int matmul(int rank, int blksz); // matrix multiplication
+int matmul2(int rank, int blksz); // matrix multiplication for symmetric matrices
 
-int candy(); // hello world
+int hello(); // hello world
 
 int main(int argc, char **argv)
 {
@@ -76,62 +76,62 @@ int main(int argc, char **argv)
     }
 #endif
 
-    if (test == 1){
-        if(me == 0){
-            printf("Running test1 with %d processes\n",nproc);
-            fflush(stdout);
-        }
-        status = test1();
+    if (test == 0){
+        status = hello();
         if(status != 0){
-        	if (me == 0){
-                printf("%s: test1() failed at line %d\n",__FILE__,__LINE__);
+            if (me == 0){
+                printf("%s: hello() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
-        };
+        }
+    } else if (test == 1){
+        if(me == 0){
+            printf("Running simple with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        status = simple();
+        if(status != 0){
+        	if (me == 0){
+                printf("%s: simple() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
     } else if (test == 2){
         if(me == 0){
-            printf("Running test2 with %d processes\n",nproc);
+            printf("Running transpose with %d processes\n",nproc);
             fflush(stdout);
         }
-        status = test2(rank,blksz);
+        status = transpose(rank,blksz);
         if(status != 0){
         	if (me == 0){
-                printf("%s: test2() failed at line %d\n",__FILE__,__LINE__);
+                printf("%s: transpose() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
-        };
+        }
     } else if (test == 3){
         if(me == 0){
-            printf("Running test3 with %d processes\n",nproc);
+            printf("Running matmul with %d processes\n",nproc);
             fflush(stdout);
         }
-        status = test3(rank,blksz);
+        status = matmul(rank,blksz);
         if(status != 0){
         	if (me == 0){
-                printf("%s: test3() failed at line %d\n",__FILE__,__LINE__);
+                printf("%s: matmul() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
-        };
+        }
     } else if (test == 4){
         if(me == 0){
-            printf("Running test4 with %d processes\n",nproc);
+            printf("Running matmul2 with %d processes\n",nproc);
             fflush(stdout);
         }
-        status = test4(rank,blksz);
+        status = matmul2(rank,blksz);
         if(status != 0){
             if (me == 0){
-                printf("%s: test4() failed at line %d\n",__FILE__,__LINE__);
+                printf("%s: matmul2() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
-        };
-    } else if (test == 0){
-        status = candy();
-        if(status != 0){
-            if (me == 0){
-                printf("%s: test4() failed at line %d\n",__FILE__,__LINE__);
-                fflush(stdout);
-            }
-        };
+        }
     }
 
     if ((me == 0) && (test != 0)) GA_Print_stats();

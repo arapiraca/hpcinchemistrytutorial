@@ -22,7 +22,7 @@
 
 /***************************************************************************
  *                                                                         *
- * test2:                                                                  *
+ * transpose:                                                                  *
  *       -demonstrates how to create a GA using the new API                *
  *       -matrix transposition									           *
  *                                                                         *
@@ -30,7 +30,7 @@
 
 void transpose_patch(double* input, double* output);
 
-int test2(int rank,int blksz)
+int transpose(int rank,int blksz)
 {
 	int me,nproc,ntask,t;
     int ii,jj;

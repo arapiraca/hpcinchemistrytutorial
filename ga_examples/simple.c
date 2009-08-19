@@ -23,13 +23,13 @@
 
 /***************************************************************************
  *                                                                         *
- * test1:                                                                  *
+ * simple:                                                                 *
  *       -demonstrates how to create a GA using the new API                *
  *       -demonstrates how to obtain local access to GA memory             *
  *                                                                         *
  ***************************************************************************/
 
-int test1()
+int simple()
 {
 	int me,nproc;
     int p,d,i,j;

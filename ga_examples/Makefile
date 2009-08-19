@@ -142,7 +142,7 @@ all: driver.x
 
 refresh: realclean all
 
-driver.x: driver.o candy.o test1.o test2.o test3.o test4.o
+driver.x: driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o
 	$(LD) $(LDFLAGS) libtests.a $(LIB) -o driver.x
 
 driver.o: driver.c
@@ -150,30 +150,35 @@ driver.o: driver.c
 	$(AR) -r libtests.a driver.o
 	$(RM) $(RMFLAGS) driver.o
 
-candy.o: candy.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) candy.c -o candy.o
-	$(AR) -r libtests.a candy.o
-	$(RM) $(RMFLAGS) candy.o
+hello.o: hello.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) hello.c -o hello.o
+	$(AR) -r libtests.a hello.o
+	$(RM) $(RMFLAGS) hello.o
 
-test1.o: test1.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test1.c -o test1.o
-	$(AR) -r libtests.a test1.o
-	$(RM) $(RMFLAGS) test1.o
+simple.o: simple.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) simple.c -o simple.o
+	$(AR) -r libtests.a simple.o
+	$(RM) $(RMFLAGS) simple.o
 
-test2.o: test2.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test2.c -o test2.o
-	$(AR) -r libtests.a test2.o
-	$(RM) $(RMFLAGS) test2.o
+transpose.o: transpose.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) transpose.c -o transpose.o
+	$(AR) -r libtests.a transpose.o
+	$(RM) $(RMFLAGS) transpose.o
 
-test3.o: test3.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test3.c -o test3.o
-	$(AR) -r libtests.a test3.o
-	$(RM) $(RMFLAGS) test3.o
+matmul.o: matmul.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) matmul.c -o matmul.o
+	$(AR) -r libtests.a matmul.o
+	$(RM) $(RMFLAGS) matmul.o
 
-test4.o: test4.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) test4.c -o test4.o
-	$(AR) -r libtests.a test4.o
-	$(RM) $(RMFLAGS) test4.o
+matmul2.o: matmul2.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) matmul2.c -o matmul2.o
+	$(AR) -r libtests.a matmul2.o
+	$(RM) $(RMFLAGS) matmul2.o
+
+matvec.o: matvec.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) matvec.c -o matvec.o
+	$(AR) -r libtests.a matvec.o
+	$(RM) $(RMFLAGS) matvec.o
 
 clean:
 	$(RM) $(RMFLAGS) *.o

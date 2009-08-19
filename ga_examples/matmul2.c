@@ -24,15 +24,13 @@
 
 /***************************************************************************
  *                                                                         *
- * test4:                                                                  *
+ * matmul2:                                                                  *
  *       -demonstrates how to create a GA using the new API                *
  *       -matrix multiplication									           *
  *                                                                         *
  ***************************************************************************/
 
-void transpose_patch(double* input, double* output);
-
-int test4(int rank, int blksz)
+int matmul2(int rank, int blksz)
 {
 	int me,nproc,ntask,t;
     int ii,jj,kk;
@@ -68,7 +66,7 @@ int test4(int rank, int blksz)
     nblock = rank/blksz;
 
     if (me == 0){
-      printf("test4: rank %d matrix with block size %d\n",rank,blksz);
+      printf("matmul2: rank %d matrix with block size %d\n",rank,blksz);
     }
 
     pg_world = GA_Pgroup_get_world();
