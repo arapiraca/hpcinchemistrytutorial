@@ -18,7 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define USE_GSL
+//#define USE_GSL
+#define USE_BLAS
 
 #include "driver.h"
 
@@ -106,8 +107,7 @@ int gemm_test(int rank)
     printf("! My dgemm took %f seconds\n",(double) (finish - start) );
 	fflush(stdout);\
 
-	alpha = 1.0;
-    beta  = 0.0;
+#ifdef USE_GSL
 
     start = MPI_Wtime(); 
 
@@ -119,6 +119,10 @@ int gemm_test(int rank)
    	printf("! GSL CBLAS dgemm took %f seconds\n",(double) (finish - start) );
     fflush(stdout);\
 
+#endif
+
+#ifdef USE_BLAS
+
     start = MPI_Wtime(); 
 
    	//dgemm_("n","n",&rank,&rank,&rank,&alpha,p_a,&rank,p_b,&rank,&beta,p_c3,&rank);
@@ -129,6 +133,8 @@ int gemm_test(int rank)
 
    	printf("! BLAS dgemm took %f seconds\n",(double) (finish - start) );
     fflush(stdout);
+
+#endif
 
 /*
  * begin error evaluation
