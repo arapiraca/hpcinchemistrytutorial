@@ -58,9 +58,7 @@ int matvec(int rank, int blksz)
     me=GA_Nodeid();
 
     dims[0] = rank;
-    dims[1] = rank;
     chunk[0] = -1;
-    chunk[1] = -1;
     nblock = rank/blksz;
 
     if (me == 0){
