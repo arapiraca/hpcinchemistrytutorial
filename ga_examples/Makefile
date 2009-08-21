@@ -111,7 +111,7 @@ ifeq ($(TARGET),BGP)
    INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(ESSL_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
-   COPT=-O5 -qarch=440d -qtune=440 -qthreaded
+   COPT=-g -O5 -qarch=440d -qtune=440 -qthreaded
    CFLAGS=$(INC) $(COPT) $(CDEF)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
@@ -119,7 +119,7 @@ ifeq ($(TARGET),BGP)
    endif
 
    LD=$(CC)
-   LFLAGS=-O3 -qarch=440d -qtune=440 -qthreaded
+   LFLAGS=-g -O3 -qarch=440d -qtune=440 -qthreaded
 
 endif
 
