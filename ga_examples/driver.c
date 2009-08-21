@@ -56,15 +56,11 @@ int main(int argc, char **argv)
         fflush(stdout);
     }
     if (test > 1){
-        if (argc == 4){
+        if (argc  > 2){
             rank = atoi(argv[2]);
+        }
+        if (argc  > 3){
             blksz = atoi(argv[3]);
-        } else {
-            if(me == 0){
-                printf("You need to specify rank and blksz for tests 2-4\n");
-                fflush(stdout);
-            }
-            return(1);
         }
     }
 
@@ -142,6 +138,16 @@ int main(int argc, char **argv)
         if(status != 0){
             if (me == 0){
                 printf("%s: matvec() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
+    } else if (test == 6){
+        if(me == 0){
+            printf("Running gemm_test on process 0\n",me);
+            fflush(stdout);
+            status = gemm_test(rank);
+            if(status != 0){
+                printf("%s: gemm_test() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
         }

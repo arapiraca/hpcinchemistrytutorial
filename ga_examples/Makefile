@@ -1,5 +1,5 @@
 MY_ROOT=.
-DEBUG=YES
+#DEBUG=YES
 
 #############################################
 #
@@ -33,7 +33,8 @@ ifeq ($(TARGET),LINUX64)
 
    GA_PREFIX=/software/ga/ga-trunk
    GA_INC=-I$(GA_PREFIX)/include
-   GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+   #GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+   GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -larmci -ltcgmsg-mpi
 
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
@@ -66,7 +67,7 @@ ifeq ($(TARGET),LINUX64)
    CXXPP=$(CXX) -E
    CXXPPFLAGS = $(PPFLAGS)
 
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(BLAS) $(GSL_LIB) $(EXTRAS)
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(GSL_LIB) $(BLAS) $(EXTRAS)
    INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(GSL_INC)
 
    LD=$(CC)
@@ -142,7 +143,7 @@ all: driver.x
 
 refresh: realclean all
 
-driver.x: driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o
+driver.x: driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o
 	$(LD) $(LDFLAGS) libtests.a $(LIB) -o driver.x
 
 driver.o: driver.c
@@ -179,6 +180,11 @@ matvec.o: matvec.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) matvec.c -o matvec.o
 	$(AR) -r libtests.a matvec.o
 	$(RM) $(RMFLAGS) matvec.o
+
+gemm_test.o: gemm_test.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) gemm_test.c -o gemm_test.o
+	$(AR) -r libtests.a gemm_test.o
+	$(RM) $(RMFLAGS) gemm_test.o
 
 clean:
 	$(RM) $(RMFLAGS) *.o

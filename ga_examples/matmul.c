@@ -18,9 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "driver.h"
+//#define USE_LOOPS
+#define USE_GSL
 
-#define USE_LOOPS
+#include "driver.h"
 
 /***************************************************************************
  *                                                                         *
