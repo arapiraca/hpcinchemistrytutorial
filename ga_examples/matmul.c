@@ -19,9 +19,12 @@
  ***************************************************************************/
 
 //#define USE_LOOPS
-#define USE_GSL
+//#define USE_GSL
+#define USE_BLAS
 
 #include "driver.h"
+
+void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
 
 /***************************************************************************
  *                                                                         *
@@ -318,11 +321,12 @@ int matmul(int rank, int blksz)
     				              one,p_a,blksz,p_b,blksz,zero,p_d,blksz);
 #endif
 
-#ifdef USE_ESSL
-    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+#ifdef USE_BLAS
+    				//dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+                    dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_b,&blksz,p_a,&blksz,&zero,p_d,&blksz);
 #endif
 
-#ifdef USE_MKL
+#ifdef USE_ESSL
     				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
 #endif
 
