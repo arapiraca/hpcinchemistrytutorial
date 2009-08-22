@@ -1,5 +1,5 @@
 MY_ROOT=.
-DEBUG=YES
+#DEBUG=YES
 HPM_PROFILING=YES
 
 #############################################
@@ -20,8 +20,6 @@ endif
 
 ifeq ($(TARGET),LINUX64)
 
-   USE_GSL=T
-
    CPPFLAGS=
 
    RM = rm
@@ -32,23 +30,11 @@ ifeq ($(TARGET),LINUX64)
 
    MPI_PREFIX=/software/open-mpi/gnu-build
    MPI_INC=-I$(MPI_PREFIX)/include
-   MPI_LIB=-L$(MPI_PREFIX)/lib -lmpi
+   MPI_LIB=-L$(MPI_PREFIX)/lib -lmpi -lpthread
 
    ARMCI_PREFIX=/software/ga/ga-trunk
    ARMCI_INC=-I$(ARMCI_PREFIX)/include
-   ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/LINUX64 -lglobal -lma -larmci -ltcgmsg-mpi
-
-   ifdef USE_GSL
-      GSL_INC=-I/usr/include/gsl
-      GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
-      CPPFLAGS+=-DUSE_GSL
-   endif
-
-   GOTO=-L/software/goto -lgoto
-
-   BLAS=$(GSL_LIB) $(GOTO)
-
-   EXTRAS=-lgomp -lgfortran -lm -lpthread
+   ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/LINUX64 -larmci
 
    OPT = -O3 -m64 -malign-double
    OPT+= -march=core2 -mtune=core2
@@ -66,15 +52,11 @@ ifeq ($(TARGET),LINUX64)
       CPPFLAGS+=-DDEBUG
    endif
 
-   LIB=-L$(MY_ROOT) $(ARMCI_LIB) $(MPI_LIB) $(BLAS) $(EXTRAS)
-   INC=-I$(MY_ROOT) $(ARMCI_INC) $(MPI_INC) $(GSL_INC)
-
-   CPPFLAGS+=$(INC)
+   LIB=-L$(MY_ROOT) $(ARMCI_LIB) $(MPI_LIB)
+   INC=-I$(MY_ROOT) $(ARMCI_INC) $(MPI_INC)
 
    LD=$(CC)
    LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2
-
-   LDFLAGS+=$(LIB)
 
 endif
 
@@ -102,20 +84,10 @@ ifeq ($(TARGET),BGP)
 
    ARMCI_PREFIX=/home/jhammond/ga-4-2
    ARMCI_INC=-I$(ARMCI_PREFIX)/include
-   //ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
-   //ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
    ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/$(TARGET) -larmci
 
-   ESSL_PREFIX=/soft/apps/ESSL-4.4
-   ESSL_INC=-I$(ESSL_PREFIX)/include
-   ESSL_LIB=-L$(ESSL_PREFIX)/lib -lesslbg -lmass
-
-   OMP=/opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
-
-   EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a
-
-   LIB=-L$(MY_ROOT) $(ARMCI_LIB) $(MPI_LIB) $(ESSL_LIB) $(EXTRAS) $(OMP)
-   INC=-I$(MY_ROOT) $(ARMCI_INC) $(MPI_INC) $(ESSL_INC)
+   LIB=-L$(MY_ROOT) $(ARMCI_LIB) $(MPI_LIB)
+   INC=-I$(MY_ROOT) $(ARMCI_INC) $(MPI_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
    COPT=-g -O5 -qarch=440d -qtune=440 -qthreaded
@@ -158,10 +130,10 @@ all: driver.x
 refresh: realclean all
 
 driver.x: $(OBJECTS)
-	$(LD) $(OBJECTS) $(LDFLAGS) -o driver.x
+	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver.x
 
 $%.o: %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
 
 clean:
 	$(RM) $(RMFLAGS) *.o

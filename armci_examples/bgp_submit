@@ -1,0 +1,4 @@
+#!/bin/csh
+cqsub -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x 1 10
+#cqsub -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x 3
+#cqsub -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x 3
