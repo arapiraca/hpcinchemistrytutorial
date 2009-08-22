@@ -55,6 +55,8 @@ ifeq ($(TARGET),LINUX64)
    LIB=-L$(MY_ROOT) $(ARMCI_LIB) $(MPI_LIB)
    INC=-I$(MY_ROOT) $(ARMCI_INC) $(MPI_INC)
 
+   CPPFLAGS+=$(INC)
+
    LD=$(CC)
    LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2
 
