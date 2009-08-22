@@ -35,8 +35,17 @@ int simple(int me, int nproc, int len)
     int n,i;
     double t0,t1;
 
+    /* allocate segments
+     *
+     * not sure if this is allocating nproc*len doubles on every node
+     * but if so, there must be a better (i.e. non-replicated) way
+     *
+     * need to read ARMCI_Malloc source...
+     */
     double** addr_vec = (double **) malloc(sizeof(double *) * nproc);
     ARMCI_Malloc((void **) addr_vec, len*sizeof(double));
+
+    /* make sure everybody has allocated */
     MPI_Barrier(MPI_COMM_WORLD);
 
     /* initialization of local segments */
