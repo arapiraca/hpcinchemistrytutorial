@@ -1,5 +1,6 @@
 MY_ROOT=.
 #DEBUG=YES
+HPM_PROFILING=YES
 
 #############################################
 #
@@ -25,7 +26,7 @@ ifeq ($(TARGET),LINUX64)
    RMFLAGS = -f
 
    AR = ar
-   ARFLAGS = 
+   ARFLAGS = -r
 
    MPI_PREFIX=/software/open-mpi/gnu-build
    MPI_INC=-I$(MPI_PREFIX)/include
@@ -88,6 +89,9 @@ ifeq ($(TARGET),BGP)
    RM = rm
    RMFLAGS = -f
 
+   AR = /bgsys/drivers/ppcfloor/gnu-linux/bin/powerpc-bgp-linux-ar
+   ARFLAGS = -r
+
    BGP_SYS=/bgsys/drivers/ppcfloor
 
    MPI_PREFIX=$(BGP_SYS)/comm
@@ -118,6 +122,11 @@ ifeq ($(TARGET),BGP)
       CPPFLAGS+=-DDEBUG
    endif
 
+   ifdef HPM_PROFILING
+      EXTRAS += /soft/apps/UPC/lib/libhpm.a
+      CPPFLAGS+=-DHPM_PROFILING
+   endif
+
    LD=$(CC)
    LFLAGS=-g -O3 -qarch=440d -qtune=440 -qthreaded
 
@@ -139,52 +148,17 @@ endif
 #
 #############################################
 
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o
+
 all: driver.x
 
 refresh: realclean all
 
-driver.x: driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o
-	$(LD) $(LDFLAGS) libtests.a $(LIB) -o driver.x
+driver.x: $(OBJECTS)
+	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver.x
 
-driver.o: driver.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) driver.c -o driver.o
-	$(AR) -r libtests.a driver.o
-	$(RM) $(RMFLAGS) driver.o
-
-hello.o: hello.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) hello.c -o hello.o
-	$(AR) -r libtests.a hello.o
-	$(RM) $(RMFLAGS) hello.o
-
-simple.o: simple.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) simple.c -o simple.o
-	$(AR) -r libtests.a simple.o
-	$(RM) $(RMFLAGS) simple.o
-
-transpose.o: transpose.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) transpose.c -o transpose.o
-	$(AR) -r libtests.a transpose.o
-	$(RM) $(RMFLAGS) transpose.o
-
-matmul.o: matmul.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) matmul.c -o matmul.o
-	$(AR) -r libtests.a matmul.o
-	$(RM) $(RMFLAGS) matmul.o
-
-matmul2.o: matmul2.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) matmul2.c -o matmul2.o
-	$(AR) -r libtests.a matmul2.o
-	$(RM) $(RMFLAGS) matmul2.o
-
-matvec.o: matvec.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) matvec.c -o matvec.o
-	$(AR) -r libtests.a matvec.o
-	$(RM) $(RMFLAGS) matvec.o
-
-gemm_test.o: gemm_test.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) gemm_test.c -o gemm_test.o
-	$(AR) -r libtests.a gemm_test.o
-	$(RM) $(RMFLAGS) gemm_test.o
+$%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
 
 clean:
 	$(RM) $(RMFLAGS) *.o

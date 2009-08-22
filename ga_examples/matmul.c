@@ -42,8 +42,6 @@ int matmul(int rank, int blksz)
     int g_a,g_b,g_c1,g_c2,g_d,g_error; // GA handles
     int status;
     int ndim = 2;
-//    int rank = 8000;
-//    int blksz = 200;
     int dims[2];
     int chunk[2];
     int nblock;
@@ -56,6 +54,7 @@ int matmul(int rank, int blksz)
     double zero = 0.0;
     double one  = 1.0;
     double temp;
+    double t_get_a,t_get_b,t_acc_d, t_dgemm; // timers
     double* p_in; // pointers for local access to GAs
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
@@ -64,6 +63,11 @@ int matmul(int rank, int blksz)
 
     nproc=GA_Nnodes();
     me=GA_Nodeid();
+
+    t_get_a = 0.0;
+    t_get_b = 0.0;
+    t_acc_d = 0.0;
+    t_dgemm = 0.0;
 
     dims[0] = rank;
     dims[1] = rank;
@@ -229,8 +233,15 @@ int matmul(int rank, int blksz)
     				hi_d[1] = blksz * (jj + 1) - 1;
     				ld_d[0] = blksz;
 
+                    
+                    temp = MPI_Wtime(); 
     			    NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
+                    t_get_a += (double) (MPI_Wtime() - temp);
+
+
+                    temp = MPI_Wtime(); 
     				NGA_Get(g_b,lo_b,hi_b,p_b,ld_b);
+                    t_get_b += (double) (MPI_Wtime() - temp);
 
     				/**************************************/
 
@@ -322,8 +333,9 @@ int matmul(int rank, int blksz)
 #endif
 
 #ifdef USE_BLAS
-    				//dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+                    temp = MPI_Wtime(); 
                     dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_b,&blksz,p_a,&blksz,&zero,p_d,&blksz);
+                    t_dgemm += (double) (MPI_Wtime() - temp);
 #endif
 
 #ifdef USE_ESSL
@@ -332,7 +344,9 @@ int matmul(int rank, int blksz)
 
     				/**************************************/
 
+                    temp = MPI_Wtime(); 
     				NGA_Acc(g_d,lo_d,hi_d,p_d,ld_d,&one);
+                    t_acc_d += (double) (MPI_Wtime() - temp);
 
     			} // myturn
 
@@ -363,6 +377,11 @@ int matmul(int rank, int blksz)
     	printf("! My dgemm took %f seconds\n",(double) (finish - start) );
 	    fflush(stdout);\
     }
+
+    printf("! GA_Get A time on node %d = %f seconds\n", me, (double) t_get_a );
+    printf("! GA_Get B time on node %d = %f seconds\n", me, (double) t_get_b );
+    printf("! GA_Acc C time on node %d = %f seconds\n", me, (double) t_acc_d );
+    printf("!   DGEMM  time on node %d = %f seconds\n", me, (double) t_dgemm );
 
 #ifdef DEBUG
 	GA_Print(g_d);

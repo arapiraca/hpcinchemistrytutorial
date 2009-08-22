@@ -20,13 +20,12 @@
 
 #include "driver.h"
 
+int hello(); // hello world
 int simple(); // very simple test
 int transpose(int rank, int blksz); // matrix transpose
 int matmul(int rank, int blksz); // matrix multiplication
 int matmul2(int rank, int blksz); // matrix multiplication for symmetric matrices
 int matvec(int rank, int blksz); // fake sparse matrix-vector product
-
-int hello(); // hello world
 
 int main(int argc, char **argv)
 {
@@ -42,6 +41,10 @@ int main(int argc, char **argv)
     MPI_Init(&argc, &argv);
     GA_Initialize();
     MA_init(MT_DBL, 128*1024*1024, 8*1024*1024);
+
+#ifdef HPC_PROFILING
+    HPM_Init();
+#endif
 
     nproc=GA_Nnodes();
     me=GA_Nodeid();
@@ -152,6 +155,10 @@ int main(int argc, char **argv)
             }
         }
     }
+
+#ifdef HPC_PROFILING
+    HPM_Print();
+#endif
 
     if ((me == 0) && (test != 0)) GA_Print_stats();
 

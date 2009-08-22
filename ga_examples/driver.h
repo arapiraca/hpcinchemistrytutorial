@@ -36,15 +36,17 @@
 #include "essl.h"
 
 #ifdef USE_GSL
-#include "gsl_math.h"
-#include "gsl_cblas.h"
+    #include "gsl_math.h"
+    #include "gsl_cblas.h"
 #endif
 
-    double start,finish,timing;
+#ifdef HPM_PROFILING
+    void HPM_Init(void);
+    void HPM_Start(char *);
+    void HPM_Stop(char *);
+    void HPM_Print(void);
+#endif
 
-    // start = clock();
-    // ... /* Do the work. */
-    // finish = clock();
-    // cpu_time_used = ((double) (finish - start)) / CLOCKS_PER_SEC;
+double start,finish,timing;
 
 #endif
