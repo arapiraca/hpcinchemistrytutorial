@@ -87,18 +87,3 @@ int simple(int me, int nproc, int len)
 
     return(0);
 }
-
-
-
-/*
-    double* p_a = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
-    double* p_b = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
-    status = ARMCI_Free_local(p_b);
-    if(status != 0){
-    	if (*me == 0) printf("%s: ARMCI_Free_local failed at line %d\n",__FILE__,__LINE__);
-    };
-    status = ARMCI_Free_local(p_a);
-    if(status != 0){
-    	if (*me == 0) printf("%s: ARMCI_Free_local failed at line %d\n",__FILE__,__LINE__);
-    };
-*/
