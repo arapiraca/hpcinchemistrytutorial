@@ -28,7 +28,8 @@
 #include <math.h>
 #include <time.h>
 
-#include "armci.h"
+//#include "armci.h"
+#include "/home/jhammond/ga-4-2/armci/src/armci.h"
 #include "mpi.h"
 
 /*
