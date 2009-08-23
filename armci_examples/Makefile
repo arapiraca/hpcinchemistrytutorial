@@ -85,7 +85,7 @@ ifeq ($(TARGET),BGP)
    MPI_INC=$(MPI_PREFIX)/include
    MPI_LIB=$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
 
-   ARMCI_PREFIX=/home/jhammond/ga-4-2
+   ARMCI_PREFIX=/home/jhammond/ga-trunk
    ARMCI_INC=$(ARMCI_PREFIX)/include
    ARMCI_LIB=$(ARMCI_PREFIX)/lib/$(TARGET) -larmci
 
@@ -128,7 +128,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o simple_get.o simple_put.o simple_acc.o
+OBJECTS = driver.o simple_get.o simple_put.o
 
 all: driver.x
 
