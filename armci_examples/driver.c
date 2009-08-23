@@ -58,6 +58,13 @@ int main(int argc, char **argv)
 
     if (test == 1){
 
+        if(nproc%2 != 0){
+            if (me == 0){
+                printf("You need to use an even number of processes\n");
+                fflush(stdout);
+            }
+        }
+
         int len;
         if (argc > 2){
             len = atoi(argv[2]);
@@ -78,6 +85,13 @@ int main(int argc, char **argv)
             }
         }
     } else if (test == 2){
+
+        if(nproc%2 != 0){
+            if (me == 0){
+                printf("You need to use an even number of processes\n");
+                fflush(stdout);
+            }
+        }
 
         int len;
         if (argc > 2){
