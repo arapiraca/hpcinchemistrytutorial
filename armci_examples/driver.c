@@ -62,6 +62,8 @@ int main(int argc, char **argv)
             if (me == 0){
                 printf("You need to use an even number of processes\n");
                 fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,test);
             }
         }
 
@@ -82,6 +84,8 @@ int main(int argc, char **argv)
             if (me == 0){
                 printf("%s: simple_get() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,status);
             }
         }
     } else if (test == 2){
@@ -90,6 +94,8 @@ int main(int argc, char **argv)
             if (me == 0){
                 printf("You need to use an even number of processes\n");
                 fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,test);
             }
         }
 
@@ -110,12 +116,16 @@ int main(int argc, char **argv)
             if (me == 0){
                 printf("%s: simple_put() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,status);
             }
         }
     } else {
         if(me == 0){
             printf("Invalid test number (%d) requested\n",test);
             fflush(stdout);
+            ARMCI_Cleanup();
+            MPI_Abort(MPI_COMM_WORLD,911);
         }
     }
 
