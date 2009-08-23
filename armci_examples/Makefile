@@ -1,4 +1,3 @@
-MY_ROOT=.
 #DEBUG=YES
 HPM_PROFILING=YES
 
@@ -29,12 +28,12 @@ ifeq ($(TARGET),LINUX64)
    ARFLAGS = -r
 
    MPI_PREFIX=/software/open-mpi/gnu-build
-   MPI_INC=$(MPI_PREFIX)/include
-   MPI_LIB=$(MPI_PREFIX)/lib -lmpi -lpthread
+   MPI_INC=-I$(MPI_PREFIX)/include
+   MPI_LIB=-L$(MPI_PREFIX)/lib -lmpi -lpthread
 
    ARMCI_PREFIX=/software/ga/ga-trunk
-   ARMCI_INC=$(ARMCI_PREFIX)/include
-   ARMCI_LIB=$(ARMCI_PREFIX)/lib/LINUX64 -larmci
+   ARMCI_INC=-I$(ARMCI_PREFIX)/include
+   ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/LINUX64 -larmci
 
    OPT = -O3 -m64 -malign-double
    OPT+= -march=core2 -mtune=core2
@@ -52,8 +51,8 @@ ifeq ($(TARGET),LINUX64)
       CPPFLAGS+=-DDEBUG
    endif
 
-   LIB=-L$(MY_ROOT) -L$(ARMCI_LIB) -L$(MPI_LIB)
-   INC=-I$(MY_ROOT) -I$(ARMCI_INC) -I$(MPI_INC)
+   LIB=$(ARMCI_LIB) $(MPI_LIB)
+   INC=$(ARMCI_INC) $(MPI_INC)
 
 
    CPPFLAGS+=$(INC)
@@ -82,15 +81,15 @@ ifeq ($(TARGET),BGP)
    BGP_SYS=/bgsys/drivers/ppcfloor
 
    MPI_PREFIX=$(BGP_SYS)/comm
-   MPI_INC=$(MPI_PREFIX)/include
-   MPI_LIB=$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
+   MPI_INC=-I$(MPI_PREFIX)/include
+   MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
 
-   ARMCI_PREFIX=/home/jhammond/ga-trunk
-   ARMCI_INC=$(ARMCI_PREFIX)/include
-   ARMCI_LIB=$(ARMCI_PREFIX)/lib/$(TARGET) -larmci
+   ARMCI_PREFIX=/home/jhammond/ga-4-2
+   ARMCI_INC=-I$(ARMCI_PREFIX)/include
+   ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/$(TARGET) -larmci
 
-   LIB=-L$(MY_ROOT) -L$(ARMCI_LIB) -L$(MPI_LIB)
-   INC=-I$(MY_ROOT) -I$(ARMCI_INC) -I$(MPI_INC)
+   LIB=$(ARMCI_LIB) $(MPI_LIB)
+   INC=$(ARMCI_INC) $(MPI_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
    COPT=-g -O5 -qarch=440d -qtune=440 -qthreaded
