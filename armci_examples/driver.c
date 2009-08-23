@@ -20,7 +20,8 @@
 
 #include "driver.h"
 
-int simple(int me, int nproc, int len);
+int simple_get(int me, int nproc, int len);
+int simple_put(int me, int nproc, int len);
 
 int main(int argc, char **argv)
 {
@@ -65,18 +66,38 @@ int main(int argc, char **argv)
         }
 
         if(me == 0){
-            printf("Running simple with %d processes and len = %d\n",nproc,len);
+            printf("Running simple_get with %d processes and len = %d\n",nproc,len);
             fflush(stdout);
         }
 
-        status = simple(me,nproc,len);
+        status = simple_get(me,nproc,len);
         if(status != 0){
             if (me == 0){
-                printf("%s: simple() failed at line %d\n",__FILE__,__LINE__);
+                printf("%s: simple_get() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
         }
+    } else if (test == 2){
 
+        int len;
+        if (argc > 2){
+            len = atoi(argv[2]);
+        } else {
+            len = 1000;
+        }
+
+        if(me == 0){
+            printf("Running simple_put with %d processes and len = %d\n",nproc,len);
+            fflush(stdout);
+        }
+
+        status = simple_put(me,nproc,len);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: simple_put() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
     } else {
         if(me == 0){
             printf("Invalid test number (%d) requested\n",test);

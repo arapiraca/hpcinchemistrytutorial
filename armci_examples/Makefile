@@ -125,7 +125,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o simple.o
+OBJECTS = driver.o simple_get.o simple_put.o
 
 all: driver.x
 

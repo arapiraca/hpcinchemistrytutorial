@@ -22,30 +22,20 @@
 
 /***************************************************************************
  *                                                                         *
- * simple:                                                                 *
+ * simple_put:                                                             *
  *       -demonstrates how to allocate some shared segements with ARMCI    *
  *       -demonstrates how to do one-sided point-to-point communication    *
- *       -inspired by armci/examples/features/non-blocking/simple/simple.c *
  *                                                                         *
  ***************************************************************************/
 
-int simple(int me, int nproc, int len)
+int simple_put(int me, int nproc, int len)
 {
     int status;
     int n,i;
     double t0,t1;
 
-    /* allocate segments
-     *
-     * not sure if this is allocating nproc*len doubles on every node
-     * but if so, there must be a better (i.e. non-replicated) way
-     *
-     * need to read ARMCI_Malloc source...
-     */
     double** addr_vec = (double **) malloc(sizeof(double *) * nproc);
     ARMCI_Malloc((void **) addr_vec, len*sizeof(double));
-
-    /* make sure everybody has allocated */
     MPI_Barrier(MPI_COMM_WORLD);
 
     /* initialization of local segments */
@@ -67,15 +57,15 @@ int simple(int me, int nproc, int len)
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    /* even processes get from odd right neighbors */
+    /* even processes put from odd right neighbors */
     if (me%2 == 0){
        t0 = MPI_Wtime();
-       status = ARMCI_Get(addr_vec[me+1], addr_vec[me], len*sizeof(double), me+1);
+       status = ARMCI_Put(addr_vec[me], addr_vec[me+1], len*sizeof(double), me+1);
        t1 = MPI_Wtime();
        if(status != 0){
-    	  if (me == 0) printf("%s: ARMCI_Get failed at line %d\n",__FILE__,__LINE__);
+    	  if (me == 0) printf("%s: ARMCI_Put failed at line %d\n",__FILE__,__LINE__);
        }
-       printf("Proc %d: Get Latency=%lf microseconds\n",me,1e6*(t1-t0)/len);
+       printf("Proc %d: Put Latency=%lf microseconds\n",me,1e6*(t1-t0)/len);
        fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
