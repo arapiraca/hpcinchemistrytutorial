@@ -58,8 +58,7 @@ int overlap_nb(int me, int nproc, int len)
     delays[0] = 0;
     for ( i = 1; i < REPS; i++ )
     {
-        delays[i] = delays[i-1] + 10000;
-        //delays[i] = delays[i-1] + 0;
+        delays[i] = delays[i-1] + 10*len;
     }
 
     /* register remote pointers */
