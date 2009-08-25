@@ -27,7 +27,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define REPS 20
+#define REPS 25
 
 unsigned long long int getticks();
 
