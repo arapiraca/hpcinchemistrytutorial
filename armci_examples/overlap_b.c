@@ -112,13 +112,11 @@ int overlap_b(int me, int nproc, int len)
         t1 = getticks();
 
         printf("Iter %6d Proc %6d: (t0,t1) = %16lld %16lld\n",i,me,t0,t1);
-        if ( me == 0 ){
-          tt = t1 - t0;
-          cp = delays[i];
-          cm = tt - cp;
-          ov = (double)cp / (double)(tt);
-          printf("BLOCKING %6d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n", me, cp, cm, tt, ov );
-        }
+        tt = t1 - t0;
+        cp = delays[i];
+        cm = tt - cp;
+        ov = (double)cp / (double)(tt);
+        printf("BLOCKING %6d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n", me, cp, cm, tt, ov );
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
