@@ -141,7 +141,7 @@ int main(int argc, char **argv)
         }
 
         if(me == 0){
-            printf("Running overlap_b with nproc = %d and len = %d\n",nproc,len);
+            printf("BLOCKING Running overlap_b with nproc = %d and len = %d\n",nproc,len);
             fflush(stdout);
         }
 
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
         }
 
         if(me == 0){
-            printf("Running overlap_nb with nproc = %d and len = %d\n",nproc,len);
+            printf("NONBLOCK Running overlap_nb with nproc = %d and len = %d\n",nproc,len);
             fflush(stdout);
         }
 

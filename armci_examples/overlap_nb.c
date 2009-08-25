@@ -77,6 +77,7 @@ int overlap_nb(int me, int nproc, int len)
        addr_vec2[me][i] = (double) -1*(1000*me+i);    
     }
 
+#ifdef DEBUG
     /* print before exchange */
     for( n=0 ; n<nproc ; n++){
        MPI_Barrier(MPI_COMM_WORLD);
@@ -92,6 +93,7 @@ int overlap_nb(int me, int nproc, int len)
        }
        MPI_Barrier(MPI_COMM_WORLD);
     }
+#endif
 
     for ( i = 0; i < REPS; i++ ){
 
@@ -120,13 +122,13 @@ int overlap_nb(int me, int nproc, int len)
           cp = delays[i];
           cm = tt - cp;
           ov = (double)cp / (double)(tt);
-          fprintf( stderr, "%6d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n", me, cp, cm, tt, ov );
+          printf("NONBLOCK %6d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n", me, cp, cm, tt, ov );
         }
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
-
+#ifdef DEBUG
     /* print after exchange */
     for( n=0 ; n<nproc ; n++){
        MPI_Barrier(MPI_COMM_WORLD);
@@ -142,6 +144,7 @@ int overlap_nb(int me, int nproc, int len)
        }
        MPI_Barrier(MPI_COMM_WORLD);
     }
+#endif
 
     return(0);
 }
