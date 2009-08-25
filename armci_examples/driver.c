@@ -22,6 +22,8 @@
 
 int simple_get(int me, int nproc, int len);
 int simple_put(int me, int nproc, int len);
+int overlap_b(int me, int nproc, int len);
+int overlap_nb(int me, int nproc, int len);
 
 int main(int argc, char **argv)
 {
@@ -75,7 +77,7 @@ int main(int argc, char **argv)
         }
 
         if(me == 0){
-            printf("Running simple_get with %d processes and len = %d\n",nproc,len);
+            printf("Running simple_get with nproc = %d and len = %d\n",nproc,len);
             fflush(stdout);
         }
 
@@ -107,7 +109,7 @@ int main(int argc, char **argv)
         }
 
         if(me == 0){
-            printf("Running simple_put with %d processes and len = %d\n",nproc,len);
+            printf("Running simple_put with nproc = %d and len = %d\n",nproc,len);
             fflush(stdout);
         }
 
@@ -115,6 +117,70 @@ int main(int argc, char **argv)
         if(status != 0){
             if (me == 0){
                 printf("%s: simple_put() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,status);
+            }
+        }
+    } else if (test == 3){
+
+        if(nproc%2 != 0){
+            if (me == 0){
+                printf("You need to use more than one process\n");
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,test);
+            }
+        }
+
+        int len;
+        if (argc > 2){
+            len = atoi(argv[2]);
+        } else {
+            len = 1000;
+        }
+
+        if(me == 0){
+            printf("Running overlap_b with nproc = %d and len = %d\n",nproc,len);
+            fflush(stdout);
+        }
+
+        status = overlap_b(me,nproc,len);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: overlap_b() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,status);
+            }
+        }
+    } else if (test == 4){
+
+        if(nproc < 2){
+            if (me == 0){
+                printf("You need to use more than one process\n");
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,test);
+            }
+        }
+
+        int len;
+        if (argc > 2){
+            len = atoi(argv[2]);
+        } else {
+            len = 1000;
+        }
+
+        if(me == 0){
+            printf("Running overlap_nb with nproc = %d and len = %d\n",nproc,len);
+            fflush(stdout);
+        }
+
+        status = overlap_nb(me,nproc,len);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: overlap_nb() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
                 ARMCI_Cleanup();
                 MPI_Abort(MPI_COMM_WORLD,status);

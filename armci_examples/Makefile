@@ -1,5 +1,6 @@
 #DEBUG=YES
-HPM_PROFILING=YES
+#HPM_PROFILING=YES
+NONBLOCK=YES
 
 #############################################
 #
@@ -92,12 +93,16 @@ ifeq ($(TARGET),BGP)
    INC=$(ARMCI_INC) $(MPI_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
-   COPT=-g -O5 -qarch=440d -qtune=440 -qthreaded
+   COPT=-g -O5 -qarch=440d -qtune=440 -qthreaded -qstrict
    CFLAGS=$(INC) $(COPT) $(CDEF)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
       CPPFLAGS+=-DDEBUG
    endif
+   ifeq ($(NONBLOCK),YES)
+      CPPFLAGS+=-DNONBLOCK
+   endif
+
 
    ifdef HPM_PROFILING
       EXTRAS += /soft/apps/UPC/lib/libhpm.a
@@ -127,7 +132,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o simple_get.o simple_put.o
+OBJECTS = driver.o simple_get.o simple_put.o overlap_b.o overlap_nb.o getticks.o
 
 all: driver.x
 
