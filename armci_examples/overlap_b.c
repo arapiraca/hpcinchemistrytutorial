@@ -56,7 +56,7 @@ int overlap_b(int me, int nproc, int len)
     delays[0] = 0;
     for ( i = 1; i < REPS; i++ )
     {
-        delays[i] = delays[i-1] + pow(2,i);
+        delays[i] = pow(2,i) - 1;
     }
 
     /* register remote pointers */
