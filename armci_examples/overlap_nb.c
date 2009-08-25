@@ -27,7 +27,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#define REPS 100
+#define REPS 20
 
 unsigned long long int getticks();
 
@@ -58,7 +58,7 @@ int overlap_nb(int me, int nproc, int len)
     delays[0] = 0;
     for ( i = 1; i < REPS; i++ )
     {
-        delays[i] = delays[i-1] + 10*len;
+        delays[i] = delays[i-1] + pow(2,i);
     }
 
     /* register remote pointers */
