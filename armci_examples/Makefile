@@ -1,6 +1,5 @@
-#DEBUG=YES
+DEBUG=YES
 #HPM_PROFILING=YES
-NONBLOCK=YES
 
 #############################################
 #
@@ -99,10 +98,6 @@ ifeq ($(TARGET),BGP)
    ifeq ($(DEBUG),YES)
       CPPFLAGS+=-DDEBUG
    endif
-   ifeq ($(NONBLOCK),YES)
-      CPPFLAGS+=-DNONBLOCK
-   endif
-
 
    ifdef HPM_PROFILING
       EXTRAS += /soft/apps/UPC/lib/libhpm.a
