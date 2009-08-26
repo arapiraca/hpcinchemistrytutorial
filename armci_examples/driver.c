@@ -186,6 +186,70 @@ int main(int argc, char **argv)
                 MPI_Abort(MPI_COMM_WORLD,status);
             }
         }
+    } else if (test == 5){
+
+        if(nproc%2 != 0){
+            if (me == 0){
+                printf("You need to use an even number of processes\n");
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,test);
+            }
+        }
+
+        int len;
+        if (argc > 2){
+            len = atoi(argv[2]);
+        } else {
+            len = 1000;
+        }
+
+        if(me == 0){
+            printf("BLOCKING Running overlap_b_ring with nproc = %d and len = %d\n",nproc,len);
+            fflush(stdout);
+        }
+
+        status = overlap_b_ring(me,nproc,len);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: overlap_b_ring() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,status);
+            }
+        }
+    } else if (test == 6){
+
+        if(nproc%2 != 0){
+            if (me == 0){
+                printf("You need to use an even number of processes\n");
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,test);
+            }
+        }
+
+        int len;
+        if (argc > 2){
+            len = atoi(argv[2]);
+        } else {
+            len = 1000;
+        }
+
+        if(me == 0){
+            printf("NONBLOCK Running overlap_nb_ring with nproc = %d and len = %d\n",nproc,len);
+            fflush(stdout);
+        }
+
+        status = overlap_nb_ring(me,nproc,len);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: overlap_nb_ring() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,status);
+            }
+        }
     } else {
         if(me == 0){
             printf("Invalid test number (%d) requested\n",test);

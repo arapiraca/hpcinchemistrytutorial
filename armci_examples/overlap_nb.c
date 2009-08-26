@@ -23,11 +23,11 @@
 /***************************************************************************
  *                                                                         *
  * overlap_nb:                                                             *
- *       -test of overlap_nbping communication and computation for Vitali  *
+ *       -test of overlapping communication and computation for Vitali     *
  *                                                                         *
  ***************************************************************************/
 
-#define REPS 25
+#define REPS 28
 
 unsigned long long int getticks();
 
@@ -100,27 +100,34 @@ int overlap_nb(int me, int nproc, int len)
         ARMCI_INIT_HANDLE(&nb_handle);
 
         t0 = getticks();
-        /* even processes get from odd right neighbors */
+
         if (me == 0){
+
            status = ARMCI_NbGet(addr_vec1[1], addr_vec1[0], len*sizeof(double), 1, &nb_handle);
            delay( delays[i] );
 
-        /* odd processes get from even left neighbors */
         } else if (me == 1){
+
            status = ARMCI_NbGet(addr_vec2[0], addr_vec2[1], len*sizeof(double), 0, &nb_handle);
            delay( delays[i] );
+
         }
+
         if((status != 0) && (me == 0)) printf("%s: ARMCI_Get failed at line %d\n",__FILE__,__LINE__);
+
         ARMCI_Wait(&nb_handle);
         MPI_Barrier(MPI_COMM_WORLD);
+
         t1 = getticks();
 
-        printf("Iter %6d Proc %6d: (t0,t1) = %16lld %16lld\n",i,me,t0,t1);
-        tt = t1 - t0;
-        cp = delays[i];
-        cm = tt - cp;
-        ov = (double)cp / (double)(tt);
-        printf("NONBLOCK %6d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n", me, cp, cm, tt, ov );
+        if (me == 0){
+           //printf("Iter %6d Proc %6d: (t0,t1) = %16lld %16lld\n",i,me,t0,t1);
+           tt = t1 - t0;
+           cp = delays[i];
+           cm = tt - cp;
+           ov = (double)cp / (double)(tt);
+           printf("NONBLOCK %6d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n", me, cp, cm, tt, ov );
+        }
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);

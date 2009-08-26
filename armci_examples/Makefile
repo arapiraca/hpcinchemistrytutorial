@@ -132,7 +132,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o simple_get.o simple_put.o overlap_b.o overlap_nb.o getticks.o
+OBJECTS = driver.o simple_get.o simple_put.o overlap_b.o overlap_nb.o overlap_b_ring.o overlap_nb_ring.o getticks.o
 
 all: driver.x
 
