@@ -50,9 +50,9 @@ int overlap(int len)
     int lo_a[1],lo_b[1];
     int hi_a[1],hi_b[1];
     int ld_a[1],ld_b[1];
-    long long int temp;
-    long long int t_get_a; // timers
-    long long int t_get_b; // timers
+    unsigned long long int temp;
+    unsigned long long int t_get_a; // timers
+    unsigned long long int t_get_b; // timers
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
     ga_nbhdl_t nbh;
@@ -98,7 +98,7 @@ int overlap(int len)
 
     temp = getticks(); 
     NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
-    t_get_a = (double) (getticks() - temp);
+    t_get_a = getticks() - temp;
 
     GA_Sync();
     printf("Process %5d: lo_a [0] = %12d hi_a [0] = %12d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
@@ -119,7 +119,7 @@ int overlap(int len)
     temp = getticks();
     NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&nbh);
     NGA_NbWait(&nbh);
-    t_get_b = (double) (getticks() - temp);
+    t_get_b = getticks() - temp;
 
     GA_Sync();
     printf("Process %5d: lo_b [0] = %12d hi_b [0] = %12d\n",me,lo_b[0],hi_b[0]); fflush(stdout);
