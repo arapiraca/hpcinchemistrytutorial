@@ -24,6 +24,8 @@ int simple_get(int me, int nproc, int len);
 int simple_put(int me, int nproc, int len);
 int overlap_b(int me, int nproc, int len);
 int overlap_nb(int me, int nproc, int len);
+int overlap_b_ring(int me, int nproc, int len);
+int overlap_nb_ring(int me, int nproc, int len);
 
 int main(int argc, char **argv)
 {

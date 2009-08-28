@@ -27,19 +27,19 @@
  *                                                                         *
  ***************************************************************************/
 
-#define REPS 28
+#define REPS 23
 
 unsigned long long int getticks();
+void delay( unsigned long long delay_ticks );
 
 int overlap_b_ring(int me, int nproc, int len)
 {
     int status;
-    int n, i;
+    int i;
     unsigned long long int delays[ REPS ];
     unsigned long long int t0, t1;
     unsigned long long int cp, cm, tt;
     double ov;
-    armci_hdl_t nb_handle;
 
     /* setup delays */
     delays[0] = 0;

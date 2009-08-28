@@ -30,24 +30,12 @@
 #define REPS 28
 
 unsigned long long int getticks();
-
-/*
-void delay( unsigned long long delay_ticks )
-{
-  unsigned long long start, end;
-
-  start = getticks();
-  end = start + delay_ticks;
-
-  while (start < end)
-    start = getticks();
-}
-*/
+void delay( unsigned long long delay_ticks );
 
 int overlap_nb(int me, int nproc, int len)
 {
     int status;
-    int n, i;
+    int i;
     unsigned long long int delays[ REPS ];
     unsigned long long int t0, t1;
     unsigned long long int cp, cm, tt;
