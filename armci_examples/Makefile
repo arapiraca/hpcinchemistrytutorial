@@ -1,4 +1,4 @@
-DEBUG=YES
+#DEBUG=YES
 #HPM_PROFILING=YES
 
 #############################################

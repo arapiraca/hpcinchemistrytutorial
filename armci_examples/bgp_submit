@@ -1,2 +1,5 @@
 #!/bin/csh
-cqsub -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x $3 $4
+cqsub -n $1 -t $2 -m smp -e DCMF_EAGER=1000    /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x $3 $4
+cqsub -n $1 -t $2 -m smp -e DCMF_EAGER=10000   /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x $3 $4
+cqsub -n $1 -t $2 -m smp -e DCMF_EAGER=100000  /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x $3 $4
+cqsub -n $1 -t $2 -m smp -e DCMF_EAGER=1000000 /gpfs/home/jhammond/hpcinchemistrytutorial/armci_examples/driver.x $3 $4
