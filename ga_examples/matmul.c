@@ -378,10 +378,17 @@ int matmul(int rank, int blksz)
 	    fflush(stdout);\
     }
 
-    printf("! GA_Get A time on node %d = %f seconds\n", me, (double) t_get_a );
-    printf("! GA_Get B time on node %d = %f seconds\n", me, (double) t_get_b );
-    printf("! GA_Acc C time on node %d = %f seconds\n", me, (double) t_acc_d );
-    printf("!   DGEMM  time on node %d = %f seconds\n", me, (double) t_dgemm );
+    for (i = 0 ; i < nproc; i++){
+        if (me==i){
+            printf("! GA_Get A time on node %d = %f seconds\n", me, (double) t_get_a );
+            printf("! GA_Get B time on node %d = %f seconds\n", me, (double) t_get_b );
+            printf("! GA_Acc C time on node %d = %f seconds\n", me, (double) t_acc_d );
+            printf("!   DGEMM  time on node %d = %f seconds\n", me, (double) t_dgemm );
+	        fflush(stdout);\
+        }
+        GA_Sync();
+    }
+
 
 #ifdef DEBUG
 	GA_Print(g_d);

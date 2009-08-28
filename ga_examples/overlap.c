@@ -50,9 +50,9 @@ int overlap(int len)
     int lo_a[1],lo_b[1];
     int hi_a[1],hi_b[1];
     int ld_a[1],ld_b[1];
-    double temp;
-    double t_get_a = 0.0; // timers
-    double t_get_b = 0.0; // timers
+    long long int temp;
+    long long int t_get_a; // timers
+    long long int t_get_b; // timers
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
     ga_nbhdl_t nbh;
@@ -81,7 +81,7 @@ int overlap(int len)
     GA_Print_distribution(g_a);
     fflush(stdout);
 
-    start = MPI_Wtime(); 
+    start = getticks(); 
 
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
@@ -96,14 +96,14 @@ int overlap(int len)
         hi_a[0] = (me * len - 1);
     }
 
-    temp = MPI_Wtime(); 
+    temp = getticks(); 
     NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
-    t_get_a += (double) (MPI_Wtime() - temp);
+    t_get_a = (double) (getticks() - temp);
 
     GA_Sync();
     printf("Process %5d: lo_a [0] = %12d hi_a [0] = %12d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
     GA_Sync();
-    printf("Process %5d: NGA_Get+delay total time = %12lf\n",me,t_get_a); fflush(stdout);
+    printf("Process %5d: NGA_Get+delay total time = %12d\n",me,t_get_a); fflush(stdout);
     GA_Sync();
 
     if (me == 0) printf("\nProcess %d: doing the non-blocking version...\n",me);
@@ -116,15 +116,15 @@ int overlap(int len)
         hi_b[0] = (me * len - 1);
     }
 
-    temp = MPI_Wtime();
+    temp = getticks();
     NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&nbh);
     NGA_NbWait(&nbh);
-    t_get_b += (double) (MPI_Wtime() - temp);
+    t_get_b = (double) (getticks() - temp);
 
     GA_Sync();
     printf("Process %5d: lo_b [0] = %12d hi_b [0] = %12d\n",me,lo_b[0],hi_b[0]); fflush(stdout);
     GA_Sync();
-    printf("Process %5d: NGA_NbGet+delay total time = %12lf\n",me,t_get_b); fflush(stdout);
+    printf("Process %5d: NGA_NbGet+delay total time = %12d\n",me,t_get_b); fflush(stdout);
     GA_Sync();
 
     if ((ARMCI_Free_local(p_b) != 0) && (me == 0)) printf("%s: ARMCI_Free_local failed at line %d\n",__FILE__,__LINE__);
