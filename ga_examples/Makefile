@@ -142,6 +142,13 @@ endif
 
 OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o
 
+ifeq ($(TARGET),BGP)
+  OBJECTS += getticks_bgp.o
+endif
+ifeq ($(TARGET),LINUX64)
+  OBJECTS += getticks_linux.o
+endif
+
 all: driver.x
 
 refresh: realclean all

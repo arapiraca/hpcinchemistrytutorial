@@ -27,6 +27,19 @@
  *                                                                         *
  ***************************************************************************/
 
+unsigned long long int getticks();
+
+void delay(unsigned long long delay_ticks)
+{
+  unsigned long long start, end;
+
+  start = getticks();
+  end = start + delay_ticks;
+
+  while (start < end)
+    start = getticks();
+}
+
 int overlap(int len)
 {
 	int me,nproc,status;
@@ -42,6 +55,7 @@ int overlap(int len)
     double t_get_b = 0.0; // timers
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
+    ga_nbhdl_t nbh;
 
     nproc=GA_Nnodes();
     me=GA_Nodeid();
@@ -49,7 +63,7 @@ int overlap(int len)
     dims[0] = len*nproc;
     chunk[0] = len;
 
-    if (me == 0) printf("Process %d: running overlap with length %d vector\n",me,len);
+    if (me == 0) printf("Process %5d: running overlap with length %d vector\n",me,len);
 
     g_a= GA_Create_handle();
     GA_Set_array_name(g_a,"matrix A");
@@ -72,23 +86,45 @@ int overlap(int len)
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
 
+    if (me == 0) printf("\nProcess %5d: doing the blocking version...\n",me);
+    GA_Sync();
     if (me == 0){
         lo_a[0] = (nproc - 1) * len;
         hi_a[0] = (nproc * len - 1);
-        temp = MPI_Wtime(); 
-        NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
-        t_get_a += (double) (MPI_Wtime() - temp);
     } else {
         lo_a[0] = (me - 1) * len;
         hi_a[0] = (me * len - 1);
-        temp = MPI_Wtime(); 
-        NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
-        t_get_a += (double) (MPI_Wtime() - temp);
     }
+
+    temp = MPI_Wtime(); 
+    NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
+    t_get_a += (double) (MPI_Wtime() - temp);
+
     GA_Sync();
-    printf("Process %d: lo_a [0] = %d hi_a [0] = %d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
+    printf("Process %5d: lo_a [0] = %12d hi_a [0] = %12d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
     GA_Sync();
-    printf("Process %d: NGA_Get time = %lf\n",me,t_get_a); fflush(stdout);
+    printf("Process %5d: NGA_Get+delay total time = %12lf\n",me,t_get_a); fflush(stdout);
+    GA_Sync();
+
+    if (me == 0) printf("\nProcess %d: doing the non-blocking version...\n",me);
+    GA_Sync();
+    if (me == 0){
+        lo_b[0] = (nproc - 1) * len;
+        hi_b[0] = (nproc * len - 1);
+    } else {
+        lo_b[0] = (me - 1) * len;
+        hi_b[0] = (me * len - 1);
+    }
+
+    temp = MPI_Wtime();
+    NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&nbh);
+    NGA_NbWait(&nbh);
+    t_get_b += (double) (MPI_Wtime() - temp);
+
+    GA_Sync();
+    printf("Process %5d: lo_b [0] = %12d hi_b [0] = %12d\n",me,lo_b[0],hi_b[0]); fflush(stdout);
+    GA_Sync();
+    printf("Process %5d: NGA_NbGet+delay total time = %12lf\n",me,t_get_b); fflush(stdout);
     GA_Sync();
 
     if ((ARMCI_Free_local(p_b) != 0) && (me == 0)) printf("%s: ARMCI_Free_local failed at line %d\n",__FILE__,__LINE__);
