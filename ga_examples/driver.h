@@ -33,7 +33,11 @@
 #include "sndrcv.h"
 #include "ga.h"
 #include "mpi.h"
-#include "essl.h"
+
+#ifdef USE_GSL
+    #include "essl.h"
+#endif
+
 
 #ifdef USE_GSL
     #include "gsl_math.h"

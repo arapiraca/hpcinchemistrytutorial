@@ -26,6 +26,8 @@ int transpose(int rank, int blksz); // matrix transpose
 int matmul(int rank, int blksz); // matrix multiplication
 int matmul2(int rank, int blksz); // matrix multiplication for symmetric matrices
 int matvec(int rank, int blksz); // fake sparse matrix-vector product
+int gemm_test(int rank);
+int overlap(int len); // test of comm/comp overlap
 
 int main(int argc, char **argv)
 {
@@ -146,11 +148,37 @@ int main(int argc, char **argv)
         }
     } else if (test == 6){
         if(me == 0){
-            printf("Running gemm_test on process 0\n",me);
+            printf("Running gemm_test on process %d\n",me);
             fflush(stdout);
             status = gemm_test(rank);
             if(status != 0){
                 printf("%s: gemm_test() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
+    } else if (test == 7){
+        if(nproc%2 != 0){
+            if (me == 0){
+                printf("You need to use an even number of processes\n");
+                fflush(stdout);
+                ARMCI_Cleanup();
+                MPI_Abort(MPI_COMM_WORLD,test);
+            }
+        }
+        if(me == 0){
+            printf("Running overlap with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        int len;
+        if (argc  > 2){
+            len = atoi(argv[2]);
+        } else {
+            len = 10;
+        }
+        status = overlap(len);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: overlap() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
         }

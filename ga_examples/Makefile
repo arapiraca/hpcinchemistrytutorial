@@ -32,9 +32,8 @@ ifeq ($(TARGET),LINUX64)
    MPI_INC=-I$(MPI_PREFIX)/include
    MPI_LIB=-L$(MPI_PREFIX)/lib -lmpi
 
-   GA_PREFIX=/software/ga/ga-trunk
+   GA_PREFIX=/software/ga/ga-4-2
    GA_INC=-I$(GA_PREFIX)/include
-   #GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
    GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -larmci -ltcgmsg-mpi
 
    GSL_INC=-I/usr/include/gsl
@@ -44,6 +43,9 @@ ifeq ($(TARGET),LINUX64)
    BLAS=$(GOTO)
 
    EXTRAS=-lgomp -lgfortran -lm -lpthread
+
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(GSL_LIB) $(BLAS) $(EXTRAS)
+   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(GSL_INC)
 
    OPT = -O3 -m64 -malign-double
    OPT+= -march=core2 -mtune=core2
@@ -55,21 +57,11 @@ ifeq ($(TARGET),LINUX64)
 
    CC=$(MPI_PREFIX)/bin/mpicc
    COPT = $(OPT)
-   CFLAGS=-g $(COPT) -Wall
+   CFLAGS=-g $(COPT) -Wall $(INC)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
       CPPFLAGS+=-DDEBUG
    endif
-
-
-   CXX=$(MPI_PREFIX)/bin/mpicxx
-   CXXOPT = $(OPT)
-   CXXFLAGS=-g $(CXXOPT) -Wall
-   CXXPP=$(CXX) -E
-   CXXPPFLAGS = $(PPFLAGS)
-
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(GSL_LIB) $(BLAS) $(EXTRAS)
-   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(GSL_INC)
 
    LD=$(CC)
    LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2
@@ -148,7 +140,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o
 
 all: driver.x
 
