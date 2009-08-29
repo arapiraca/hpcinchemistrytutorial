@@ -99,11 +99,12 @@ int overlap(int len)
     temp = getticks(); 
     NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
     t_get_a = getticks() - temp;
+    printf("t_get_a = %lld\n",t_get_a);
 
     GA_Sync();
     printf("Process %5d: lo_a [0] = %12d hi_a [0] = %12d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
     GA_Sync();
-    printf("Process %5d: NGA_Get+delay total time = %12d\n",me,t_get_a); fflush(stdout);
+    printf("Process %5d: NGA_Get+delay total time = %12lld\n",me,t_get_a); fflush(stdout);
     GA_Sync();
 
     if (me == 0) printf("\nProcess %d: doing the non-blocking version...\n",me);
@@ -120,11 +121,12 @@ int overlap(int len)
     NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&nbh);
     NGA_NbWait(&nbh);
     t_get_b = getticks() - temp;
+    printf("t_get_b = %lld\n",t_get_b);
 
     GA_Sync();
     printf("Process %5d: lo_b [0] = %12d hi_b [0] = %12d\n",me,lo_b[0],hi_b[0]); fflush(stdout);
     GA_Sync();
-    printf("Process %5d: NGA_NbGet+delay total time = %12d\n",me,t_get_b); fflush(stdout);
+    printf("Process %5d: NGA_NbGet+delay total time = %12lld\n",me,t_get_b); fflush(stdout);
     GA_Sync();
 
     if ((ARMCI_Free_local(p_b) != 0) && (me == 0)) printf("%s: ARMCI_Free_local failed at line %d\n",__FILE__,__LINE__);
