@@ -27,6 +27,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#define REPS 28
+
 unsigned long long int getticks();
 
 void delay(unsigned long long delay_ticks)
@@ -42,6 +44,7 @@ void delay(unsigned long long delay_ticks)
 
 int overlap(int len)
 {
+    int i;
 	int me,nproc,status;
     int g_a,g_b; // GA handles
     int ndim = 1;
@@ -50,15 +53,22 @@ int overlap(int len)
     int lo_a[1],lo_b[1];
     int hi_a[1],hi_b[1];
     int ld_a[1],ld_b[1];
-    unsigned long long int temp;
-    unsigned long long int t_get_a; // timers
-    unsigned long long int t_get_b; // timers
+    unsigned long long int tt, cp, cm, t0, t1;
+    unsigned long long int delays[ REPS ];
+    double ov;
     double* p_a;  // pointers for local access to GAs
     double* p_b;  // pointers for local access to GAs
     ga_nbhdl_t nbh;
 
     nproc=GA_Nnodes();
     me=GA_Nodeid();
+
+    /* setup delays */
+    delays[0] = 0;
+    for ( i = 1; i < REPS; i++ )
+    {
+        delays[i] = pow(2,i) - 1;
+    }
 
     dims[0] = len*nproc;
     chunk[0] = len;
@@ -88,6 +98,7 @@ int overlap(int len)
 
     if (me == 0) printf("\nProcess %5d: doing the blocking version...\n",me);
     GA_Sync();
+
     if (me == 0){
         lo_a[0] = (nproc - 1) * len;
         hi_a[0] = (nproc * len - 1);
@@ -96,19 +107,30 @@ int overlap(int len)
         hi_a[0] = (me * len - 1);
     }
 
-    temp = getticks(); 
-    NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
-    t_get_a = getticks() - temp;
-    printf("t_get_a = %lld\n",t_get_a);
+    for ( i = 0; i < REPS; i++ ){
 
-    GA_Sync();
-    printf("Process %5d: lo_a [0] = %12d hi_a [0] = %12d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
-    GA_Sync();
-    printf("Process %5d: NGA_Get+delay total time = %12lld\n",me,t_get_a); fflush(stdout);
-    GA_Sync();
+        t0 = getticks(); 
+        NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
+        delay( delays[i] );
+        t1 = getticks();
+
+        if (me == 0){
+            tt = t1 - t0;
+            cp = delays[i];
+            cm = tt - cp;
+            ov = (double)cp / (double)tt;
+            printf("BLOCKING %5d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n",me,cp,cm,tt,ov);
+        }
+        fflush(stdout);
+        GA_Sync();
+    }
+
+    //printf("Process %5d: lo_a [0] = %12d hi_a [0] = %12d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
+    //GA_Sync();
 
     if (me == 0) printf("\nProcess %d: doing the non-blocking version...\n",me);
     GA_Sync();
+
     if (me == 0){
         lo_b[0] = (nproc - 1) * len;
         hi_b[0] = (nproc * len - 1);
@@ -117,17 +139,27 @@ int overlap(int len)
         hi_b[0] = (me * len - 1);
     }
 
-    temp = getticks();
-    NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&nbh);
-    NGA_NbWait(&nbh);
-    t_get_b = getticks() - temp;
-    printf("t_get_b = %lld\n",t_get_b);
+    for ( i = 0; i < REPS; i++ ){
 
-    GA_Sync();
-    printf("Process %5d: lo_b [0] = %12d hi_b [0] = %12d\n",me,lo_b[0],hi_b[0]); fflush(stdout);
-    GA_Sync();
-    printf("Process %5d: NGA_NbGet+delay total time = %12lld\n",me,t_get_b); fflush(stdout);
-    GA_Sync();
+        t0 = getticks();
+        NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&nbh);
+        delay( delays[i] );
+        NGA_NbWait(&nbh);
+        t1 = getticks();
+
+        if (me == 0){
+            tt = t1 - t0;
+            cp = delays[i];
+            cm = tt - cp;
+            ov = (double)cp / (double)tt;
+            printf("NONBLOCK %5d: comp, comm, total, ratio:  %16lld  %16lld  %16lld  %18.8lf\n",me,cp,cm,tt,ov);
+        }
+        fflush(stdout);
+        GA_Sync();
+    }
+
+    //printf("Process %5d: lo_b [0] = %12d hi_b [0] = %12d\n",me,lo_b[0],hi_b[0]); fflush(stdout);
+    //GA_Sync();
 
     if ((ARMCI_Free_local(p_b) != 0) && (me == 0)) printf("%s: ARMCI_Free_local failed at line %d\n",__FILE__,__LINE__);
     if ((ARMCI_Free_local(p_a) != 0) && (me == 0)) printf("%s: ARMCI_Free_local failed at line %d\n",__FILE__,__LINE__);
