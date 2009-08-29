@@ -87,9 +87,7 @@ int overlap(int len)
     if ((g_b == 0) && (me == 0)) printf("%s: GA_Duplicate failed at line %d with status %d\n",__FILE__,__LINE__,g_b);
     GA_Zero(g_a);
     GA_Zero(g_b);
-    GA_Sync();
-    GA_Print_distribution(g_a);
-    fflush(stdout);
+    //GA_Print_distribution(g_a);
 
     start = getticks(); 
 
