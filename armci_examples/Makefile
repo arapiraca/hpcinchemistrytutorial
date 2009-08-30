@@ -1,4 +1,4 @@
-#DEBUG=YES
+DEBUG=YES
 #HPM_PROFILING=YES
 
 #############################################
@@ -136,12 +136,15 @@ ifeq ($(TARGET),LINUX64)
   OBJECTS += getticks_linux.o
 endif
 
-all: driver.x
+all: driver.x matmul.x
 
 refresh: realclean all
 
 driver.x: $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver.x
+
+matmul.x: matmul.o
+	$(LD) $(LDFLAGS) matmul.o $(LIB) -o matmul.x
 
 $%.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@

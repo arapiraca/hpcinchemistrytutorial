@@ -36,6 +36,9 @@ int overlap_nb(int me, int nproc, int len)
 {
     int status;
     int i;
+#ifdef DEBUG
+    int n;
+#endif
     unsigned long long int delays[ REPS ];
     unsigned long long int t0, t1;
     unsigned long long int cp, cm, tt;
