@@ -62,8 +62,8 @@ int overlap_b(int me, int nproc, int len)
     }
 
     /* register remote pointers */
-    double** addr_vec1 = (double **) malloc(sizeof(double *) * nproc);
-    double** addr_vec2 = (double **) malloc(sizeof(double *) * nproc);
+    double** addr_vec1 = (double **) malloc( len * sizeof(double *) );
+    double** addr_vec2 = (double **) malloc( len * sizeof(double *) );
     ARMCI_Malloc((void **) addr_vec1, len*sizeof(double));
     ARMCI_Malloc((void **) addr_vec2, len*sizeof(double));
     MPI_Barrier(MPI_COMM_WORLD);
