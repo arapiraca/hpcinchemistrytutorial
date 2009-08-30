@@ -34,7 +34,7 @@ int simple_put(int me, int nproc, int len)
     int n,i;
     double t0,t1;
 
-    double** addr_vec = (double **) malloc(sizeof(double *) * nproc);
+    double** addr_vec = (double **) malloc( len * sizeof(double *) );
     ARMCI_Malloc((void **) addr_vec, len*sizeof(double));
     MPI_Barrier(MPI_COMM_WORLD);
 
