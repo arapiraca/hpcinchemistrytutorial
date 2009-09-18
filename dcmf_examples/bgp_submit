@@ -1,0 +1,2 @@
+#!/bin/csh
+cqsub -n $1 -t $2 -m smp -e DCMF_EAGER=1000000 /gpfs/home/jhammond/hpcinchemistrytutorial/dcmf_examples/driver.x $3
