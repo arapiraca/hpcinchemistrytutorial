@@ -339,6 +339,7 @@ int main(int argc, char **argv)
         volatile int done = 0;
         dcmf_cb_done.function   = function;
         dcmf_cb_done.clientdata = (void*)&done;
+        // I am too stupid with structs to map this cb to RMA_Request
 
         switch(rma_optype)
         {
@@ -347,7 +348,7 @@ int main(int argc, char **argv)
                 DCMF_Put_register(&dcmf_protocol, &dcmf_put_config);
                 RMA_Memregion origin_mem;
                 fake_MPI_RMA_Memregion_create( &origin_mem , origin_addr );
-                DCMF_Put( &dcmf_protocol , &dcmf_request , dcmf_cb_done , dcmf_attribute , target_rank , origin_mem.size ,
+                DCMF_Put( &dcmf_protocol , &dcmf_request , done , dcmf_attribute , target_rank , origin_mem.size ,
                           &origin_mem.memregion, &( (*target_mem).memregion ) , 0 , sizeof(int) , (DCMF_Callback_t){NULL,NULL} );
                 break;
 
