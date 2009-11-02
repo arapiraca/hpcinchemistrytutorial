@@ -18,15 +18,19 @@ ifeq ($(TARGET),BGP)
    DCMF_INC=-I$(DCMF_PREFIX)/include
    DCMF_LIB=-L$(DCMF_PREFIX)/lib -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
 
-   LIB=$(DCMF_LIB)
-   INC=$(DCMF_INC)
+   MPI_PREFIX=$(BGP_SYS)/comm
+   MPI_INC=-I$(MPI_PREFIX)/include
+   MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk
+
+   LIB=$(MPI_LIB) $(DCMF_LIB)
+   INC=$(MPI_INC) $(DCMF_INC)
 
    CC=bgxlc_r
    CPP=$(CC) -E
    LD=$(CC)
-   COPT=-g -O3 -qarch=440d -qtune=440 -qthreaded -qstrict
+   COPT=-g -O3 -qarch=450d -qtune=450 -qthreaded -qstrict
    CFLAGS=$(INC) $(COPT)
-   LFLAGS=-g -O3 -qarch=440d -qtune=440 -qthreaded
+   LFLAGS=-g -O3 -qarch=450d -qtune=450 -qthreaded
 
    ifeq ($(DEBUG),YES)
       CFLAGS+=-DDEBUG
