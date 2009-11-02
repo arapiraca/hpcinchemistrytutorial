@@ -1,4 +1,4 @@
-DEBUG=YES
+#DEBUG=YES
 #HPM_PROFILING=YES
 
 #############################################
@@ -92,7 +92,7 @@ ifeq ($(TARGET),BGP)
    INC=$(ARMCI_INC) $(MPI_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
-   COPT=-g -O5 -qarch=440d -qtune=440 -qthreaded -qstrict
+   COPT=-g -O5 -qarch=450d -qtune=450 -qthreaded -qstrict
    CFLAGS=$(INC) $(COPT) $(CDEF)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
@@ -107,7 +107,7 @@ ifeq ($(TARGET),BGP)
    CPPFLAGS+=$(INC)
 
    LD=$(CC)
-   LFLAGS=-g -O3 -qarch=440d -qtune=440 -qthreaded
+   LFLAGS=-g -O3 -qarch=450d -qtune=450 -qthreaded
 
 endif
 
@@ -129,12 +129,12 @@ endif
 
 OBJECTS = driver.o simple_get.o simple_put.o overlap_b.o overlap_nb.o overlap_b_ring.o overlap_nb_ring.o
 
-ifeq ($(TARGET),BGP)
-  OBJECTS += getticks_bgp.o
-endif
-ifeq ($(TARGET),LINUX64)
-  OBJECTS += getticks_linux.o
-endif
+#ifeq ($(TARGET),BGP)
+#  OBJECTS += getticks_bgp.o
+#endif
+#ifeq ($(TARGET),LINUX64)
+#  OBJECTS += getticks_linux.o
+#endif
 
 all: driver.x matmul.x
 
