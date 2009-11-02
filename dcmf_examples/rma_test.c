@@ -107,17 +107,18 @@ unsigned long long getticks(void)
 
 /***************************************************************/
 
-     typedef struct {
-         void* buffer;
-         size_t sizetype;
-         DCMF_Memregion_t memregion;
-     } RMA_Memregion;
+    typedef struct {
+        void* buffer;
+        size_t size;
+        DCMF_Memregion_t memregion;
+    } RMA_Memregion;
 
-     typedef struct {
-         volatile int done;
-     } RMA_Request;
+    typedef struct {
+        volatile int finished;
+    } RMA_Request;
 
-    void fake_MPI_RMA_Memregion_create( RMA_Memregion* mem );
+    void fake_MPI_RMA_Memregion_create( RMA_Memregion* mem ,
+                                        void* buffer );
 
     void fake_MPI_RMA_Memregion_destroy( RMA_Memregion* mem );
 
@@ -140,25 +141,25 @@ unsigned long long getticks(void)
                             MPI_Datatype target_datatype , 
                             int target_rank , 
                             MPI_Comm comm , 
-                            int RMA_Attributes ,
+                            int rma_attributes ,
                             RMA_Request* request );
 
     void fake_MPI_RMA_putb( void* origin_addr , 
                             int count,
-                            RMA_Memregion* target_addr , 
+                            RMA_Memregion* target_mem , 
                             int target_disp , 
                             int target_rank , 
                             MPI_Comm comm , 
-                            int RMA_Attributes ,
+                            int rma_attributes ,
                             RMA_Request* request );
 
     void fake_MPI_RMA_getb( void* origin_addr , 
                             int count,
-                            RMA_Memregion* target_addr , 
+                            RMA_Memregion* target_mem , 
                             int target_disp , 
                             int target_rank , 
                             MPI_Comm comm , 
-                            int RMA_Attributes ,
+                            int rma_attributes ,
                             RMA_Request* request );
 
 /***************************************************************/
@@ -167,17 +168,6 @@ int main(int argc, char **argv)
 {
     int me, nproc;
     unsigned long long t0,t1;
-
-    void* origin_addr ;
-    int origin_count ;
-    MPI_Datatype origin_datatype ;
-    RMA_Memregion* target_mem ;
-    int target_disp ;
-    int target_count ;
-    MPI_Datatype target_datatype ;
-    int target_rank ;
-    MPI_Comm comm ;
-    RMA_Request* request ;
 
     MPI_Init(&argc, &argv);
 
@@ -217,10 +207,13 @@ int main(int argc, char **argv)
     int payload;
     payload = 1984;
 
-    RMA_Request xfer_request;
-
-    RMA_Memregion local_memregion;
+    MPI_Datatype origin_datatype ;
     RMA_Memregion target_memregion;
+    int target_disp ;
+    MPI_Datatype target_datatype ;
+    int target_rank ;
+    MPI_Comm comm ;
+    RMA_Request xfer_request;
 
     if ( version == 1 )
     {
@@ -253,13 +246,15 @@ int main(int argc, char **argv)
 
 /***************************************************************/
 
-    void fake_MPI_RMA_Memregion_create( RMA_Memregion* mem )
+    void fake_MPI_RMA_Memregion_create( RMA_Memregion* mem ,
+                                        void* buffer )
     {
-        RMA_Memregion local;
-        local = *mem;        
         size_t bytes_out;
-        DCMF_Memregion_create(&local.memregion, &bytes_out, local.sizetype, local.buffer, 0);
-        if ( bytes_out != local.sizetype )
+        RMA_Memregion local;
+        local = *mem;
+        local.buffer = buffer;
+        DCMF_Memregion_create( &local.memregion , &bytes_out , local.size , local.buffer , 0 );
+        if ( bytes_out != local.size )
         {
             fprintf( stdout , "DCMF_Memregion_create failed" );
             MPI_Abort( MPI_COMM_WORLD , 911 );
@@ -299,18 +294,18 @@ int main(int argc, char **argv)
                             void* origin_addr , 
                             int origin_count ,
                             MPI_Datatype origin_datatype , 
-                            RMA_Memregion* target_addr , 
+                            RMA_Memregion* target_mem , 
                             int target_disp , 
                             int target_count ,
                             MPI_Datatype target_datatype , 
                             int target_rank , 
                             MPI_Comm comm , 
-                            int RMA_Attributes ,
+                            int rma_attributes ,
                             RMA_Request* request )
     {
 
-        int result;
 
+        int result;
         if ( origin_datatype != target_datatype && target_datatype != MPI_DATATYPE_NULL )
         {
             result = datatype_check( origin_datatype , target_datatype , comm , target_rank );
@@ -321,10 +316,39 @@ int main(int argc, char **argv)
             }
         }
 
+        int dcmf_attribute;
+        if ( rma_attributes == RMA_ATTR_NONE )
+        {
+            dcmf_attribute = DCMF_RELAXED_CONSISTENCY;
+        }
+        else if ( rma_attributes == RMA_ATTR_AOBR )
+        {
+            dcmf_attribute = DCMF_SEQUENTIAL_CONSISTENCY;
+        }
+        else
+        {
+            fprintf( stdout , "invalid rma_attributes\n" );
+            MPI_Abort( comm , 911 );
+        }
+
+        DCMF_Protocol_t dcmf_protocol;
+        DCMF_Put_Configuration_t dcmf_put_config;
+        DCMF_Request_t dcmf_request;
+        DCMF_Callback_t dcmf_cb_done;
+
+        volatile int done = 0;
+        dcmf_cb_done.function   = function;
+        dcmf_cb_done.clientdata = (void*)&done;
+
         switch(rma_optype)
         {
             case RMA_PUT:
-                
+                dcmf_put_config.protocol = DCMF_DEFAULT_PUT_PROTOCOL;
+                DCMF_Put_register(&dcmf_protocol, &dcmf_put_config);
+                RMA_Memregion origin_mem;
+                fake_MPI_RMA_Memregion_create( &origin_mem , origin_addr );
+                DCMF_Put( &dcmf_protocol , &dcmf_request , dcmf_cb_done , dcmf_attribute , target_rank , origin_mem.size ,
+                          &origin_mem.memregion, &( (*target_mem).memregion ) , 0 , sizeof(int) , (DCMF_Callback_t){NULL,NULL} );
                 break;
 
             case RMA_GET:
@@ -360,11 +384,11 @@ int main(int argc, char **argv)
 
     void fake_MPI_RMA_putb( void* origin_addr , 
                             int count,
-                            RMA_Memregion* target_addr , 
+                            RMA_Memregion* target_mem , 
                             int target_disp , 
                             int target_rank , 
                             MPI_Comm comm , 
-                            int RMA_Attributes ,
+                            int rma_attributes ,
                             RMA_Request* request )
     {
 
