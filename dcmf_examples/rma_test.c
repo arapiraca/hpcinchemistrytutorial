@@ -91,17 +91,18 @@ unsigned long long getticks(void)
 #define RMA_ACC_PROD 5
 #define RMA_ACC_LXOR 6
 
-// possible values of rma_optype
-#define RMA_GET 1
-#define RMA_PUT 2
+// possible values of rma_attributes
+// bit field AOBR (atomic, ordered, blocking, remote completion)
+#define RMA_ATTR_NONE 0
+#define RMA_ATTR_AOBR 15
 
 /***************************************************************/
 
-     struct {
+     typedef struct {
          void* addr;
      } RMA_Memregion;
 
-     struct {
+     typedef struct {
          int done;
      } RMA_Request;
 
@@ -109,7 +110,7 @@ unsigned long long getticks(void)
                             void* origin_addr , 
                             int origin_count ,
                             int origin_datatype , 
-                            RMA_Memregion* target_addr , 
+                            RMA_Memregion* target_mem , 
                             int target_disp , 
                             int target_count ,
                             int target_datatype , 
@@ -143,17 +144,15 @@ int main(int argc, char **argv)
     int me, nproc;
     unsigned long long t0,t1;
 
-    int rma_optype ;
     void* origin_addr ;
     int origin_count ;
     int origin_datatype ;
-    RMA_Memregion* target_addr ;
+    RMA_Memregion* target_mem ;
     int target_disp ;
     int target_count ;
     int target_datatype ;
     int target_rank ;
     MPI_Comm comm ;
-    int RMA_Attributes ;
     RMA_Request* request ;
 
     MPI_Init(&argc, &argv);
@@ -181,7 +180,7 @@ int main(int argc, char **argv)
 /***************************************************************/
 
     t0 = getticks();
-    fake_MPI_RMA_xfer( rma_optype , 
+    fake_MPI_RMA_xfer( RMA_PUT , 
                        origin_addr , 
                        origin_count ,
                        origin_datatype , 
@@ -191,7 +190,7 @@ int main(int argc, char **argv)
                        target_datatype , 
                        target_rank , 
                        comm , 
-                       RMA_Attributes ,
+                       RMA_ATTR_NONE ,
                        request );
     t1 = getticks();
 
