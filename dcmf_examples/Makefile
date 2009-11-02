@@ -24,9 +24,9 @@ ifeq ($(TARGET),BGP)
    CC=bgxlc_r
    CPP=$(CC) -E
    LD=$(CC)
-   COPT=-g -O0 -qarch=440d -qtune=440 -qthreaded -qstrict
+   COPT=-g -O3 -qarch=440d -qtune=440 -qthreaded -qstrict
    CFLAGS=$(INC) $(COPT)
-   LFLAGS=-g -O0 -qarch=440d -qtune=440 -qthreaded
+   LFLAGS=-g -O3 -qarch=440d -qtune=440 -qthreaded
 
    ifeq ($(DEBUG),YES)
       CFLAGS+=-DDEBUG
@@ -45,14 +45,17 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o
+OBJECTS = driver.o rma_test.o
 
-all: driver.x
+all: driver.x rma_test.x
 
 refresh: realclean all
 
 driver.x: $(OBJECTS)
-	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver.x
+	$(LD) $(LDFLAGS) driver.o $(LIB) -o driver.x
+
+rma_test.x: $(OBJECTS)
+	$(LD) $(LDFLAGS) rma_test.o $(LIB) -o rma_test.x
 
 $%.o: %.c
 	$(CC) -c $(CFLAGS) $(INC) $< -o $@
@@ -62,6 +65,4 @@ clean:
 
 realclean: clean
 	$(RM) $(RMFLAGS) *.x *.a
-
-
 
