@@ -214,20 +214,27 @@ int main(int argc, char **argv)
 
 /***************************************************************/
 
-    t0 = getticks();
-    fake_MPI_RMA_xfer( RMA_PUT , 
-                       origin_addr , 
-                       origin_count ,
-                       origin_datatype , 
-                       target_mem , 
-                       target_disp , 
-                       target_count ,
-                       target_datatype , 
-                       target_rank , 
-                       comm , 
-                       RMA_ATTR_NONE ,
-                       request );
-    t1 = getticks();
+    int payload;
+    payload = 1984;
+
+    RMA_Request xfer_request;
+
+    RMA_Memregion local_memregion;
+    RMA_Memregion target_memregion;
+
+    if ( version == 1 )
+    {
+        t0 = getticks();
+        fake_MPI_RMA_xfer( RMA_PUT , &payload , 1 , MPI_INT , &target_memregion , 0 ,
+                           1 , MPI_INT , 1 , MPI_COMM_WORLD , RMA_ATTR_NONE , 
+                           &xfer_request );
+        t1 = getticks();
+    }   
+    else if ( version == 2 )
+    {
+        t0 = getticks();
+        t1 = getticks();
+    }
 
     LINE_STAMP
 
