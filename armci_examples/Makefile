@@ -84,8 +84,8 @@ ifeq ($(TARGET),BGP)
    MPI_INC=-I$(MPI_PREFIX)/include
    MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
 
-   ARMCI_PREFIX=/home/jhammond/ga-4-2
-   ARMCI_INC=-I$(ARMCI_PREFIX)/include
+   ARMCI_PREFIX=/home/projects/nwchem/ga-cvs-dev
+   ARMCI_INC=-I$(ARMCI_PREFIX)/armci/src
    ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/$(TARGET) -larmci
 
    LIB=$(ARMCI_LIB) $(MPI_LIB)
