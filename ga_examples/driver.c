@@ -28,6 +28,7 @@ int matmul2(int rank, int blksz); // matrix multiplication for symmetric matrice
 int matvec(int rank, int blksz); // fake sparse matrix-vector product
 int gemm_test(int rank);
 int overlap(int len); // test of comm/comp overlap
+int bigtest(int rank);
 
 int main(int argc, char **argv)
 {
@@ -40,11 +41,18 @@ int main(int argc, char **argv)
     rank = 6;
     blksz = 2;
 
-    MPI_Init(&argc, &argv);
-    GA_Initialize();
-    MA_init(MT_DBL, 128*1024*1024, 8*1024*1024);
+    int desired = MPI_THREAD_MULTIPLE;
+    int provided;
+    MPI_Init_thread(&argc, &argv, desired, &provided);
 
-#ifdef HPC_PROFILING
+    if ( provided != MPI_THREAD_MULTIPLE ){
+      printf("provided != MPI_THREAD_MULTIPLE\n");
+    }
+
+    GA_Initialize();
+    MA_init(MT_DBL, 32*1024*1024, 2*1024*1024);
+
+#ifdef HPM_PROFILING
     HPM_Init();
 #endif
 
@@ -63,13 +71,15 @@ int main(int argc, char **argv)
     if (test > 1){
         if (argc  > 2){
             rank = atoi(argv[2]);
+        } else {
+            rank = 1000;
         }
         if (argc  > 3){
             blksz = atoi(argv[3]);
+        } else {
+            blksz = -1;
         }
     }
-
-
 
 #ifdef DEBUG
     if(me == 0){
@@ -182,9 +192,33 @@ int main(int argc, char **argv)
                 fflush(stdout);
             }
         }
+    } else if (test == 8){
+        if(me == 0){
+            printf("Running ga_dgemm_test with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        status = ga_dgemm_test(rank,blksz);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: ga_dgemm_test() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
+    } else if (test == 9){
+        if(me == 0){
+            printf("Running bigtest with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        status = bigtest(rank);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: bigtest() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
     }
 
-#ifdef HPC_PROFILING
+#ifdef HPM_PROFILING
     HPM_Print();
 #endif
 
