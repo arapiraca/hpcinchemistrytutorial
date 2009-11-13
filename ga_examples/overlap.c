@@ -94,7 +94,7 @@ int overlap(int len)
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
 
-    if (me == 0) printf("\nProcess %5d: doing the blocking version...\n",me);
+    if (me == 0) printf("\nProcess %5d: doing the BLOCKING version with length %d vector\n",me,len);
     GA_Sync();
 
     if (me == 0){
@@ -126,7 +126,7 @@ int overlap(int len)
     //printf("Process %5d: lo_a [0] = %12d hi_a [0] = %12d\n",me,lo_a[0],hi_a[0]); fflush(stdout);
     //GA_Sync();
 
-    if (me == 0) printf("\nProcess %d: doing the non-blocking version...\n",me);
+    if (me == 0) printf("\nProcess %5d: doing the NONBLOCK version with length %d vector\n",me,len);
     GA_Sync();
 
     if (me == 0){

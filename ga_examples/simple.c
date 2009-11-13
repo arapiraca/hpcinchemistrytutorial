@@ -51,7 +51,7 @@ int simple()
     me=GA_Nodeid();
 
     for(i=0; i<ndim; i++){
-        dims[i] = 6;
+        dims[i] = 100;
         chunk[i] = -1;
     }
 
