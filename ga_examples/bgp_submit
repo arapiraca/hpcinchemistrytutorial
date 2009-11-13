@@ -1,4 +1,9 @@
 #!/bin/csh
-cqsub -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4
-#cqsub -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4
-#cqsub -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4
+
+cqsub -e DCMF_INTERRUPT=0 -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
+cqsub -e DCMF_INTERRUPT=0 -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
+cqsub -e DCMF_INTERRUPT=0 -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
+
+cqsub -e DCMF_INTERRUPT=1 -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
+cqsub -e DCMF_INTERRUPT=1 -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
+cqsub -e DCMF_INTERRUPT=1 -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
