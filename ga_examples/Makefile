@@ -90,14 +90,14 @@ ifeq ($(TARGET),BGP)
    MPI_INC=-I$(MPI_PREFIX)/include
    MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
 
-   GA_PREFIX=/home/projects/nwchem/ga-cvs-dev-i8
+   GA_PREFIX=/home/projects/nwchem/ga-cvs-dev
    GA_INC=-I$(GA_PREFIX)/include -I$(GA_PREFIX)/armci/src
-   GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
-   //GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
+   //GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+   GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
 
-   #ESSL_PREFIX=/soft/apps/ESSL-4.4
-   #ESSL_INC=-I$(ESSL_PREFIX)/include
-   #ESSL_LIB=-L$(ESSL_PREFIX)/lib -lesslbg -lmass
+   ESSL_PREFIX=/soft/apps/ESSL-4.4
+   ESSL_INC=-I$(ESSL_PREFIX)/include
+   ESSL_LIB=-L$(ESSL_PREFIX)/lib -lesslbg -lmass
 
    OMP=/opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
 
