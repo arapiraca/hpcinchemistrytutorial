@@ -39,17 +39,17 @@
  *                                                                         *
  ***************************************************************************/
 
-INTEGER bigtest(INTEGER rank)
+int bigtest(int rank)
 {
-	INTEGER me,nproc;
-    //INTEGER p,d,i,j;
-    INTEGER g_a;
-    INTEGER status;
-    INTEGER ndim=1;
-    INTEGER dims[ndim];
-    INTEGER chunk[ndim];
-    INTEGER pg_world;
-    //INTEGER* pg_list;
+	int me,nproc;
+    //int p,d,i,j;
+    int g_a;
+    int status;
+    int ndim=1;
+    int dims[ndim];
+    int chunk[ndim];
+    int pg_world;
+    //int* pg_list;
     double val;
 
     nproc=GA_Nnodes();
@@ -58,7 +58,7 @@ INTEGER bigtest(INTEGER rank)
     dims[0] = pow(2,rank);
     chunk[0] = -1;
 
-    //pg_list = (INTEGER*) malloc(nproc*sizeof(INTEGER));
+    //pg_list = (int*) malloc(nproc*sizeof(int));
     //for(p=0; p<nproc; p++){ pg_list[p]=p; }
     //pg_world = GA_Pgroup_create(pg_list,nproc);
     /* This is an easier way to get the world group */
