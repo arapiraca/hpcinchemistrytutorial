@@ -4,33 +4,17 @@
 #
 #############################################
 
-ifeq ($(TARGET),BGP)
-
    DEBUG=YES
-   HPM_PROFILING=YES
+   #HPM_PROFILING=YES
 
    BGP_SYS=/bgsys/drivers/ppcfloor
 
    RM = rm
    RMFLAGS = -f
 
-   DCMF_PREFIX=$(BGP_SYS)/comm
-   DCMF_INC=-I$(DCMF_PREFIX)/include
-   DCMF_LIB=-L$(DCMF_PREFIX)/lib -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
-
-   MPI_PREFIX=$(BGP_SYS)/comm
-   MPI_INC=-I$(MPI_PREFIX)/include
-   MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk
-
-   LIB=$(MPI_LIB) $(DCMF_LIB)
-   INC=$(MPI_INC) $(DCMF_INC)
-
-   CC=bgxlc_r
-   CPP=$(CC) -E
-   LD=$(CC)
+   CC=mpixlc_r
    COPT=-g -O3 -qarch=450d -qtune=450 -qthreaded -qstrict
    CFLAGS=$(INC) $(COPT)
-   LFLAGS=-g -O3 -qarch=450d -qtune=450 -qthreaded
 
    ifeq ($(DEBUG),YES)
       CFLAGS+=-DDEBUG
@@ -40,8 +24,6 @@ ifeq ($(TARGET),BGP)
       LIB += /soft/apps/UPC/lib/libhpm.a
       CFLAGS+=-DHPM_PROFILING
    endif
-
-endif
 
 #############################################
 #
@@ -55,11 +37,11 @@ all: driver.x rma_test.x
 
 refresh: realclean all
 
-driver.x: $(OBJECTS)
-	$(LD) $(LDFLAGS) driver.o $(LIB) -o driver.x
+driver.x: driver.o
+	$(CC) $(CCFLAGS) driver.o $(LIB) -o driver.x
 
-rma_test.x: $(OBJECTS)
-	$(LD) $(LDFLAGS) rma_test.o $(LIB) -o rma_test.x
+rma_test.x: rma_test.o
+	$(CC) $(CCFLAGS) rma_test.o $(LIB) -o rma_test.x
 
 $%.o: %.c
 	$(CC) -c $(CFLAGS) $(INC) $< -o $@

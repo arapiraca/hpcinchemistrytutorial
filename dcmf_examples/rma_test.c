@@ -74,27 +74,6 @@
 
 /***************************************************************/
 
-unsigned long long getticks(void)
-{
-     unsigned int rx, ry, rz;
-     unsigned long long r64;
-
-     do
-     {
-         asm volatile ( "mftbu %0" : "=r"(rx) );
-         asm volatile ( "mftb %0" : "=r"(ry) );
-         asm volatile ( "mftbu %0" : "=r"(rz) );
-     }
-     while ( rx != rz );
-
-     r64 = rx;
-     r64 = ( r64 << 32 ) | ry;
-     
-     return r64;
-}
-
-/***************************************************************/
-
 // possible values of rma_optype
 #define RMA_GET 1
 #define RMA_PUT 2
@@ -227,16 +206,16 @@ int main(int argc, char **argv)
 
     if ( version == 1 )
     {
-        t0 = getticks();
+        t0 = DCMF_Timebase();
         fake_MPI_RMA_xfer( RMA_PUT , &payload , 1 , MPI_INT , &target_memregion , 0 ,
                            1 , MPI_INT , 1 , MPI_COMM_WORLD , RMA_ATTR_NONE , 
                            &xfer_request );
-        t1 = getticks();
+        t1 = DCMF_Timebase();
     }   
     else if ( version == 2 )
     {
-        t0 = getticks();
-        t1 = getticks();
+        t0 = DCMF_Timebase();
+        t1 = DCMF_Timebase();
     }
 
     LINE_STAMP
