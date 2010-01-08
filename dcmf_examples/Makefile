@@ -4,7 +4,7 @@
 #
 #############################################
 
-   DEBUG=YES
+   #DEBUG=YES
    #HPM_PROFILING=YES
 
    BGP_SYS=/bgsys/drivers/ppcfloor
@@ -31,9 +31,7 @@
 #
 #############################################
 
-OBJECTS = driver.o rma_test.o
-
-all: driver.x rma_test.x
+all: driver.x rma_test.x am_test1.x
 
 refresh: realclean all
 
@@ -42,6 +40,9 @@ driver.x: driver.o
 
 rma_test.x: rma_test.o
 	$(CC) $(CCFLAGS) rma_test.o $(LIB) -o rma_test.x
+
+am_test1.x: am_test1.o
+	$(CC) $(CCFLAGS) am_test1.o $(LIB) -o am_test1.x
 
 $%.o: %.c
 	$(CC) -c $(CFLAGS) $(INC) $< -o $@

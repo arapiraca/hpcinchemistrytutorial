@@ -70,31 +70,31 @@ int main(int argc, char **argv)
 
 /***************************************************************/
 
-    DCMF_Protocol_t* registration;
-    DCMF_Send_Configuration_t* configuration;
-    result = DCMF_Send_register( registration,
-                                 configuration );
+    DCMF_Result               result;
+    DCMF_Protocol_t           registration;
+    DCMF_Send_Configuration_t configuration;
+
+    result = DCMF_Send_register( &registration,
+                                 &configuration );
 
     DCMF_Consistency consistency = DCMF_RELAXED_CONSISTENCY;
-    DCMF_Result      result;
-    DCMF_Request_t*  request;
+    DCMF_Request_t   request;
     DCMF_Callback_t  cb_done;
-    DCQuad*          msginfo;
+    DCQuad           msginfo;
 
     size_t target = 1;
     size_t bytes  = 0;
     size_t count  = 0;
-    char*  src    = NULL;
+    char   src    = NULL;
 
     if (rank==0)
     {
-        result = DCMF_Send( registration, request, cb_done, consistency,
-                            target, bytes, src, msginfo, count );   
+        result = DCMF_Send( &registration, &request, cb_done, consistency,
+                            target, bytes, &src, &msginfo, count );   
     }
 
 /***************************************************************/
 
-    OUTPUT( "__LINE__ of __FILE__\n");
     DCMF_CRITICAL( DCMF_Messager_finalize(); )
 
 #ifdef HPC_PROFILING
