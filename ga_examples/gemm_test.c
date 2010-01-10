@@ -138,7 +138,7 @@ int gemm_test(int rank)
    	//dgemm_("n","n",&rank,&rank,&rank,&alpha,p_a,&rank,p_b,&rank,&beta,p_c3,&rank);
    	//dgemm_("t","t",&rank,&rank,&rank,&alpha,p_a,&rank,p_b,&rank,&beta,p_c3,&rank);
    	//dgemm_("n","n",&rank,&rank,&rank,&alpha,p_b,&rank,p_a,&rank,&beta,p_c3,&rank);
-   	dgemm("n","n",&rank,&rank,&rank,&alpha,p_b,&rank,p_a,&rank,&beta,p_c3,&rank);
+   	dgemm_("n","n",&rank,&rank,&rank,&alpha,p_b,&rank,p_a,&rank,&beta,p_c3,&rank);
 
     finish = MPI_Wtime(); 
 

@@ -360,7 +360,7 @@ int matmul(int rank, int blksz)
 
 #ifdef USE_GOTO
                     temp = MPI_Wtime(); 
-    				dgemm("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
                     t_dgemm += (double) (MPI_Wtime() - temp);
 #endif
 
