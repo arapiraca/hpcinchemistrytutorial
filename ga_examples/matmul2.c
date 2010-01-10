@@ -282,6 +282,10 @@ int matmul2(int rank, int blksz)
     				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
 #endif
 
+#ifdef USE_GOTO
+    				dgemm("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+#endif
+
 #ifdef USE_MKL
     				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
 #endif

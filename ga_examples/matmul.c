@@ -30,11 +30,13 @@
 
 //#define USE_LOOPS
 //#define USE_GSL
-#define USE_BLAS
+//#define USE_BLAS
+#define USE_GOTO
 
 #include "driver.h"
 
-void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
+//void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
+void dgemm(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
 
 /***************************************************************************
  *                                                                         *
@@ -338,8 +340,10 @@ int matmul(int rank, int blksz)
 #endif
 
 #ifdef USE_GSL
+                    temp = MPI_Wtime(); 
     				cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,blksz,blksz,blksz,
     				              one,p_a,blksz,p_b,blksz,zero,p_d,blksz);
+                    t_dgemm += (double) (MPI_Wtime() - temp);
 #endif
 
 #ifdef USE_BLAS
@@ -349,7 +353,15 @@ int matmul(int rank, int blksz)
 #endif
 
 #ifdef USE_ESSL
+                    temp = MPI_Wtime(); 
     				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+                    t_dgemm += (double) (MPI_Wtime() - temp);
+#endif
+
+#ifdef USE_GOTO
+                    temp = MPI_Wtime(); 
+    				dgemm("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
+                    t_dgemm += (double) (MPI_Wtime() - temp);
 #endif
 
     				/**************************************/

@@ -99,12 +99,15 @@ ifeq ($(TARGET),BGP)
    ESSL_INC=-I$(ESSL_PREFIX)/include
    ESSL_LIB=-L$(ESSL_PREFIX)/lib -lesslbg -lmass
 
-   OMP=/opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
+   #GOTO_LIB=/soft/apps/LAPACK/liblapack_bgp.a /soft/apps/LIBGOTO/libgoto_ppc440FP2-r1.02a.VM.a -lxlsmp
+   #GOTO_LIB=/soft/apps/LAPACK/liblapack_bgp.a /soft/apps/LIBGOTO/libgoto_ppc440FP2-r1.02a.VM.a -lxlomp_ser
 
-   EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a
+   OMP_LIB=/opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
 
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(ESSL_LIB) $(EXTRAS) $(OMP)
-   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(ESSL_INC)
+   EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a -lpthread
+
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(ESSL_LIB) $(EXTRAS) $(OMP_LIB)
+   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC)
 
    CC=$(MPI_PREFIX)/bin/mpixlc_r
    COPT=-g -O5 -qarch=450d -qtune=450 -qthreaded
@@ -120,7 +123,7 @@ ifeq ($(TARGET),BGP)
    endif
 
    LD=$(CC)
-   LFLAGS=-g -O3 -qarch=450d -qtune=450 -qthreaded
+   LDFLAGS=-g -O3 -qarch=450d -qtune=450 -qthreaded
 
 endif
 

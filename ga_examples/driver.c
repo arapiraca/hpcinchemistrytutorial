@@ -50,7 +50,7 @@ unsigned long long DCMF_Timebase(void)
 int main(int argc, char **argv)
 {
 	int me,nproc;
-    int test;
+    int test=0;
     int status;
 
     int rank,blksz;
@@ -62,8 +62,14 @@ int main(int argc, char **argv)
     int provided;
     MPI_Init_thread(&argc, &argv, desired, &provided);
 
+    //nproc=GA_Nnodes();
+    //me=GA_Nodeid();
+
+    MPI_Comm_size(MPI_COMM_WORLD,&nproc);
+    MPI_Comm_rank(MPI_COMM_WORLD,&me);
+
     if ( provided != MPI_THREAD_MULTIPLE ){
-      printf("provided != MPI_THREAD_MULTIPLE\n");
+      if ( me == 0 ) fprintf(stderr,"provided != MPI_THREAD_MULTIPLE\n");
     }
 
 #ifdef GA_INIT_ARGS
@@ -76,9 +82,6 @@ int main(int argc, char **argv)
 #ifdef HPM_PROFILING
     HPM_Init();
 #endif
-
-    nproc=GA_Nnodes();
-    me=GA_Nodeid();
 
     if (argc > 1){
         test = atoi(argv[1]);
