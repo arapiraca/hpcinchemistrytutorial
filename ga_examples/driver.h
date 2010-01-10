@@ -41,10 +41,7 @@
 #ifdef DCMF
 #include "dcmf.h"
 #else
-unsigned long long DCMF_Timebase(void)
-{
-    return (unsigned long long) clock();
-}
+unsigned long long DCMF_Timebase(void);
 #endif
 
 #include "macdecls.h"

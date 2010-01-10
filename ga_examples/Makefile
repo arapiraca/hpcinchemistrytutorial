@@ -39,7 +39,7 @@ ifeq ($(TARGET),LINUX64)
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
 
-   GOTO=-L/software/goto -lgoto
+   GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
    BLAS=$(GOTO)
 
    EXTRAS=-lgomp -lgfortran -lm -lpthread

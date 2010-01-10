@@ -40,6 +40,11 @@ int gemm_test(int rank);
 int overlap(int len); // test of comm/comp overlap
 int bigtest(int rank);
 
+unsigned long long DCMF_Timebase(void)
+{
+    return (unsigned long long) clock();
+}
+
 int main(int argc, char **argv)
 {
 	int me,nproc;
