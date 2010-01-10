@@ -59,7 +59,11 @@ int main(int argc, char **argv)
       printf("provided != MPI_THREAD_MULTIPLE\n");
     }
 
+#ifdef GA_INIT_ARGS
+    GA_Initialize_args(&argc, &argv);
+#else
     GA_Initialize();
+#endif
     MA_init(MT_DBL, 32*1024*1024, 2*1024*1024);
 
 #ifdef HPM_PROFILING
@@ -207,7 +211,7 @@ int main(int argc, char **argv)
             printf("Running ga_dgemm_test with %d processes\n",nproc);
             fflush(stdout);
         }
-        status = ga_dgemm_test(rank,blksz);
+        status = ga_dgemm_test(rank);
         if(status != 0){
             if (me == 0){
                 printf("%s: ga_dgemm_test() failed at line %d\n",__FILE__,__LINE__);

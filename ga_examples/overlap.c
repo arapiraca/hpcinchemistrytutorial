@@ -39,17 +39,15 @@
 
 #define REPS 28
 
-unsigned long long int getticks();
-
 void delay(unsigned long long delay_ticks)
 {
   unsigned long long start, end;
 
-  start = getticks();
+  start = DCMF_Timebase();
   end = start + delay_ticks;
 
   while (start < end)
-    start = getticks();
+    start = DCMF_Timebase();
 }
 
 int overlap(int len)
@@ -99,7 +97,7 @@ int overlap(int len)
     GA_Zero(g_b);
     //GA_Print_distribution(g_a);
 
-    start = getticks(); 
+    start = DCMF_Timebase(); 
 
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
@@ -117,10 +115,10 @@ int overlap(int len)
 
     for ( i = 0; i < REPS; i++ ){
 
-        t0 = getticks(); 
+        t0 = DCMF_Timebase(); 
         NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
         delay( delays[i] );
-        t1 = getticks();
+        t1 = DCMF_Timebase();
 
         if (me == 0){
             tt = t1 - t0;
@@ -149,11 +147,11 @@ int overlap(int len)
 
     for ( i = 0; i < REPS; i++ ){
 
-        t0 = getticks();
+        t0 = DCMF_Timebase();
         NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&nbh);
         delay( delays[i] );
         NGA_NbWait(&nbh);
-        t1 = getticks();
+        t1 = DCMF_Timebase();
 
         if (me == 0){
             tt = t1 - t0;

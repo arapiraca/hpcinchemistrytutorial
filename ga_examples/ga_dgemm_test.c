@@ -40,7 +40,7 @@ void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , doubl
  *                                                                         *
  ***************************************************************************/
 
-int ga_dgemm_test(int rank, int blksz)
+int ga_dgemm_test(int rank)
 {
 	int me,nproc;
     int g_a,g_b,g_c; // GA handles
@@ -48,7 +48,6 @@ int ga_dgemm_test(int rank, int blksz)
     int ndim = 2;
     int dims[2];
     int chunk[2];
-    int nblock;
     int pg_world;   // world processor group
     double alpha,beta,error;
     double one  = 1.0;
@@ -60,10 +59,9 @@ int ga_dgemm_test(int rank, int blksz)
     dims[1] = rank;
     chunk[0] = -1;
     chunk[1] = -1;
-    nblock = rank/blksz;
 
     if (me == 0){
-      printf("! ga_dgemm_test: rank %d matrix with block size %d\n",rank,blksz);
+      printf("! ga_dgemm_test: rank %d matrix with block size %d\n",rank);
     }
 
     pg_world = GA_Pgroup_get_world();

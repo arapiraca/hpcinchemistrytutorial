@@ -38,6 +38,15 @@
 #include <math.h>
 #include <time.h>
 
+#ifdef DCMF
+#include "dcmf.h"
+#else
+unsigned long long DCMF_Timebase(void)
+{
+    return (unsigned long long) clock();
+}
+#endif
+
 #include "macdecls.h"
 #include "armci.h"
 #include "sndrcv.h"

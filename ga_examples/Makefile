@@ -76,7 +76,7 @@ endif
 
 ifeq ($(TARGET),BGP)
 
-   CPPFLAGS=
+   CPPFLAGS=-DDCMF
 
    RM = rm
    RMFLAGS = -f
@@ -142,19 +142,12 @@ endif
 
 OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o
 
-ifeq ($(TARGET),BGP)
-  OBJECTS += getticks_bgp.o
-endif
-ifeq ($(TARGET),LINUX64)
-  OBJECTS += getticks_linux.o
-endif
-
 all: driver.x
 
 refresh: realclean all
 
 driver.x: $(OBJECTS)
-	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver.x
+	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver_$(TARGET).x
 
 $%.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
