@@ -61,7 +61,7 @@ int ga_dgemm_test(int rank)
     chunk[1] = -1;
 
     if (me == 0){
-      printf("! ga_dgemm_test: rank %d matrix with block size %d\n",rank);
+      printf("! ga_dgemm_test: rank %d matrix\n",rank);
     }
 
     pg_world = GA_Pgroup_get_world();

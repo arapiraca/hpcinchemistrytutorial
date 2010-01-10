@@ -1,9 +1,9 @@
 #!/bin/csh
 
-cqsub -e DCMF_INTERRUPT=0 -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
-cqsub -e DCMF_INTERRUPT=0 -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
-cqsub -e DCMF_INTERRUPT=0 -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
+cqsub -q prod-devel -e DCMF_INTERRUPT=0 -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver_BGP.x $3 $4 $5
+cqsub -q prod-devel -e DCMF_INTERRUPT=0 -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver_BGP.x $3 $4 $5
+cqsub -q prod-devel -e DCMF_INTERRUPT=0 -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver_BGP.x $3 $4 $5
 
-cqsub -e DCMF_INTERRUPT=1 -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
-cqsub -e DCMF_INTERRUPT=1 -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
-cqsub -e DCMF_INTERRUPT=1 -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver.x $3 $4 $5
+cqsub -q prod-devel -e DCMF_INTERRUPT=1 -n $1 -t $2 -m smp /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver_BGP.x $3 $4 $5
+cqsub -q prod-devel -e DCMF_INTERRUPT=1 -n $1 -t $2 -m vn /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver_BGP.x $3 $4 $5
+cqsub -q prod-devel -e DCMF_INTERRUPT=1 -n $1 -t $2 -m dual /gpfs/home/jhammond/hpcinchemistrytutorial/ga_examples/driver_BGP.x $3 $4 $5
