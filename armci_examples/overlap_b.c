@@ -39,17 +39,17 @@
 
 #define REPS 28
 
-unsigned long long int getticks();
+unsigned long long int DCMF_Timebase();
 
 void delay( unsigned long long delay_ticks )
 {
   unsigned long long start, end;
 
-  start = getticks();
+  start = DCMF_Timebase();
   end = start + delay_ticks;
 
   while (start < end)
-    start = getticks();
+    start = DCMF_Timebase();
 }
 
 int overlap_b(int me, int nproc, int len)
@@ -108,7 +108,7 @@ int overlap_b(int me, int nproc, int len)
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        t0 = getticks();
+        t0 = DCMF_Timebase();
 
         if (me == 0){
 
@@ -125,7 +125,7 @@ int overlap_b(int me, int nproc, int len)
         if((status != 0) && (me == 0)) printf("%s: ARMCI_Get failed at line %d\n",__FILE__,__LINE__);
 
         MPI_Barrier(MPI_COMM_WORLD);
-        t1 = getticks();
+        t1 = DCMF_Timebase();
 
         if (me == 0){
            //printf("Iter %6d Proc %6d: (t0,t1) = %16lld %16lld\n",i,me,t0,t1);

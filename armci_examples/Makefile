@@ -70,7 +70,7 @@ endif
 
 ifeq ($(TARGET),BGP)
 
-   CPPFLAGS=
+   CPPFLAGS=-DDCMF
 
    RM = rm
    RMFLAGS = -f
@@ -141,10 +141,10 @@ all: driver.x matmul.x
 refresh: realclean all
 
 driver.x: $(OBJECTS)
-	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver.x
+	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver_$(TARGET).x
 
 matmul.x: matmul.o
-	$(LD) $(LDFLAGS) matmul.o $(LIB) -o matmul.x
+	$(LD) $(LDFLAGS) matmul.o $(LIB) -o matmul_$(TARGET).x
 
 $%.o: %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
