@@ -6,6 +6,7 @@
 
    # Lincoln
    ifeq ($(HOSTNAME),$(findstring $(TARGET),honest))
+      OPT = -O3 -xT -no-prec-div -funroll-loops
       MKL_DIR = /usr/local/intel/mkl/10.2.2
       CUDA_DIR = /usr/local/cuda-2.2/cuda
       LIB_BITS =
@@ -13,6 +14,7 @@
 
    # Megatron
    ifeq ($(HOSTNAME),megatron)
+      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1 -no-prec-div -funroll-loops
       MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
       CUDA_DIR = /opt/cuda
       LIB_BITS = 64
@@ -28,7 +30,6 @@
    PLIB = $(PBLAS_LIB) $(CUBLAS_LIB) $(EXTRAS)
    SLIB = $(SBLAS_LIB) $(CUBLAS_LIB) $(EXTRAS)
 
-   OPT = -O3 -xT -no-prec-div -funroll-loops
 
    FC = ifort
    FOPT = $(OPT)
