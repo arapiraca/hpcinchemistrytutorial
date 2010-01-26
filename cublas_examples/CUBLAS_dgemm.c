@@ -83,11 +83,11 @@ int main(int argc, char** argv)
     fflush(stdout);
     if ( argc > 2 ) N = atoi(argv[2]);
 
-    printf("SGEMM of %d by %d matrices\n",N,N); fflush(stdout);
+    printf("# DGEMM of %d by %d matrices\n",N,N); fflush(stdout);
 
     n2 = N * N;
     nflops = 2 * N * N * N; // C = C + A * B
-    printf("SGEMM requires %8.3e flops\n",1.0*nflops); fflush(stdout);
+    printf("  DGEMM requires %8.3e flops\n",1.0*nflops); fflush(stdout);
 
     /* Allocate host memory for the matrices */
     printf("malloc h_A\n"); fflush(stdout);
