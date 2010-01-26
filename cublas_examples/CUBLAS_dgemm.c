@@ -250,8 +250,8 @@ int main(int argc, char** argv)
     printf("# cublasDgemm Gflops %f including transfer\n",1e-9 * nflops / rt_cublas); fflush(stdout);
 
     /* Check result against reference */
-    printf("CPU              GPU\n");
     if ( N < 20 ){
+        printf("CPU              GPU\n");
         for (i = 0; i < n2; ++i) printf("%20.10f %20.10f\n",h_C[i],h_D[i]);
     } fflush(stdout);
 
