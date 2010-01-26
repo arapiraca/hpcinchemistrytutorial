@@ -5,14 +5,14 @@
 #############################################
 
    # Lincoln
-   #MKL_DIR = /usr/local/intel/mkl/10.2.2
-   #CUDA_DIR = /usr/local/cuda-2.2/cuda
-   #LIB_BITS =
+   MKL_DIR = /usr/local/intel/mkl/10.2.2
+   CUDA_DIR = /usr/local/cuda-2.2/cuda
+   LIB_BITS =
 
    # Megatron
-   MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
-   CUDA_DIR = /opt/cuda
-   LIB_BITS = 64
+   #MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
+   #CUDA_DIR = /opt/cuda
+   #LIB_BITS = 64
 
    PBLAS_LIB = -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
    SBLAS_LIB = -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml

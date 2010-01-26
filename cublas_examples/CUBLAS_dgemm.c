@@ -136,10 +136,10 @@ int main(int argc, char** argv)
     rt1 = omp_get_wtime();
     tt_blas = tt1 - tt0;
     rt_blas = rt1 - rt0;
-    printf("dgemm took %lld ticks\n",tt_blas);
-    printf("dgemm took %f seconds\n",rt_blas);
-    printf("dgemm Mflops %f\n",1e-6 * nflops / rt_blas); fflush(stdout);
-    printf("dgemm Gflops %f\n",1e-9 * nflops / rt_blas); fflush(stdout);
+    //printf("dgemm took %lld ticks\n",tt_blas);
+    printf("# dgemm took %f seconds\n",rt_blas);
+    //printf("dgemm Mflops %f\n",1e-6 * nflops / rt_blas); fflush(stdout);
+    printf("# dgemm Gflops %f\n",1e-9 * nflops / rt_blas); fflush(stdout);
 
     if ( use_GPU == 0){
         /* Memory clean up */
@@ -238,16 +238,16 @@ int main(int argc, char** argv)
     
     tt_cublas = tt1 - tt0;
     rt_cublas = rt1 - rt0;
-    printf("cublasDgemm took %lld ticks excluding transfer\n",tt_cublas);
-    printf("cublasDgemm took %f seconds excluding transfer\n",rt_cublas);
-    printf("cublasDgemm Mflops %f excluding transfer\n",1e-6 * nflops / rt_cublas); fflush(stdout);
-    printf("cublasDgemm Gflops %f excluding transfer\n",1e-9 * nflops / rt_cublas); fflush(stdout);
+    //printf("cublasDgemm took %lld ticks excluding transfer\n",tt_cublas);
+    printf("  cublasDgemm took %f seconds excluding transfer\n",rt_cublas);
+    //printf("cublasDgemm Mflops %f excluding transfer\n",1e-6 * nflops / rt_cublas); fflush(stdout);
+    printf("  cublasDgemm Gflops %f excluding transfer\n",1e-9 * nflops / rt_cublas); fflush(stdout);
     tt_cublas = tt3 - tt2;
     rt_cublas = rt3 - rt2;
-    printf("cublasDgemm took %lld ticks including transfer\n",tt_cublas);
-    printf("cublasDgemm took %f seconds including transfer\n",rt_cublas);
-    printf("cublasDgemm Mflops %f including transfer\n",1e-6 * nflops / rt_cublas); fflush(stdout);
-    printf("cublasDgemm Gflops %f including transfer\n",1e-9 * nflops / rt_cublas); fflush(stdout);
+    //printf("cublasDgemm took %lld ticks including transfer\n",tt_cublas);
+    printf("# cublasDgemm took %f seconds including transfer\n",rt_cublas);
+    //printf("cublasDgemm Mflops %f including transfer\n",1e-6 * nflops / rt_cublas); fflush(stdout);
+    printf("# cublasDgemm Gflops %f including transfer\n",1e-9 * nflops / rt_cublas); fflush(stdout);
 
     /* Check result against reference */
     printf("CPU              GPU\n");
@@ -269,7 +269,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     printf( "Test %s\n", (error_norm / ref_norm < 1e-6) ? "PASSED" : "FAILED"); fflush(stdout);
-    printf( " error_norm = %f\n ref_norm = %f\n", error_norm, ref_norm); fflush(stdout);
+    //printf( " error_norm = %f\n ref_norm = %f\n", error_norm, ref_norm); fflush(stdout);
 
     /* Memory clean up */
     free(h_A);
