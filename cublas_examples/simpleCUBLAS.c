@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "cuda_runtime.h"
 #include "cublas.h"
 #include "mkl.h"
 #include <omp.h>
