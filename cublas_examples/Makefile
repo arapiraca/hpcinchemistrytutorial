@@ -32,18 +32,27 @@
 #
 #############################################
 
-OBJECTS = simpleCUBLAS.o getticks.o 
-
-all: simpleCUBLAS.x
+all: simpleCUBLAS.x CUBLAS_sgemm.x CUBLAS_dgemm.x
 
 refresh: realclean all
 
-simpleCUBLAS.x: $(OBJECTS)
-	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o simpleCUBLAS.x
-	rm -f *.o
+simpleCUBLAS.x: simpleCUBLAS.o getticks.o 
+	$(LD) $(LDFLAGS) getticks.o simpleCUBLAS.o $(LIB) -o simpleCUBLAS.x
+
+CUBLAS_sgemm.x: CUBLAS_sgemm.o getticks.o
+	$(LD) $(LDFLAGS) getticks.o CUBLAS_sgemm.o $(LIB) -o CUBLAS_sgemm.x
+
+CUBLAS_dgemm.x: CUBLAS_dgemm.o getticks.o
+	$(LD) $(LDFLAGS) getticks.o CUBLAS_dgemm.o $(LIB) -o CUBLAS_dgemm.x
 
 simpleCUBLAS.o: simpleCUBLAS.c
 	$(CC) -c $(CFLAGS) $(INC) simpleCUBLAS.c
+
+CUBLAS_sgemm.o: CUBLAS_sgemm.c
+	$(CC) -c $(CFLAGS) $(INC) CUBLAS_sgemm.c
+
+CUBLAS_dgemm.o: CUBLAS_dgemm.c
+	$(CC) -c $(CFLAGS) $(INC) CUBLAS_dgemm.c
 
 getticks.o: getticks.c
 	gcc -c getticks.c
