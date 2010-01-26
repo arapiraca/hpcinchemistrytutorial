@@ -4,16 +4,25 @@
 #
 #############################################
 
-   #BLAS_LIB = -L/usr/local/intel/mkl/10.2.2/lib/em64t -lguide -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lsvml
-   PBLAS_LIB = -L/usr/local/intel/mkl/10.2.2/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
-   SBLAS_LIB = -L/usr/local/intel/mkl/10.2.2/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml
-   CUBLAS_LIB = -L/usr/local/cuda-2.2/cuda/lib -lcublas
+   # Lincoln
+   #MKL_DIR = /usr/local/intel/mkl/10.2.2
+   #CUDA_DIR = /usr/local/cuda-2.2/cuda
+   #LIB_BITS =
+
+   # Megatron
+   MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
+   CUDA_DIR = /opt/cuda
+   LIB_BITS = 64
+
+   PBLAS_LIB = -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
+   SBLAS_LIB = -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml
+   CUBLAS_LIB = -L${CUDA_DIR}/lib${LIB_BITS} -lcublas
+   INC = -I${CUDA_DIR}/include -I${MKL_DIR}/include
 
    EXTRAS = -lm -lpthread -openmp
 
    PLIB = $(PBLAS_LIB) $(CUBLAS_LIB) $(EXTRAS)
    SLIB = $(SBLAS_LIB) $(CUBLAS_LIB) $(EXTRAS)
-   INC = -I/usr/local/cuda-2.2/cuda/include -I/usr/local/intel/mkl/10.2.2/include
 
    OPT = -O3 -xT -no-prec-div -funroll-loops
 
