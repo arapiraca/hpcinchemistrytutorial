@@ -128,6 +128,7 @@ int main(int argc, char** argv)
     /* Performs operation using plain C code */
     //simple_sgemm(N, alpha, h_A, h_B, beta, h_D);
     printf("calling sgemm\n"); fflush(stdout);
+    if (N<1000) sgemm("n", "n", &N, &N, &N, &alpha, h_A, &N, h_B, &N, &beta, h_D, &N);
     rt0 = omp_get_wtime();
     tt0 = getticks();
     sgemm("n", "n", &N, &N, &N, &alpha, h_A, &N, h_B, &N, &beta, h_D, &N);

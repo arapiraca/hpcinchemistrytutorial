@@ -128,6 +128,7 @@ int main(int argc, char** argv)
     /* Performs operation using plain C code */
     //simple_dgemm(N, alpha, h_A, h_B, beta, h_D);
     printf("calling dgemm\n"); fflush(stdout);
+    if (N<1000) dgemm("n", "n", &N, &N, &N, &alpha, h_A, &N, h_B, &N, &beta, h_D, &N);
     rt0 = omp_get_wtime();
     tt0 = getticks();
     dgemm("n", "n", &N, &N, &N, &alpha, h_A, &N, h_B, &N, &beta, h_D, &N);
