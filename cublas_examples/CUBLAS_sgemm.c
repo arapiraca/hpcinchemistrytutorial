@@ -120,10 +120,9 @@ int main(int argc, char** argv)
     for (i = 0; i < n2; i++) h_A[i] = rand() / (float)RAND_MAX;
     printf("rand() initialization B\n"); fflush(stdout);
     for (i = 0; i < n2; i++) h_D[i] = rand() / (float)RAND_MAX;
-    printf("rand() initialization C\n"); fflush(stdout);
-    for (i = 0; i < n2; i++) h_C[i] = rand() / (float)RAND_MAX;
-    printf("rand() initialization D\n"); fflush(stdout);
-    for (i = 0; i < n2; i++) h_D[i] = rand() / (float)RAND_MAX;
+    printf("rand() initialization C and D\n"); fflush(stdout);
+    for (i = 0; i < n2; i++) h_C[i] = rand() / (double)RAND_MAX;
+    for (i = 0; i < n2; i++) h_D[i] = h_C[i];
 
     /* Performs operation using plain C code */
     //simple_sgemm(N, alpha, h_A, h_B, beta, h_D);
@@ -250,6 +249,11 @@ int main(int argc, char** argv)
     printf("cublasSgemm Gflops %f including transfer\n",1e-9 * nflops / rt_cublas); fflush(stdout);
 
     /* Check result against reference */
+    printf("CPU              GPU\n");
+    if ( N < 20 ){
+        for (i = 0; i < n2; ++i) printf("%20.10f %20.10f\n",h_C[i],h_D[i]);
+    } fflush(stdout);
+
     error_norm = 0;
     ref_norm = 0;
     for (i = 0; i < n2; ++i) {
@@ -264,6 +268,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     printf( "Test %s\n", (error_norm / ref_norm < 1e-6f) ? "PASSED" : "FAILED");
+    printf( " error_norm = %f\n ref_norm = %f\n", error_norm, ref_norm); fflush(stdout);
 
     /* Memory clean up */
     free(h_A);
