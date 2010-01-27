@@ -11,6 +11,7 @@
       CUDA_DIR =
       LIB_BITS =
       DEFINES = 
+      CUDA = NO
    endif
 
    # Lincoln
@@ -20,6 +21,7 @@
       CUDA_DIR = /usr/local/cuda-2.2/cuda
       LIB_BITS =
       DEFINES = -DCUDA
+      CUDA = YES
    endif
    ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
       OPT = -O3 -xT -no-prec-div -funroll-loops
@@ -27,6 +29,7 @@
       CUDA_DIR = /usr/local/cuda-2.2/cuda
       LIB_BITS =
       DEFINES = -DCUDA
+      CUDA = YES
    endif
 
    # Megatron
@@ -36,6 +39,7 @@
       CUDA_DIR = /opt/cuda
       LIB_BITS = 64
       DEFINES = -DCUDA
+      CUDA = YES
    endif
 
    PBLAS_LIB = -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
@@ -47,7 +51,7 @@
 
    PLIB = $(PBLAS_LIB) $(EXTRAS)
    SLIB = $(SBLAS_LIB) $(EXTRAS)
-   ifdef CUDA
+   ifeq ($(CUDA),YES)
       PLIB += $(CUBLAS_LIB)
       SLIB += $(CUBLAS_LIB) 
    endif
