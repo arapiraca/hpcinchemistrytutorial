@@ -54,11 +54,11 @@
 
    FC = ifort
    FOPT = $(OPT)
-   FFLAGS = -g $(COPT) $(INC)
+   FFLAGS = -g $(COPT) $(INC) $(DEFINES)
 
    CC = icc
    COPT = $(OPT)
-   CFLAGS = -g -std=c99 $(COPT) $(INC)
+   CFLAGS = -g -std=c99 $(COPT) $(INC) $(DEFINES)
 
    LD = $(CC)
    LDFLAGS = -g $(OPT)
