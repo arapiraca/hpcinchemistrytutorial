@@ -5,6 +5,12 @@
 #############################################
 
    # Lincoln
+   ifeq ($(HOSTNAME),honest1.ncsa.uiuc.edu)
+      OPT = -O3 -xT -no-prec-div -funroll-loops
+      MKL_DIR = /usr/local/intel/mkl/10.2.2
+      CUDA_DIR = /usr/local/cuda-2.2/cuda
+      LIB_BITS =
+   endif
    ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
       OPT = -O3 -xT -no-prec-div -funroll-loops
       MKL_DIR = /usr/local/intel/mkl/10.2.2
