@@ -4,18 +4,29 @@
 #
 #############################################
 
+   # Fusion
+   ifeq ($(HOSTNAME),flogin1.lcrc.anl.gov)
+      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2 -no-prec-div -funroll-loops
+      MKL_DIR = /soft/mkl/10.2.2.025
+      CUDA_DIR =
+      LIB_BITS =
+      DEFINES = 
+   endif
+
    # Lincoln
    ifeq ($(HOSTNAME),honest1.ncsa.uiuc.edu)
       OPT = -O3 -xT -no-prec-div -funroll-loops
       MKL_DIR = /usr/local/intel/mkl/10.2.2
       CUDA_DIR = /usr/local/cuda-2.2/cuda
       LIB_BITS =
+      DEFINES = -DCUDA
    endif
    ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
       OPT = -O3 -xT -no-prec-div -funroll-loops
       MKL_DIR = /usr/local/intel/mkl/10.2.2
       CUDA_DIR = /usr/local/cuda-2.2/cuda
       LIB_BITS =
+      DEFINES = -DCUDA
    endif
 
    # Megatron
@@ -24,6 +35,7 @@
       MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
       CUDA_DIR = /opt/cuda
       LIB_BITS = 64
+      DEFINES = -DCUDA
    endif
 
    PBLAS_LIB = -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
@@ -33,9 +45,12 @@
 
    EXTRAS = -lm -lpthread -openmp
 
-   PLIB = $(PBLAS_LIB) $(CUBLAS_LIB) $(EXTRAS)
-   SLIB = $(SBLAS_LIB) $(CUBLAS_LIB) $(EXTRAS)
-
+   PLIB = $(PBLAS_LIB) $(EXTRAS)
+   SLIB = $(SBLAS_LIB) $(EXTRAS)
+   ifdef CUDA
+      PLIB += $(CUBLAS_LIB)
+      SLIB += $(CUBLAS_LIB) 
+   endif
 
    FC = ifort
    FOPT = $(OPT)

@@ -39,8 +39,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#ifdef CUDA
 #include "cuda_runtime.h"
 #include "cublas.h"
+#endif
 #include "mkl.h"
 #include <omp.h>
 
@@ -48,11 +50,13 @@ unsigned long long getticks(void);
 
 int main(int argc, char** argv)
 {    
+#ifdef CUDA
     cublasStatus status;
     cublasStatus status0;
     cublasStatus status1;
     cublasStatus status2;
     cublasStatus status3;
+#endif
     double* h_A;
     double* h_B;
     double* h_C;
@@ -151,6 +155,7 @@ int main(int argc, char** argv)
         return(0);
     } // use_GPU
 
+#ifdef CUDA
     printf("cublasInit()\n");
     fflush(stdout);
     status = cublasInit();
@@ -300,4 +305,5 @@ int main(int argc, char** argv)
     }
 
     return EXIT_SUCCESS;
+#endif
 }
