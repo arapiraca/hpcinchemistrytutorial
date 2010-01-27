@@ -48,7 +48,7 @@
 unsigned long long getticks(void);
 
 int main(int argc, char** argv)
-{    
+{
 #ifdef CUDA
     cublasStatus status;
     cublasStatus status0;
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
     printf("rand() initialization B\n"); fflush(stdout);
     for (i = 0; i < n2; i++) h_D[i] = rand() / (float)RAND_MAX;
     printf("rand() initialization C and D\n"); fflush(stdout);
-    for (i = 0; i < n2; i++) h_C[i] = rand() / (double)RAND_MAX;
+    for (i = 0; i < n2; i++) h_C[i] = rand() / (float)RAND_MAX;
     for (i = 0; i < n2; i++) h_D[i] = h_C[i];
 
     /* Performs operation using plain C code */
@@ -196,7 +196,7 @@ int main(int argc, char** argv)
     status0 = cublasSetVector(n2, sizeof(h_C[0]), h_C, 1, d_C, 1);
     status1 = cublasSetVector(n2, sizeof(h_A[0]), h_A, 1, d_A, 1);
     status2 = cublasSetVector(n2, sizeof(h_B[0]), h_B, 1, d_B, 1);
-            
+
     /* Clear last error */
     cublasGetError();
 
