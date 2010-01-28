@@ -84,7 +84,7 @@ int main(int argc, char** argv)
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);
     fflush(stderr);
 
-    threads = 1;
+    threads = -1;
 
     for ( t = 0 ; t < ntests ; t++)
     {
