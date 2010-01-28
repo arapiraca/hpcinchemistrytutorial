@@ -47,7 +47,9 @@ void run_blas_sgemm_test(int threads, int dim, float alpha, float beta, double* 
 #ifdef OPENMP
     if ( threads > 0 ){ omp_set_num_threads(threads); }
     else { omp_set_num_threads( omp_get_max_threads() ); }
-    printf("Using %d OpenMP threads with BLAS (if applicable)\n");
+    printf("Using %d OpenMP threads with BLAS (if applicable)\n",omp_get_num_threads());
+#else
+    printf("Not using OpenMP threads with BLAS\n");
 #endif
 
     int i;
@@ -113,6 +115,9 @@ void run_blas_dgemm_test(int threads, int dim, double alpha, double beta, double
 #ifdef OPENMP
     if ( threads > 0 ){ omp_set_num_threads(threads); }
     else { omp_set_num_threads( omp_get_max_threads() ); }
+    printf("Using %d OpenMP threads with BLAS (if applicable)\n",omp_get_num_threads());
+#else
+    printf("Not using OpenMP threads with BLAS\n");
 #endif
 
     int i;
