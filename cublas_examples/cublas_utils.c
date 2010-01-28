@@ -165,7 +165,7 @@ void pull_floats(int num, float* h_ptr, float* d_ptr)
     status = cublasGetVector(num, sizeof(float), d_ptr, 1, h_ptr, 1);
     if (status != CUBLAS_STATUS_SUCCESS) {
         printf("! failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("! cannot push %d floats to device\n",num);
+        printf("! cannot pull %d floats from device\n",num);
         fflush(stdout);
     }
 }
@@ -173,10 +173,10 @@ void pull_floats(int num, float* h_ptr, float* d_ptr)
 void pull_doubles(int num, double* h_ptr, double* d_ptr)
 {
     cublasStatus status;
-    status = cublasGetVector(num, sizeof(double), h_ptr, 1, d_ptr, 1);
+    status = cublasGetVector(num, sizeof(double), d_ptr, 1, h_ptr, 1);
     if (status != CUBLAS_STATUS_SUCCESS) {
         printf("! failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("! cannot push %d doubles to device\n",num);
+        printf("! cannot pull %d doubles from device\n",num);
         fflush(stdout);
     }
 }

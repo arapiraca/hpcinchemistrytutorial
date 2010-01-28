@@ -106,14 +106,16 @@ void run_blas_sgemm_test(int threads, int dim, float alpha, float beta, double* 
 
 }
 
-
 void run_blas_dgemm_test(int threads, int dim, double alpha, double beta, double* time, double* Gflops)
 {
 
 #ifdef OPENMP
-   omp_set_num_threads(threads);
+    if ( threads > 0 ){ omp_set_num_threads(threads); }
+    else { omp_set_num_threads( omp_get_max_threads() ); }
 #endif
 
+    int i;
+    int count = 10;
     int N = dim;
     double myalpha = alpha;
     double mybeta = beta;
@@ -126,25 +128,35 @@ void run_blas_dgemm_test(int threads, int dim, double alpha, double beta, double
     double* c;
 
     nflops = 0;
-    if (alpha==1.0){       nflops += dim*dim*dim; }
+    if      (alpha==0.0){  nflops += 0; }
     else if (alpha==1.0){  nflops += dim*dim*dim; }
+    else                {  nflops += 2*dim*dim*dim; }
+
+    if      (beta==0.0){  nflops += 0; }
+    else if (beta==1.0){  nflops += dim*dim; }
+    else               {  nflops += 2*dim*dim; }
 
     a = alloc_host_doubles(dim*dim);
     b = alloc_host_doubles(dim*dim);
     c = alloc_host_doubles(dim*dim);
 
-    fprintf(stderr,"# calling dgemm for %d by %d matrices\n",N,N);
+    fprintf(stderr,"# calling sgemm for %d by %d matrices\n",N,N);
     fflush(stderr);
 
     /* warm-up */
-    if (N<1000) dgemm("n", "n", &N, &N, &N, &myalpha, a, &N, b, &N, &mybeta, c, &N);
-
-    /* run the timing */
-    tt_start = gettime();
     dgemm("n", "n", &N, &N, &N, &myalpha, a, &N, b, &N, &mybeta, c, &N);
-    tt_end = gettime();
 
-    tt_blas = tt_end - tt_start;
+    tt_blas = 0;
+    for ( i = 0 ; i < count ; i++ )
+    {
+        /* run the timing */
+        tt_start = gettime();
+        dgemm("n", "n", &N, &N, &N, &myalpha, a, &N, b, &N, &mybeta, c, &N);
+        tt_end = gettime();
+        tt_blas += ( tt_end - tt_start );
+    }
+
+    tt_blas /= (double) count;
 
     *time = tt_blas;
     *Gflops = 1e-9 * nflops / tt_blas;
@@ -158,10 +170,3 @@ void run_blas_dgemm_test(int threads, int dim, double alpha, double beta, double
     free_host_doubles(c);
 
 }
-
-
-
-
-
-
-

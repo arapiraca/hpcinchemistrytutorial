@@ -56,5 +56,6 @@ privately owned rights.
 #include "cublas_utils.h"
 
 void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time0, double* time1, double* Gflops0, double* Gflops1);
+void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time0, double* time1, double* Gflops0, double* Gflops1);
 
 #endif

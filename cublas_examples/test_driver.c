@@ -55,6 +55,7 @@ int main(int argc, char** argv)
 
     int threads;
     int i, t;
+    int precision = 1;
     int ntests = 100;
     int dim[ntests];
     float f_alpha = 1.0;
@@ -67,6 +68,9 @@ int main(int argc, char** argv)
     double cublas_excl_Gflops[ntests];
     double cublas_incl_time[ntests];
     double cublas_incl_Gflops[ntests];
+
+    /* default to single precision or command-line override */
+    if ( argc > 1 ) precision = atoi(argv[1]);
 
     t = 0;
     dim[t++] = 1;
@@ -84,12 +88,12 @@ int main(int argc, char** argv)
 
     for ( t = 0 ; t < ntests ; t++)
     {
-        run_blas_sgemm_test(threads, dim[t], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]);
+        if ( precision==1 ) { 
+            run_blas_sgemm_test(threads, dim[t], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]); }
+        else if (precision==2 ) {
+            run_blas_dgemm_test(threads, dim[t], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]); }
     }
-    for ( t = 0 ; t < ntests ; t++)
-    {
-//         run_blas_dgemm_test(threads, dim[t], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]);
-    }
+
 
 #ifdef CUDA
     status = cublasInit();
@@ -103,8 +107,12 @@ int main(int argc, char** argv)
 
     for ( t = 0 ; t < ntests ; t++)
     {
-        run_cublas_sgemm_test(dim[t], f_alpha, f_beta, &cublas_excl_time[t], &cublas_excl_Gflops[t],
-                                                       &cublas_incl_time[t], &cublas_incl_Gflops[t]);
+        if ( precision==1 ) {
+            run_cublas_sgemm_test(dim[t], f_alpha, f_beta, &cublas_excl_time[t], &cublas_excl_Gflops[t],
+                                                           &cublas_incl_time[t], &cublas_incl_Gflops[t]); }
+        else if  (precision==2 ) {
+            run_cublas_dgemm_test(dim[t], d_alpha, d_beta, &cublas_excl_time[t], &cublas_excl_Gflops[t],
+                                                           &cublas_incl_time[t], &cublas_incl_Gflops[t]); }
     }
 
     status = cublasShutdown();
@@ -117,7 +125,8 @@ int main(int argc, char** argv)
     }
 #endif
 
-    printf("    d        BLAS               CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==1 ) printf("   dim        SGEMM              CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==2 ) printf("   dim        DGEMM              CUBLAS (incl)   CUBLAS (excl)\n");
     for ( t = 0 ; t < ntests ; t++ )
     {
         if ( blas_Gflops[t] > cublas_incl_Gflops[t] ){

@@ -164,3 +164,128 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
     free_device_floats(dc);
 
 }
+
+
+void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time_excl, double* Gflops_excl,
+                                                             double* time_incl, double* Gflops_incl)
+{
+    cublasStatus status;
+    cublasStatus statusX;
+
+    int i;
+    int count = 10;
+    int N = dim;
+    double myalpha = alpha;
+    double mybeta = beta;
+
+    long long nflops;
+    double tt_incl, tt_incl_start, tt_incl_end;
+    double tt_excl, tt_excl_start, tt_excl_end;
+
+    double* ha;
+    double* hb;
+    double* hc;
+
+    double* da;
+    double* db;
+    double* dc;
+
+    nflops = 0;
+    if      (alpha==0.0){  nflops += 0; }
+    else if (alpha==1.0){  nflops += dim*dim*dim; }
+    else                {  nflops += 2*dim*dim*dim; }
+
+    if      (beta==0.0){  nflops += 0; }
+    else if (beta==1.0){  nflops += dim*dim; }
+    else               {  nflops += 2*dim*dim; }
+
+    ha = alloc_host_doubles(dim*dim);
+    hb = alloc_host_doubles(dim*dim);
+    hc = alloc_host_doubles(dim*dim);
+
+    randomize_doubles(dim*dim, ha);
+    randomize_doubles(dim*dim, hb);
+    randomize_doubles(dim*dim, hc);
+
+    da = alloc_device_doubles(dim*dim);
+    db = alloc_device_doubles(dim*dim);
+    dc = alloc_device_doubles(dim*dim);
+
+    fprintf(stderr,"# calling cublasDgemm for %d by %d matrices\n",N,N);
+    fflush(stderr);
+
+    /* warm-up */
+    push_doubles(dim*dim, ha, da);
+    push_doubles(dim*dim, hb, db);
+    if ( myalpha != 0.0) push_doubles(dim*dim, hc, dc);
+    cublasDgemm('n', 'n', N, N, N, myalpha, da, N, db, N, mybeta, dc, N);
+    pull_doubles(dim*dim, hc, dc);
+
+    /* run the timing */
+    tt_incl = 0;
+    tt_excl = 0;
+
+    for ( i = 0 ; i < count ; i++ )
+    {
+        cudaThreadSynchronize();
+        tt_incl_start = gettime();
+
+        push_doubles(dim*dim, ha, da);
+        push_doubles(dim*dim, hb, db);
+        if ( myalpha != 0.0) push_doubles(dim*dim, hc, dc);
+
+        tt_excl_start = gettime();
+        cublasDgemm('n', 'n', N, N, N, myalpha, da, N, db, N, mybeta, dc, N);
+        cudaThreadSynchronize();
+
+        /* check for errors */
+        statusX = cublasGetError();
+        tt_excl_end = gettime();
+
+        /* read the result back */
+        pull_doubles(dim*dim, hc, dc);
+        tt_incl_end = gettime();
+
+        tt_incl += ( tt_incl_end - tt_incl_start );
+        tt_excl += ( tt_excl_end - tt_excl_start );
+    }
+
+    if (statusX == CUBLAS_STATUS_SUCCESS) {
+
+        tt_incl /= (double) count;
+        tt_excl /= (double) count;
+
+        *time_incl = tt_incl;
+        *time_excl = tt_excl;
+
+        *Gflops_incl = 1e-9 * nflops / *time_incl;
+        *Gflops_excl = 1e-9 * nflops / *time_excl;
+
+        fprintf(stderr,"# cublasDgemm took %f seconds (exclusive)\n",*time_excl);
+        fprintf(stderr,"# cublasDgemm took %f seconds (inclusive)\n",*time_incl);
+        fprintf(stderr,"# cublasDgemm Gflops %f (exclusive)\n",*Gflops_excl);
+        fprintf(stderr,"# cublasDgemm Gflops %f (inclusive)\n",*Gflops_incl);
+        fflush(stderr);
+
+    } else {
+
+        *time_incl = 1e9;
+        *time_excl = 1e9;
+
+        *Gflops_incl = 0;
+        *Gflops_excl = 0;
+
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cublasDgemm failed\n");
+        fflush(stdout);
+    }
+
+    free_host_doubles(ha);
+    free_host_doubles(hb);
+    free_host_doubles(hc);
+
+    free_device_doubles(da);
+    free_device_doubles(db);
+    free_device_doubles(dc);
+
+}
