@@ -67,6 +67,16 @@
       MKL = YES
       OPENMP = YES
    endif
+   ifeq ($(HOSTNAME),honest4.ncsa.uiuc.edu)
+      OPT = -O3 -xT -no-prec-div -funroll-loops
+      INTEL_DIR = 
+      MKL_DIR = /usr/local/intel/mkl/10.2.2
+      CUDA_DIR = /usr/local/cuda-2.2/cuda
+      LIB_BITS =
+      CUDA = YES
+      MKL = YES
+      OPENMP = YES
+   endif
 
    # Megatron
    ifeq ($(HOSTNAME),megatron)
