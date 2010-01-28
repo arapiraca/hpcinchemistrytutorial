@@ -37,7 +37,8 @@
       MKL = YES
       OPENMP = YES
    endif
-   ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
+   #ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
+   ifeq ($(HOSTNAME),flogin3)
       OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
       INTEL_DIR = 
       MKL_DIR = /soft/mkl/10.2.2.025
