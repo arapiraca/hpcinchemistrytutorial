@@ -52,7 +52,6 @@ privately owned rights.
 
 int main(int argc, char** argv)
 {
-
     int threads;
     int i, t;
     int precision;
@@ -68,11 +67,23 @@ int main(int argc, char** argv)
     /* default to single precision or command-line override */
     if ( argc > 1 ) precision = atoi(argv[1]);
     else            precision = 1;
-
-    if      ( precision == 1 ) printf("Using single-precision\n");
-    else if ( precision == 2 ) printf("Using double-precision\n");
-    else    { precision = 1 ;  printf("Using single-precision\n"); }
+    if      ( precision == 1 ) printf("You have requested single-precision.\n");
+    else if ( precision == 2 ) printf("You have requested double-precision.\n");
+    else    {                  printf("Defaulting to single-precision.\n"); }
     fflush(stdout);
+
+#ifdef CUDA
+    int cudaDevice;
+    struct cudaDeviceProp cudaProp;
+    cudaGetDevice( &cudaDevice );
+    cudaGetDeviceProperties( &cudaProp, cudaDevice );
+    if ( cudaProp.major==1 && cudaProp.minor==0 && precision == 2 ){
+        precision = 1;
+        printf("CUDA device does not support double-precision\n");
+        printf("Changing to single-precision\n");
+        fflush(stdout);
+    }
+#endif
 
     t = 0;
     dim[t++] = 1;
@@ -83,7 +94,7 @@ int main(int argc, char** argv)
 #ifdef BIGTESTS
     for ( i = 4 ; i < 11 ; i++ ) dim[t++] = i*500; // 2000 to 5000 by 500
 #else
-    for ( i = 4 ; i <  6 ; i++ ) dim[t++] = i*500; // 2000 to 2500 by 500
+    for ( i = 4 ; i <  5 ; i++ ) dim[t++] = i*500; // 2000 to 2000 by 500
 #endif
     ntests = t;
 
@@ -107,13 +118,13 @@ int main(int argc, char** argv)
             run_blas_dgemm_test(threads, dim[t], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]); }
     }
 
-
 #ifdef CUDA
 
     double cublas_excl_time[ntests];
     double cublas_excl_Gflops[ntests];
     double cublas_incl_time[ntests];
     double cublas_incl_Gflops[ntests];
+    double ratio;
 
     cublasStatus status;
 
@@ -144,26 +155,54 @@ int main(int argc, char** argv)
         printf("! cublasShutdown failed\n");
         fflush(stdout);
     }
+
+    printf("=========================================================\n");
+    printf("CUDA device properties:\n");
+    printf("name:                 %20s\n",cudaProp.name);
+    printf("major version:        %20d\n",cudaProp.major);
+    printf("minor version:        %20d\n",cudaProp.minor);
+    printf("canMapHostMemory:     %20d\n",cudaProp.canMapHostMemory);
+    printf("totalGlobalMem:       %20ld\n",cudaProp.totalGlobalMem);
+    printf("sharedMemPerBlock:    %20ld\n",cudaProp.sharedMemPerBlock);
+    printf("clockRate:            %20d\n",cudaProp.clockRate);
+    printf("regsPerBlock:         %20d\n",cudaProp.regsPerBlock);
+    printf("warpSize:             %20d\n",cudaProp.warpSize);
+    printf("maxThreadsPerBlock:   %20d\n",cudaProp.maxThreadsPerBlock);
+    printf("=========================================================\n");
+//     struct cudaDeviceProp {
+//         size_t memPitch;
+//         int maxThreadsDim[3];
+//         int maxGridSize[3];
+//         size_t totalConstMem;
+//         size_t textureAlignment;
+//         int deviceOverlap;
+//         int multiProcessorCount;
+//         int kernelExecTimeoutEnabled;
+//         int integrated;
+//         int computeMode;
+//     }
+
 #endif
 
-    if ( precision==1 ) printf("   dim        SGEMM              CUBLAS (incl)   CUBLAS (excl)\n");
-    if ( precision==2 ) printf("   dim        DGEMM              CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==1 ) printf("   dim        SGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==2 ) printf("   dim        DGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
     for ( t = 0 ; t < ntests ; t++ )
     {
 #ifdef CUDA
+        ratio = blas_Gflops[t] / cublas_incl_Gflops[t];
         if ( blas_Gflops[t] > cublas_incl_Gflops[t] ){
-            printf("%6d %8.3f Gflops <==    %8.3f Gflops %8.3f Gflops\n",
-                    dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+            printf("%6d %8.3f Gflops <== %6.3f     %8.3f Gflops %8.3f Gflops\n",
+                    dim[t],blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
 
         else if ( blas_Gflops[t] < cublas_incl_Gflops[t] ) {
-            printf("%6d %8.3f Gflops    ==> %8.3f Gflops %8.3f Gflops\n",
-                    dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+            printf("%6d %8.3f Gflops     %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
+                    dim[t],blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
         else {
-            printf("%6d %8.3f Gflops <====> %8.3f Gflops %8.3f Gflops\n",
-                    dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+            printf("%6d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
+                    dim[t],blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
 #else
-        printf("%6d %8.3f Gflops <====> %8.3f Gflops %8.3f Gflops\n",
-               dim[t],blas_Gflops[t],0.0,0.0);
+            printf("%6d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
+                   dim[t],blas_Gflops[t],0.0,0.0,0.0);
 #endif
     }
     fflush(stdout);
