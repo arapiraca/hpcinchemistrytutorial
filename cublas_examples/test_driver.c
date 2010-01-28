@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 
     int threads;
     int i, t;
-    int precision = 1;
+    int precision;
     int ntests = 100;
     int dim[ntests];
     float f_alpha = 1.0;
@@ -71,6 +71,11 @@ int main(int argc, char** argv)
 
     /* default to single precision or command-line override */
     if ( argc > 1 ) precision = atoi(argv[1]);
+    else            precision = 1;
+
+    if      ( precision == 1 ) printf("Using single-precision\n");
+    else if ( precision == 2 ) printf("Using double-precision\n");
+    else { precision = 1 ;     printf("Using single-precision\n"); }
 
     t = 0;
     dim[t++] = 1;
