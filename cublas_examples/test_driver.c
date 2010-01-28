@@ -72,6 +72,7 @@ int main(int argc, char** argv)
     if      ( precision == 1 ) printf("Using single-precision\n");
     else if ( precision == 2 ) printf("Using double-precision\n");
     else    { precision = 1 ;  printf("Using single-precision\n"); }
+    fflush(stdout);
 
     t = 0;
     dim[t++] = 1;
