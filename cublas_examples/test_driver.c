@@ -45,13 +45,13 @@ privately owned rights.
 #include <math.h>
 
 #include "blas_gemm_test.h"
+
+#ifdef CUDA
 #include "cublas_gemm_test.h"
+#endif
 
 int main(int argc, char** argv)
 {
-#ifdef CUDA
-    cublasStatus status;
-#endif
 
     int threads;
     int i, t;
@@ -64,10 +64,6 @@ int main(int argc, char** argv)
     double d_beta = 0.0;
     double blas_time[ntests];
     double blas_Gflops[ntests];
-    double cublas_excl_time[ntests];
-    double cublas_excl_Gflops[ntests];
-    double cublas_incl_time[ntests];
-    double cublas_incl_Gflops[ntests];
 
     /* default to single precision or command-line override */
     if ( argc > 1 ) precision = atoi(argv[1]);
@@ -101,6 +97,14 @@ int main(int argc, char** argv)
 
 
 #ifdef CUDA
+
+    double cublas_excl_time[ntests];
+    double cublas_excl_Gflops[ntests];
+    double cublas_incl_time[ntests];
+    double cublas_incl_Gflops[ntests];
+
+    cublasStatus status;
+
     status = cublasInit();
     if (status == CUBLAS_STATUS_SUCCESS) {
 //         printf("cublasInit succeeded\n");
@@ -134,15 +138,21 @@ int main(int argc, char** argv)
     if ( precision==2 ) printf("   dim        DGEMM              CUBLAS (incl)   CUBLAS (excl)\n");
     for ( t = 0 ; t < ntests ; t++ )
     {
+#ifdef CUDA
         if ( blas_Gflops[t] > cublas_incl_Gflops[t] ){
             printf("%6d %8.3f Gflops <==    %8.3f Gflops %8.3f Gflops\n",
                     dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+
         else if ( blas_Gflops[t] < cublas_incl_Gflops[t] ) {
             printf("%6d %8.3f Gflops    ==> %8.3f Gflops %8.3f Gflops\n",
                     dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
         else {
             printf("%6d %8.3f Gflops <====> %8.3f Gflops %8.3f Gflops\n",
                     dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+#else
+        printf("%6d %8.3f Gflops <====> %8.3f Gflops %8.3f Gflops\n",
+               dim[t],blas_Gflops[t],0.0,0.0);
+#endif
     }
     fflush(stdout);
 

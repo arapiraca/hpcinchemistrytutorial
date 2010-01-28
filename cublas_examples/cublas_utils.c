@@ -38,6 +38,7 @@ product, or process disclosed, or represents that its use would not infringe
 privately owned rights.
 
  ***************************************************************************/
+#ifdef CUDA
 
 #include "cublas_utils.h"
 
@@ -181,4 +182,4 @@ void pull_doubles(int num, double* h_ptr, double* d_ptr)
     }
 }
 
-    
+#endif

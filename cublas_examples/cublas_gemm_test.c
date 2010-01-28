@@ -39,6 +39,8 @@ privately owned rights.
 
  ***************************************************************************/
 
+#ifdef CUDA
+
 #include "cublas_gemm_test.h"
 
 void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, double* Gflops_excl,
@@ -289,3 +291,5 @@ void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time_excl
     free_device_doubles(dc);
 
 }
+
+#endif
