@@ -146,7 +146,7 @@ void run_blas_dgemm_test(int threads, int dim, double alpha, double beta, double
     b = alloc_host_doubles(dim*dim);
     c = alloc_host_doubles(dim*dim);
 
-    fprintf(stderr,"# calling sgemm for %d by %d matrices\n",N,N);
+    fprintf(stderr,"# calling dgemm for %d by %d matrices\n",N,N);
     fflush(stderr);
 
     /* warm-up */
