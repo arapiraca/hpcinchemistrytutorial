@@ -49,7 +49,7 @@ privately owned rights.
 
 #ifdef MKL
   #include "mkl.h"
-#elif
+#else
   sgemm(char*, char*, int*, int*, int*, float* , float*, int*, float*, int*, float*, float*, int*);
   dgemm(char*, char*, int*, int*, int*, double* , double*, int*, double*, int*, double*, double*, int*);
 #endif
