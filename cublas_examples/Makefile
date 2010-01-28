@@ -4,9 +4,21 @@
 #
 #############################################
 
+   # Gadzooks
+   ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
+      OPT = -O3 -xHost
+      INTEL_DIR = /soft/apps/intel-cc-11.0.074
+      MKL_DIR = /soft/apps/intel-cc-11.0.074/mkl
+      CUDA_DIR = /soft/apps/cuda-2.3/cuda
+      LIB_BITS = 64
+      CUDA = YES
+      MKL = YES
+      OPENMP = YES
+   endif
+
    # Fusion
    ifeq ($(HOSTNAME),flogin1.lcrc.anl.gov)
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2 -no-prec-div -funroll-loops
+      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
       INTEL_DIR = 
       MKL_DIR = /soft/mkl/10.2.2.025
       CUDA_DIR =
@@ -16,7 +28,7 @@
       OPENMP = YES
    endif
    ifeq ($(HOSTNAME),flogin2.lcrc.anl.gov)
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2 -no-prec-div -funroll-loops
+      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
       INTEL_DIR = 
       MKL_DIR = /soft/mkl/10.2.2.025
       CUDA_DIR =
@@ -26,7 +38,7 @@
       OPENMP = YES
    endif
    ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2 -no-prec-div -funroll-loops
+      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
       INTEL_DIR = 
       MKL_DIR = /soft/mkl/10.2.2.025
       CUDA_DIR =
@@ -38,7 +50,7 @@
 
    # Lincoln
    ifeq ($(HOSTNAME),honest1.ncsa.uiuc.edu)
-      OPT = -O3 -xT -no-prec-div -funroll-loops
+      OPT = -O3 -xT
       INTEL_DIR = 
       MKL_DIR = /usr/local/intel/mkl/10.2.2
       CUDA_DIR = /usr/local/cuda-2.2/cuda
@@ -48,7 +60,7 @@
       OPENMP = YES
    endif
    ifeq ($(HOSTNAME),honest2.ncsa.uiuc.edu)
-      OPT = -O3 -xT -no-prec-div -funroll-loops
+      OPT = -O3 -xT
       INTEL_DIR = 
       MKL_DIR = /usr/local/intel/mkl/10.2.2
       CUDA_DIR = /usr/local/cuda-2.2/cuda
@@ -58,7 +70,7 @@
       OPENMP = YES
    endif
    ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
-      OPT = -O3 -xT -no-prec-div -funroll-loops
+      OPT = -O3 -xT
       INTEL_DIR = 
       MKL_DIR = /usr/local/intel/mkl/10.2.2
       CUDA_DIR = /usr/local/cuda-2.2/cuda
@@ -68,7 +80,7 @@
       OPENMP = YES
    endif
    ifeq ($(HOSTNAME),honest4.ncsa.uiuc.edu)
-      OPT = -O3 -xT -no-prec-div -funroll-loops
+      OPT = -O3 -xT
       INTEL_DIR = 
       MKL_DIR = /usr/local/intel/mkl/10.2.2
       CUDA_DIR = /usr/local/cuda-2.2/cuda
@@ -80,7 +92,7 @@
 
    # Megatron
    ifeq ($(HOSTNAME),megatron)
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1 -no-prec-div -funroll-loops
+      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1
       INTEL_DIR = /opt/intel/Compiler/11.1/059
       MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
       CUDA_DIR = /opt/cuda
