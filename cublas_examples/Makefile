@@ -6,7 +6,7 @@
 
    # Gadzooks
    ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
-      OPT = -O3 -xHost
+      OPT = -O3 -xHost -static-intel
       INTEL_DIR = /soft/apps/intel-cc-11.0.074
       MKL_DIR = /soft/apps/intel-cc-11.0.074/mkl
       CUDA_DIR = /soft/apps/cuda-2.3/cuda
