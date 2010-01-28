@@ -89,12 +89,10 @@ int main(int argc, char** argv)
     dim[t++] = 1;
     for ( i = 1 ; i < 20 ; i++ ) dim[t++] = i*10;  //   10 to  200 by 10
     for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
-    for ( i = 5 ; i <  5 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
-    for ( i = 5 ; i < 10 ; i++ ) dim[t++] = i*200; // 1000 to 1800 by 100
+    for ( i = 5 ; i < 11 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
 #ifdef BIGTESTS
+    for ( i = 6 ; i < 10 ; i++ ) dim[t++] = i*200; // 1200 to 1800 by 200
     for ( i = 4 ; i < 11 ; i++ ) dim[t++] = i*500; // 2000 to 5000 by 500
-#else
-    for ( i = 4 ; i <  5 ; i++ ) dim[t++] = i*500; // 2000 to 2000 by 500
 #endif
     ntests = t;
 
@@ -162,7 +160,7 @@ int main(int argc, char** argv)
     printf("major version:        %20d\n",cudaProp.major);
     printf("minor version:        %20d\n",cudaProp.minor);
     printf("canMapHostMemory:     %20d\n",cudaProp.canMapHostMemory);
-    printf("totalGlobalMem:       %20ld\n",cudaProp.totalGlobalMem);
+    printf("totalGlobalMem:       %20ld MiB\n",cudaProp.totalGlobalMem/(1024*1024));
     printf("sharedMemPerBlock:    %20ld\n",cudaProp.sharedMemPerBlock);
     printf("clockRate:            %20d\n",cudaProp.clockRate);
     printf("regsPerBlock:         %20d\n",cudaProp.regsPerBlock);
