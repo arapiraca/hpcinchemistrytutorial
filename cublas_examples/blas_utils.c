@@ -66,8 +66,8 @@ float* alloc_host_floats(int num)
 {
     float* ptr = (float*) malloc( num * sizeof(float) );
     if (ptr == NULL) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot allocate %d floats on host\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot allocate %d floats on host\n",num);
         fflush(stdout);
         return NULL;
     }
@@ -80,8 +80,8 @@ double* alloc_host_doubles(int num)
 {
     double* ptr = (double*) malloc( num * sizeof(double) );
     if (ptr == NULL) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot allocate %d doubles on host\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot allocate %d doubles on host\n",num);
         fflush(stdout);
         return NULL;
     }

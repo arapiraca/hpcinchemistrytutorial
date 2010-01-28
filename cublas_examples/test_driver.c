@@ -70,18 +70,20 @@ int main(int argc, char** argv)
 
     t = 0;
     dim[t++] = 1;
-//     for ( i = 1 ; i < 20 ; i++ ) dim[t++] = i*10;  //   10 to  200 by 10
-//     for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
+    for ( i = 1 ; i < 20 ; i++ ) dim[t++] = i*10;  //   10 to  200 by 10
+    for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
 //     for ( i = 5 ; i < 20 ; i++ ) dim[t++] = i*100; //  500 to 1900 by 100
-    for ( i = 4 ; i < 11 ; i++ ) dim[t++] = i*500; // 2000 to 5000 by 500
+//     for ( i = 4 ; i <  8 ; i++ ) dim[t++] = i*500; // 2000 to 3500 by 500
     ntests = t;
-    for ( t = 0 ; t < ntests ; t++ ) printf("@ dim[%d] = %d\n",t,dim[t]);
+
+    for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);
+    fflush(stderr);
 
     threads = 1;
 
     for ( t = 0 ; t < ntests ; t++)
     {
-//         run_blas_sgemm_test(threads, dim[t], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]);
+        run_blas_sgemm_test(threads, dim[t], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]);
     }
     for ( t = 0 ; t < ntests ; t++)
     {
@@ -93,8 +95,8 @@ int main(int argc, char** argv)
     if (status == CUBLAS_STATUS_SUCCESS) {
 //         printf("cublasInit succeeded\n");
     } else {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cublasInit failed\n");
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cublasInit failed\n");
         fflush(stdout);
     }
 
@@ -108,11 +110,19 @@ int main(int argc, char** argv)
     if (status == CUBLAS_STATUS_SUCCESS) {
 //         printf("cublasShutdown succeeded\n");
     } else {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cublasShutdown failed\n");
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cublasShutdown failed\n");
         fflush(stdout);
     }
 #endif
+
+    printf("    d        BLAS         CUBLAS (incl)   CUBLAS (excl)\n");
+    for ( t = 0 ; t < ntests ; t++ )
+    {
+        printf("%6d %8.3f Gflops %8.3f Gflops %8.3f Gflops\n",
+                dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]);
+    }
+    fflush(stdout);
 
     fprintf(stderr,"# the test driver has finished!!!\n");
     fflush(stderr);

@@ -88,8 +88,8 @@ float* alloc_device_floats(int num)
     float* ptr;
     status = cublasAlloc(num, sizeof(float), (void**)&ptr);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot allocate %d floats on device\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot allocate %d floats on device\n",num);
         fflush(stdout);
         return NULL;
     }
@@ -102,8 +102,8 @@ double* alloc_device_doubles(int num)
     double* ptr;
     status = cublasAlloc(num, sizeof(double), (void**)&ptr);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot allocate %d doubles on device\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot allocate %d doubles on device\n",num);
         fflush(stdout);
         return NULL;
     }
@@ -115,8 +115,8 @@ void free_device_floats(float* ptr)
     cublasStatus status;
     status = cublasFree(ptr);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot free floats on device\n");
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot free floats on device\n");
         fflush(stdout);
     }
 }
@@ -126,8 +126,8 @@ void free_device_doubles(double* ptr)
     cublasStatus status;
     status = cublasFree(ptr);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot free doubles on device\n");
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot free doubles on device\n");
         fflush(stdout);
     }
 }
@@ -142,8 +142,8 @@ void push_floats(int num, float* h_ptr, float* d_ptr)
     cublasStatus status;
     status = cublasSetVector(num, sizeof(float), h_ptr, 1, d_ptr, 1);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot push %d floats to device\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot push %d floats to device\n",num);
         fflush(stdout);
     }
 }
@@ -153,8 +153,8 @@ void push_doubles(int num, double* h_ptr, double* d_ptr)
     cublasStatus status;
     status = cublasSetVector(num, sizeof(double), h_ptr, 1, d_ptr, 1);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot push %d doubles to device\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot push %d doubles to device\n",num);
         fflush(stdout);
     }
 }
@@ -164,8 +164,8 @@ void pull_floats(int num, float* h_ptr, float* d_ptr)
     cublasStatus status;
     status = cublasGetVector(num, sizeof(float), d_ptr, 1, h_ptr, 1);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot push %d floats to device\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot push %d floats to device\n",num);
         fflush(stdout);
     }
 }
@@ -175,8 +175,8 @@ void pull_doubles(int num, double* h_ptr, double* d_ptr)
     cublasStatus status;
     status = cublasGetVector(num, sizeof(double), h_ptr, 1, d_ptr, 1);
     if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cannot push %d doubles to device\n",num);
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cannot push %d doubles to device\n",num);
         fflush(stdout);
     }
 }

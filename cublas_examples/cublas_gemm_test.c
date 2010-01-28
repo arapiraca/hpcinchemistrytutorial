@@ -130,8 +130,8 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
         *Gflops_incl = 0;
         *Gflops_excl = 0;
 
-        printf("failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("cublasSgemm failed\n");
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cublasSgemm failed\n");
         fflush(stdout);
     }
 
