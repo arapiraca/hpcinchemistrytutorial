@@ -60,8 +60,8 @@ privately owned rights.
 
 #include "blas_utils.h"
 
-void run_blas_sgemm_test(int threads, int dim, float alpha, float beta, double* time, double* Gflops);
-void run_blas_dgemm_test(int threads, int dim, double alpha, double beta, double* time, double* Gflops);
+void run_blas_sgemm_test(int dim, float alpha, float beta, double* time, double* Gflops);
+void run_blas_dgemm_test(int dim, double alpha, double beta, double* time, double* Gflops);
 
 #endif
 

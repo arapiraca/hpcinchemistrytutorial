@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);
     fflush(stderr);
 
-    threads = 0;
+    threads = 2;
 #ifdef OPENMP
     if ( threads > 0 ){ omp_set_num_threads(threads); }
     else { omp_set_num_threads( omp_get_max_threads() ); }
@@ -107,13 +107,14 @@ int main(int argc, char** argv)
 #else
     printf("Not using OpenMP threads with BLAS\n");
 #endif
+    fflush(stdout);
 
     for ( t = 0 ; t < ntests ; t++)
     {
         if ( precision==1 ) { 
-            run_blas_sgemm_test(threads, dim[t], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]); }
+            run_blas_sgemm_test(dim[t], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]); }
         else if (precision==2 ) {
-            run_blas_dgemm_test(threads, dim[t], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]); }
+            run_blas_dgemm_test(dim[t], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]); }
     }
 
 #ifdef CUDA
@@ -187,7 +188,7 @@ int main(int argc, char** argv)
     for ( t = 0 ; t < ntests ; t++ )
     {
 #ifdef CUDA
-        ratio = blas_Gflops[t] / cublas_incl_Gflops[t];
+        ratio = cublas_incl_Gflops[t] / blas_Gflops[t];
         if ( blas_Gflops[t] > cublas_incl_Gflops[t] ){
             printf("%6d %8.3f Gflops <== %6.3f     %8.3f Gflops %8.3f Gflops\n",
                     dim[t],blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }

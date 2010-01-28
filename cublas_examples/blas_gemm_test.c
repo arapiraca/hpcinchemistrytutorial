@@ -41,7 +41,7 @@ privately owned rights.
 
 #include "blas_gemm_test.h"
 
-void run_blas_sgemm_test(int threads, int dim, float alpha, float beta, double* time, double* Gflops)
+void run_blas_sgemm_test(int dim, float alpha, float beta, double* time, double* Gflops)
 {
     int i;
     int count = 10;
@@ -100,17 +100,8 @@ void run_blas_sgemm_test(int threads, int dim, float alpha, float beta, double* 
 
 }
 
-void run_blas_dgemm_test(int threads, int dim, double alpha, double beta, double* time, double* Gflops)
+void run_blas_dgemm_test(int dim, double alpha, double beta, double* time, double* Gflops)
 {
-
-#ifdef OPENMP
-    if ( threads > 0 ){ omp_set_num_threads(threads); }
-    else { omp_set_num_threads( omp_get_max_threads() ); }
-    printf("Using %d OpenMP threads with BLAS (if applicable)\n",omp_get_num_threads());
-#else
-    printf("Not using OpenMP threads with BLAS\n");
-#endif
-
     int i;
     int count = 10;
     int N = dim;
