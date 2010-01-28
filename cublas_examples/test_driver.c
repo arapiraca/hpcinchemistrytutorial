@@ -79,7 +79,11 @@ int main(int argc, char** argv)
     for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
     for ( i = 5 ; i <  5 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
     for ( i = 5 ; i < 10 ; i++ ) dim[t++] = i*200; // 1000 to 1800 by 100
-    for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*500; // 2000 to   ?  by 500
+#ifdef BIGTESTS
+    for ( i = 4 ; i < 11 ; i++ ) dim[t++] = i*500; // 2000 to 5000 by 500
+#else
+    for ( i = 4 ; i <  6 ; i++ ) dim[t++] = i*500; // 2000 to 2500 by 500
+#endif
     ntests = t;
 
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);

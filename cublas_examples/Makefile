@@ -14,6 +14,7 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
 
    # Fusion
@@ -26,6 +27,7 @@
       CUDA = NO
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
    ifeq ($(HOSTNAME),flogin2.lcrc.anl.gov)
       OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
@@ -36,6 +38,7 @@
       CUDA = NO
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
    #ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
    ifeq ($(HOSTNAME),flogin3)
@@ -47,6 +50,7 @@
       CUDA = NO
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
 
    # Lincoln
@@ -59,6 +63,7 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
    ifeq ($(HOSTNAME),honest2.ncsa.uiuc.edu)
       OPT = -O3 -xT
@@ -69,6 +74,7 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
    ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
       OPT = -O3 -xT
@@ -79,6 +85,7 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
    ifeq ($(HOSTNAME),honest4.ncsa.uiuc.edu)
       OPT = -O3 -xT
@@ -89,6 +96,7 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      BIGTESTS = YES
    endif
 
    # Megatron
@@ -101,12 +109,17 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      BIGTESTS = NO
    endif
 
    DEFINES =
    INC =
    PLIB =
    SLIB =
+
+   ifeq ($(BIGTESTS),YES)
+      DEFINES += -DBIGTESTS
+   endif 
 
    ifeq ($(OPENMP),YES)
       DEFINES += -DOPENMP
