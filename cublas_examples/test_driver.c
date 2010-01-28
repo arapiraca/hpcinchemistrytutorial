@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 
     if      ( precision == 1 ) printf("Using single-precision\n");
     else if ( precision == 2 ) printf("Using double-precision\n");
-    else { precision = 1 ;     printf("Using single-precision\n"); }
+    else    { precision = 1 ;  printf("Using single-precision\n"); }
 
     t = 0;
     dim[t++] = 1;
@@ -83,7 +83,7 @@ int main(int argc, char** argv)
     for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
     for ( i = 5 ; i <  5 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
     for ( i = 5 ; i < 10 ; i++ ) dim[t++] = i*200; // 1000 to 1800 by 100
-    for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*500; // 2000 to   ?  by 500
+    //for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*500; // 2000 to   ?  by 500
     ntests = t;
 
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);
