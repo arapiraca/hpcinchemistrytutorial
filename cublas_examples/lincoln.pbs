@@ -1,0 +1,14 @@
+#!/bin/sh
+#PBS -N test_driver_S
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=0:29:00
+#PBS -j oe
+#PBS -q lincoln_debug
+#PBS -V
+
+echo "Using serial BLAS"
+/u/ac/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 1
+/u/ac/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 2
+echo "Using threaded BLAS"
+/u/ac/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1
+/u/ac/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2
