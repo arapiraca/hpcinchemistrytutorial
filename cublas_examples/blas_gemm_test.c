@@ -49,6 +49,8 @@ void run_blas_sgemm_test(int threads, int dim, float alpha, float beta, double* 
     else { omp_set_num_threads( omp_get_max_threads() ); }
 #endif
 
+    int i;
+    int count = 10;
     int N = dim;
     float myalpha = alpha;
     float mybeta = beta;
@@ -77,14 +79,19 @@ void run_blas_sgemm_test(int threads, int dim, float alpha, float beta, double* 
     fflush(stderr);
 
     /* warm-up */
-    if (N<1000) sgemm("n", "n", &N, &N, &N, &myalpha, a, &N, b, &N, &mybeta, c, &N);
-
-    /* run the timing */
-    tt_start = gettime();
     sgemm("n", "n", &N, &N, &N, &myalpha, a, &N, b, &N, &mybeta, c, &N);
-    tt_end = gettime();
 
-    tt_blas = tt_end - tt_start;
+    tt_blas = 0;
+    for ( i = 0 ; i < count ; i++ )
+    {
+        /* run the timing */
+        tt_start = gettime();
+        sgemm("n", "n", &N, &N, &N, &myalpha, a, &N, b, &N, &mybeta, c, &N);
+        tt_end = gettime();
+        tt_blas += ( tt_end - tt_start );
+    }
+
+    tt_blas /= (double) count;
 
     *time = tt_blas;
     *Gflops = 1e-9 * nflops / tt_blas;

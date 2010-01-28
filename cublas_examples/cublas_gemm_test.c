@@ -47,13 +47,15 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
     cublasStatus status;
     cublasStatus statusX;
 
+    int i;
+    int count = 10;
     int N = dim;
     float myalpha = alpha;
     float mybeta = beta;
 
     long long nflops;
-    double tt_incl_start, tt_incl_end;
-    double tt_excl_start, tt_excl_end;
+    double tt_incl, tt_incl_start, tt_incl_end;
+    double tt_excl, tt_excl_start, tt_excl_end;
 
     float* ha;
     float* hb;
@@ -88,31 +90,48 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
     fflush(stderr);
 
     /* warm-up */
-    if (N<1000) cublasSgemm('n', 'n', N, N, N, myalpha, da, N, db, N, mybeta, dc, N);
-
-    /* run the timing */
-    cudaThreadSynchronize();
-    tt_incl_start = gettime();
-
     push_floats(dim*dim, ha, da);
     push_floats(dim*dim, hb, db);
     if ( myalpha != 0.0) push_floats(dim*dim, hc, dc);
-
-    tt_excl_start = gettime();
     cublasSgemm('n', 'n', N, N, N, myalpha, da, N, db, N, mybeta, dc, N);
-    cudaThreadSynchronize();
-
-    /* check for errors */
-    statusX = cublasGetError();
-    tt_excl_end = gettime();
-
-    /* read the result back */
     pull_floats(dim*dim, hc, dc);
-    tt_incl_end = gettime();
+
+    /* run the timing */
+    tt_incl = 0;
+    tt_excl = 0;
+
+    for ( i = 0 ; i < count ; i++ )
+    {
+        cudaThreadSynchronize();
+        tt_incl_start = gettime();
+
+        push_floats(dim*dim, ha, da);
+        push_floats(dim*dim, hb, db);
+        if ( myalpha != 0.0) push_floats(dim*dim, hc, dc);
+
+        tt_excl_start = gettime();
+        cublasSgemm('n', 'n', N, N, N, myalpha, da, N, db, N, mybeta, dc, N);
+        cudaThreadSynchronize();
+
+        /* check for errors */
+        statusX = cublasGetError();
+        tt_excl_end = gettime();
+
+        /* read the result back */
+        pull_floats(dim*dim, hc, dc);
+        tt_incl_end = gettime();
+
+        tt_incl += ( tt_incl_end - tt_incl_start );
+        tt_excl += ( tt_excl_end - tt_excl_start );
+    }
 
     if (statusX == CUBLAS_STATUS_SUCCESS) {
-        *time_incl = tt_incl_end - tt_incl_start;
-        *time_excl = tt_excl_end - tt_excl_start;
+
+        tt_incl /= (double) count;
+        tt_excl /= (double) count;
+
+        *time_incl = tt_incl;
+        *time_excl = tt_excl;
 
         *Gflops_incl = 1e-9 * nflops / *time_incl;
         *Gflops_excl = 1e-9 * nflops / *time_excl;
@@ -122,6 +141,7 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
         fprintf(stderr,"# cublasSgemm Gflops %f (exclusive)\n",*Gflops_excl);
         fprintf(stderr,"# cublasSgemm Gflops %f (inclusive)\n",*Gflops_incl);
         fflush(stderr);
+
     } else {
 
         *time_incl = 1e9;

@@ -58,9 +58,9 @@ int main(int argc, char** argv)
     int ntests = 100;
     int dim[ntests];
     float f_alpha = 1.0;
-    float f_beta = 1.0;
+    float f_beta = 0.0;
     double d_alpha = 1.0;
-    double d_beta = 1.0;
+    double d_beta = 0.0;
     double blas_time[ntests];
     double blas_Gflops[ntests];
     double cublas_excl_time[ntests];
@@ -72,8 +72,9 @@ int main(int argc, char** argv)
     dim[t++] = 1;
     for ( i = 1 ; i < 20 ; i++ ) dim[t++] = i*10;  //   10 to  200 by 10
     for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
-//     for ( i = 5 ; i < 20 ; i++ ) dim[t++] = i*100; //  500 to 1900 by 100
-//     for ( i = 4 ; i <  8 ; i++ ) dim[t++] = i*500; // 2000 to 3500 by 500
+    for ( i = 5 ; i <  5 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
+    for ( i = 5 ; i < 10 ; i++ ) dim[t++] = i*200; // 1000 to 1800 by 100
+    for ( i = 4 ; i <  3 ; i++ ) dim[t++] = i*500; // 2000 to   ?  by 500
     ntests = t;
 
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);
@@ -116,11 +117,18 @@ int main(int argc, char** argv)
     }
 #endif
 
-    printf("    d        BLAS         CUBLAS (incl)   CUBLAS (excl)\n");
+    printf("    d        BLAS               CUBLAS (incl)   CUBLAS (excl)\n");
     for ( t = 0 ; t < ntests ; t++ )
     {
-        printf("%6d %8.3f Gflops %8.3f Gflops %8.3f Gflops\n",
-                dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]);
+        if ( blas_Gflops[t] > cublas_incl_Gflops[t] ){
+            printf("%6d %8.3f Gflops <==    %8.3f Gflops %8.3f Gflops\n",
+                    dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+        else if ( blas_Gflops[t] < cublas_incl_Gflops[t] ) {
+            printf("%6d %8.3f Gflops    ==> %8.3f Gflops %8.3f Gflops\n",
+                    dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+        else {
+            printf("%6d %8.3f Gflops <====> %8.3f Gflops %8.3f Gflops\n",
+                    dim[t],blas_Gflops[t],cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
     }
     fflush(stdout);
 

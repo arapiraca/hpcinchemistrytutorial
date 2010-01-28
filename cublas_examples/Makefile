@@ -131,7 +131,7 @@
 
 OBJECTS = blas_gemm_test.o cublas_gemm_test.o blas_utils.o cublas_utils.o getticks.o
 
-all: refresh
+all: bin
 
 bin: test_driver.x
 #
