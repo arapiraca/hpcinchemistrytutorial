@@ -43,6 +43,8 @@ privately owned rights.
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
+int gethostname(char *name, size_t len);
 
 #include "blas_gemm_test.h"
 
@@ -63,6 +65,11 @@ int main(int argc, char** argv)
     double d_beta = 0.0;
     double blas_time[ntests];
     double blas_Gflops[ntests];
+
+    char buf[256];
+    if (gethostname(buf, (int) sizeof(buf)) != 0) buf[0] = 0;
+    printf("Hostname: %s\n",buf);
+    fflush(stdout);
 
     /* default to single precision or command-line override */
     if ( argc > 1 ) precision = atoi(argv[1]);
@@ -163,7 +170,7 @@ int main(int argc, char** argv)
     printf("canMapHostMemory:     %20d\n",cudaProp.canMapHostMemory);
     printf("totalGlobalMem:       %20ld MiB\n",cudaProp.totalGlobalMem/(1024*1024));
     printf("sharedMemPerBlock:    %20ld\n",cudaProp.sharedMemPerBlock);
-    printf("clockRate:            %20d\n",cudaProp.clockRate);
+    printf("clockRate:            %20.3f MHz\n",(double)cudaProp.clockRate/(1000000));
     printf("regsPerBlock:         %20d\n",cudaProp.regsPerBlock);
     printf("warpSize:             %20d\n",cudaProp.warpSize);
     printf("maxThreadsPerBlock:   %20d\n",cudaProp.maxThreadsPerBlock);
