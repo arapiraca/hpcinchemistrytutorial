@@ -165,7 +165,7 @@
 #
 #############################################
 
-OBJECTS = blas_gemm_test.o cublas_gemm_test.o blas_utils.o cublas_utils.o getticks.o
+OBJECTS = blas_gemm_test.o cublas_gemm_test.o blas_utils.o cublas_utils.o getticks.o # cpuid.o
 
 all: bin
 
@@ -196,6 +196,9 @@ cublas_utils.o: cublas_utils.c cublas_utils.h
 
 getticks.o: getticks.c
 	gcc -c getticks.c
+
+cpuid.o: cpuid.c
+	gcc -c cpuid.c
 
 #
 # UTILITY OPERATIONS
