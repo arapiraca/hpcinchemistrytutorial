@@ -170,7 +170,7 @@ int main(int argc, char** argv)
     printf("canMapHostMemory:     %20d\n",cudaProp.canMapHostMemory);
     printf("totalGlobalMem:       %20ld MiB\n",cudaProp.totalGlobalMem/(1024*1024));
     printf("sharedMemPerBlock:    %20ld\n",cudaProp.sharedMemPerBlock);
-    printf("clockRate:            %20.3f MHz\n",(double)cudaProp.clockRate/(1000000));
+    printf("clockRate:            %20.3f GHz\n",cudaProp.clockRate/1.0e6); /* kHz is base unit */
     printf("regsPerBlock:         %20d\n",cudaProp.regsPerBlock);
     printf("warpSize:             %20d\n",cudaProp.warpSize);
     printf("maxThreadsPerBlock:   %20d\n",cudaProp.maxThreadsPerBlock);
