@@ -43,7 +43,10 @@ int main(int argc, char **argv)
     int test;
     int status;
 
-    MPI_Init(&argc, &argv);
+    int desired = MPI_THREAD_MULTIPLE;
+    int provided;
+    MPI_Init_thread(&argc, &argv, desired, &provided);
+
     ARMCI_Init();
 
 #ifdef HPC_PROFILING
