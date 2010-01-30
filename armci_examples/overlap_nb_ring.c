@@ -101,19 +101,24 @@ int overlap_nb_ring(int me, int nproc, int len)
 
         if (me == (nproc-1) ){
 
+           t0 = getticks();
            status = ARMCI_NbGet(addr_vec1[0], addr_vec2[nproc-1], len*sizeof(double), 0, &nb_handle);
            delay( delays[i] );
+           ARMCI_Wait(&nb_handle);
+           t1 = getticks();
 
         } else {
 
+           t0 = getticks();
            status = ARMCI_NbGet(addr_vec1[me+1], addr_vec2[me], len*sizeof(double), me+1, &nb_handle);
            delay( delays[i] );
+           ARMCI_Wait(&nb_handle);
+           t1 = getticks();
 
         }
 
         if((status != 0) && (me == 0)) printf("%s: ARMCI_NbGet failed at line %d\n",__FILE__,__LINE__);
 
-        ARMCI_Wait(&nb_handle);
         MPI_Barrier(MPI_COMM_WORLD);
 
         if (me == 0){
