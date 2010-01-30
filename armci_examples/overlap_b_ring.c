@@ -39,7 +39,6 @@
 
 #define REPS 23
 
-unsigned long long int DCMF_Timebase();
 void delay( unsigned long long delay_ticks );
 
 int overlap_b_ring(int me, int nproc, int len)
@@ -98,24 +97,25 @@ int overlap_b_ring(int me, int nproc, int len)
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        t0 = DCMF_Timebase();
-
         if (me == (nproc-1) ){
 
+           t0 = getticks();
            status = ARMCI_Get(addr_vec1[0], addr_vec2[nproc-1], len*sizeof(double), 0);
            delay( delays[i] );
+           t1 = getticks();
 
         } else {
 
+           t0 = getticks();
            status = ARMCI_Get(addr_vec1[me+1], addr_vec2[me], len*sizeof(double), me+1);
            delay( delays[i] );
+           t1 = getticks();
 
         }
 
         if((status != 0) && (me == 0)) printf("%s: ARMCI_Get failed at line %d\n",__FILE__,__LINE__);
 
         MPI_Barrier(MPI_COMM_WORLD);
-        t1 = DCMF_Timebase();
 
         if (me == 0){
            //printf("Iter %6d Proc %6d: (t0,t1) = %16lld %16lld\n",i,me,t0,t1);
