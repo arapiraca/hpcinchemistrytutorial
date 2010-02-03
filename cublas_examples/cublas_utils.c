@@ -42,8 +42,8 @@ privately owned rights.
 
 #include "cublas_utils.h"
 
-// void start_cublas(void)
-// {
+void start_cublas(int printMask)
+{
 //     static int cublas_instances = 0;
 // 
 //     if ( cublas_instances == 0 )
@@ -61,10 +61,46 @@ privately owned rights.
 //     } else {
 //         cublas_instances += 1;
 //     }
-// }
+    cublasStatus status;
 
-// void stop_cublas(void)
-// {
+    status = cublasInit();
+    if (status == CUBLAS_STATUS_SUCCESS) {
+        fprintf(stderr,"! cublasInit succeeded\n");
+    } else {
+        fprintf(stderr,"! failure at line %d of %s\n",__LINE__,__FILE__);
+        fprintf(stderr,"! cublasInit failed\n");
+    }
+    fflush(stderr);
+
+    if (printMask==0)
+    {
+        int cudaDevice;
+        struct cudaDeviceProp cudaProp;
+        cudaGetDevice( &cudaDevice );
+        cudaGetDeviceProperties( &cudaProp, cudaDevice );
+        if ( cudaProp.major==1 && cudaProp.minor==0 ){
+            fprintf(stderr,"! CUDA device does not support double-precision\n");
+            fflush(stderr);
+        }
+
+        printf("=========================================================\n");
+        printf("CUDA device properties:\n");
+        printf("name:                 %20s\n",cudaProp.name);
+        printf("major version:        %20d\n",cudaProp.major);
+        printf("minor version:        %20d\n",cudaProp.minor);
+        printf("canMapHostMemory:     %20d\n",cudaProp.canMapHostMemory);
+        printf("totalGlobalMem:       %20ld MiB\n",cudaProp.totalGlobalMem/(1024*1024));
+        printf("sharedMemPerBlock:    %20ld\n",cudaProp.sharedMemPerBlock);
+        printf("clockRate:            %20.3f GHz\n",cudaProp.clockRate/1.0e6); /* kHz is base unit */
+        printf("regsPerBlock:         %20d\n",cudaProp.regsPerBlock);
+        printf("warpSize:             %20d\n",cudaProp.warpSize);
+        printf("maxThreadsPerBlock:   %20d\n",cudaProp.maxThreadsPerBlock);
+        printf("=========================================================\n");
+    }
+}
+
+void stop_cublas(void)
+{
 //     static int cublas_instances = 0;
 // 
 //     if ( cublas_instances == 0 )
@@ -81,7 +117,18 @@ privately owned rights.
 //     } else {
 //         cublas_instances -= 1;
 //     }
-// }
+
+    cublasStatus status;
+    status = cublasShutdown();
+    if (status == CUBLAS_STATUS_SUCCESS) {
+        fprintf(stderr,"! cublasShutdown succeeded\n");
+    } else {
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+        printf("! cublasShutdown failed\n");
+        fflush(stdout);
+    }
+
+}
 
 float* alloc_device_floats(int num)
 {

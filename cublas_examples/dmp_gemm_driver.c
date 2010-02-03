@@ -39,30 +39,46 @@ privately owned rights.
 
  ***************************************************************************/
 
-#ifndef CUBLAS_UTILS_H
-#define CUBLAS_UTILS_H
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <unistd.h>
+
+#include "blas_gemm_test.h"
 
 #ifdef CUDA
-
-#include "cuda_runtime.h"
-#include "cublas.h"
-
-void start_cublas(int printMake);
-void stop_cublas(void);
-float* alloc_device_floats(int num);
-double* alloc_device_doubles(int num);
-void free_device_floats(float* ptr);
-void free_device_doubles(double* ptr);
-void push_floats(int num, float* h_ptr, float* d_ptr);
-void push_doubles(int num, double* h_ptr, double* d_ptr);
-void pull_floats(int num, float* d_ptr, float* h_ptr);
-void pull_doubles(int num, double* d_ptr, double* h_ptr);
-
+#include "cublas_gemm_test.h"
 #endif
 
-#endif
+#include "ga_utils.h"
+
+int main(int argc, char** argv)
+{
+    int me, nproc;
+
+    start_parallel(&argc,&argv,&me,&nproc);
+
+    int precision = 1;
+    int rows = 10000;
+    int cols = 10000;
+
+    int g_a = alloc_global_2d(precision,rows,cols,me);
+    int g_b = alloc_global_2d(precision,rows,cols,me);
+    int g_c = alloc_global_2d(precision,rows,cols,me);
+
+    zero_global(g_a);
+    zero_global(g_b);
+    zero_global(g_c);
+
+    free_global(g_c);
+    free_global(g_b);
+    free_global(g_a);
+
+    stop_parallel(me);
+
+    fprintf(stderr,"# the test driver has finished!!!\n");
+    fflush(stderr);
+
+    return 0;
+}

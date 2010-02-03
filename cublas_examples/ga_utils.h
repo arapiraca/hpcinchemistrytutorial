@@ -39,30 +39,32 @@ privately owned rights.
 
  ***************************************************************************/
 
-#ifndef CUBLAS_UTILS_H
-#define CUBLAS_UTILS_H
+#ifndef GA_UTILS_H
+#define GA_UTILS_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-#ifdef CUDA
+#include "macdecls.h"
+#include "armci.h"
+#include "sndrcv.h"
+#include "ga.h"
 
-#include "cuda_runtime.h"
-#include "cublas.h"
+#include "mpi.h"
 
-void start_cublas(int printMake);
-void stop_cublas(void);
-float* alloc_device_floats(int num);
-double* alloc_device_doubles(int num);
-void free_device_floats(float* ptr);
-void free_device_doubles(double* ptr);
-void push_floats(int num, float* h_ptr, float* d_ptr);
-void push_doubles(int num, double* h_ptr, double* d_ptr);
-void pull_floats(int num, float* d_ptr, float* h_ptr);
-void pull_doubles(int num, double* d_ptr, double* h_ptr);
+void print_hostname(int printMask);
+
+void start_parallel(int* argc, char*** argv, int* me, int* nproc);
+void stop_parallel(int me);
+
+void zero_global(int g_a);
+
+int alloc_global_2d(int precision, int rows, int cols, int printMask);
+
+void copy_global(int g_in, int g_out);
+void free_global(int g_a);
 
 #endif
 
-#endif
