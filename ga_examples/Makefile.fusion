@@ -1,0 +1,165 @@
+#DEBUG=YES
+#HPM_PROFILING=YES
+
+#############################################
+#
+#               Linux (64-bit)
+#
+#############################################
+
+ifeq ($(TARGET),LINUX64)
+
+   CPPFLAGS=
+
+   RM = rm
+   RMFLAGS = -f
+
+   AR = ar
+   ARFLAGS = -r
+
+   MPI_PREFIX=/soft/mvapich2/1.4-intel-11.1.059
+   MPI_INC=-I$(MPI_PREFIX)/include
+   MPI_LIB=-L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/var/tmp/pvfs-2.8.1/usr/lib -lpvfs2 -lcrypto -lssl -L/usr/lib64/ -libverbs -lrt
+
+   GA_PREFIX=/homes/jhammond/ga-cvs-dev
+   GA_INC=-I$(GA_PREFIX)/include
+   GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -larmci -ltcgmsg-mpi
+
+   #MKL_LIB=-L/soft/intel/11.1.038/mkl/lib/em64t -lguide -lmkl_lapack -lmkl_core -lmkl_sequential
+   MKL_LIB=-L/soft/intel/11.1.038/mkl/lib/em64t -lguide -lmkl_lapack -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread
+
+   GOTO=-L/homes/jhammond/lib -lgoto2_nehalem-r1.08_intel_nothread
+   #GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
+
+   GSL_DIR=/homes/jhammond/GSL
+   GSL_INC=-I$(GSL_DIR)/include
+   GSL_LIB=-L$(GSL_DIR)/lib -lgslcblas -lgsl
+
+   #BLAS=$(GOTO)
+   BLAS=$(MKL_LIB)
+
+   EXTRAS=-lm -lpthread
+
+   LIB=$(GA_LIB) $(MPI_LIB) $(GSL_LIB) $(BLAS) $(EXTRAS)
+   INC=$(GA_INC) $(MPI_INC) $(GSL_INC)
+
+   OPT = -g -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2 -no-prec-div -funroll-loops
+
+   CC=$(MPI_PREFIX)/bin/mpicc
+   COPT = $(OPT)
+   CFLAGS=-g $(COPT) -Wall $(INC)
+   CPP=$(CC) -E
+   ifeq ($(DEBUG),YES)
+      CPPFLAGS+=-DDEBUG
+   endif
+
+   OPT = -g -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2 -no-prec-div -funroll-loops
+
+   CC=$(MPI_PREFIX)/bin/mpicc
+   COPT = $(OPT)
+   CFLAGS=-g $(COPT) -Wall $(INC)
+   CPP=$(CC) -E
+   ifeq ($(DEBUG),YES)
+      CPPFLAGS+=-DDEBUG
+   endif
+
+   LD=$(CC)
+   LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2
+
+endif
+
+#############################################
+#
+#               BlueGene/P
+#
+#############################################
+
+ifeq ($(TARGET),BGP)
+
+   CPPFLAGS=-DDCMF
+
+   RM = rm
+   RMFLAGS = -f
+
+   AR = /bgsys/drivers/ppcfloor/gnu-linux/bin/powerpc-bgp-linux-ar
+   ARFLAGS = -r
+
+   BGP_SYS=/bgsys/drivers/ppcfloor
+
+   MPI_PREFIX=$(BGP_SYS)/comm
+   MPI_INC=-I$(MPI_PREFIX)/include
+   MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
+
+   GA_PREFIX=/home/projects/nwchem/ga-cvs-dev
+   GA_INC=-I$(GA_PREFIX)/include -I$(GA_PREFIX)/armci/src
+   //GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -llinalg -larmci -ltcgmsg-mpi
+   GA_LIB=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
+
+   ESSL_PREFIX=/soft/apps/ESSL-4.4
+   ESSL_INC=-I$(ESSL_PREFIX)/include
+   ESSL_LIB=-L$(ESSL_PREFIX)/lib -lesslbg -lmass
+
+   #GOTO_LIB=/soft/apps/LAPACK/liblapack_bgp.a /soft/apps/LIBGOTO/libgoto_ppc440FP2-r1.02a.VM.a -lxlsmp
+   #GOTO_LIB=/soft/apps/LAPACK/liblapack_bgp.a /soft/apps/LIBGOTO/libgoto_ppc440FP2-r1.02a.VM.a -lxlomp_ser
+
+   OMP_LIB=/opt/ibmcmp/xlsmp/bg/1.7/lib/libxlsmp.a
+
+   EXTRAS=/opt/ibmcmp/xlf/bg/11.1/lib/libxlf90_r.a -lpthread
+
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(ESSL_LIB) $(EXTRAS) $(OMP_LIB)
+   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC)
+
+   CC=$(MPI_PREFIX)/bin/mpixlc_r
+   COPT=-g -O5 -qarch=450d -qtune=450 -qthreaded
+   CFLAGS=$(INC) $(COPT) $(CDEF)
+   CPP=$(CC) -E
+   ifeq ($(DEBUG),YES)
+      CPPFLAGS+=-DDEBUG
+   endif
+
+   ifdef HPM_PROFILING
+      EXTRAS += /soft/apps/UPC/lib/libhpm.a
+      CPPFLAGS+=-DHPM_PROFILING
+   endif
+
+   LD=$(CC)
+   LDFLAGS=-g -O3 -qarch=450d -qtune=450 -qthreaded
+
+endif
+
+#############################################
+#
+#               Custom
+#
+#############################################
+
+ifeq ($(TARGET),CUSTOM)
+
+endif
+
+#############################################
+#
+#               End of Targets
+#
+#############################################
+
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o
+
+all: driver.x
+
+refresh: realclean all
+
+driver.x: $(OBJECTS)
+	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver_$(TARGET).x
+
+$%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
+
+clean:
+	$(RM) $(RMFLAGS) *.o
+
+realclean: clean
+	$(RM) $(RMFLAGS) *.x *.a
+
+
+

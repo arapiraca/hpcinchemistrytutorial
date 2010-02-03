@@ -28,7 +28,7 @@
  *                                                                         *
  ***************************************************************************/
 
-//#define USE_GSL
+#define USE_GSL
 #define USE_BLAS
 
 #include "driver.h"

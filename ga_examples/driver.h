@@ -50,14 +50,13 @@ unsigned long long DCMF_Timebase(void);
 #include "ga.h"
 #include "mpi.h"
 
-#ifdef USE_GSL
+#ifdef USE_ESSL
     #include "essl.h"
 #endif
 
-
 #ifdef USE_GSL
-    #include "gsl_math.h"
-    #include "gsl_cblas.h"
+    #include "gsl/gsl_math.h"
+    #include "gsl/gsl_cblas.h"
 #endif
 
 #ifdef HPM_PROFILING
