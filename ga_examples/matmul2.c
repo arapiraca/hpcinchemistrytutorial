@@ -233,8 +233,7 @@ int matmul2(int rank, int blksz)
     			if (myturn){
 
 #ifdef DEBUG
-    				printf("proc %d doing work tuple (%d,%d,%d)\n",me,ii,jj,kk);
-    				fflush(stdout);
+    				printf("proc %d doing work tuple (%d,%d,%d)\n",me,ii,jj,kk); fflush(stdout);
 #endif
 
     				lo_a[0] = blksz * ii;
