@@ -110,8 +110,10 @@ int main(int argc, char **argv)
     int target;
     int j;
     for (j=0;j<nproc;j++){
+        if (me==0) printf("ARMCI_Get performance test for buffer size = %d doubles\n",bufSize);
+        if (me==0) printf("host    target     local time (s)    total time (s)    effective BW (MB/s)\n");
+        fflush(stdout);
         target = (me+j) % nproc;
-        printf("process %d gets from target %d\n",me,target);
         MPI_Barrier(MPI_COMM_WORLD);
         t0 = MPI_Wtime();
         status = ARMCI_Get(addrVec1[target], b2, bufSize*sizeof(double), target); assert(status==0);
@@ -120,12 +122,9 @@ int main(int argc, char **argv)
         t2 = MPI_Wtime();
         fflush(stdout);
         for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
-        printf("%d: ARMCI_Get local and remote completion in %f and %f seconds\n",me,t1-t0,t2-t0);
-        printf("%d: ARMCI_Get effective bandwidth = %f MB/s\n",me, bufSize*sizeof(double)/(1024*1024)/(t2-t0) );
+        if (me==0) printf("%8d %8d %14.8f %14.8f $14.4f\n",me,target,t1-t0,t2-t0,bufSize*sizeof(double)/(1024*1024)/(t2-t0));
         fflush(stdout);
     }
-
-    fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
 
     status = ARMCI_Free_local(b2); assert(status==0);
