@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD,&me);
     MPI_Comm_size(MPI_COMM_WORLD,&nproc);
 
-    printf("%d: Hello world!\n",me);
+    //printf("%d: Hello world!\n",me);
 
     if ( me == 0 )
     {
