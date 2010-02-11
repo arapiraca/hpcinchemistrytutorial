@@ -34,6 +34,7 @@
       OPT = -O3
       MPI = NO # that is, LIB and INC not needed
       GA = YES
+      GA_PREFIX = /gpfs/home/jhammond/ga-cvs-dev
    endif
 
    # Gadzooks
@@ -130,7 +131,7 @@
    endif
    ifeq ($(TARGET),BGP)
       GCC = $(CC)
-      DEFINES += USE_DCMF_TIMEBASE
+      DEFINES += -DUSE_DCMF_TIMEBASE
    endif
 
    LIB += -lm -lpthread
