@@ -84,6 +84,7 @@ int main(int argc, char **argv)
     if (me==0) printf("%d: ARMCI_Init\n",me);
     ARMCI_Init();
     int status;
+    double t0,t1,t2,t3;
 
     int bufSize = ( argc>1 ? atoi(argv[1]) : 100 );
     if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
@@ -100,24 +101,25 @@ int main(int argc, char **argv)
 
     int i;
     for (i=0;i<bufSize;i++) b1[i]=1.0*me;
-    for (i=0;i<bufSize;i++) b2[i]=0.0;
+    for (i=0;i<bufSize;i++) b2[i]=-1.0;
 
-    status = ARMCI_Put(b1, addrVec1[me], bufSize*sizeof(double), me);
-    if (status!=0) printf("%d: ARMCI_Put failed at line %d of %s\n",me,__LINE__,__FILE__);
-    status = ARMCI_Put(b2, addrVec2[me], bufSize*sizeof(double), me);
-    if (status!=0) printf("%d: ARMCI_Put failed at line %d of %s\n",me,__LINE__,__FILE__);
+    status = ARMCI_Put(b1, addrVec1[me], bufSize*sizeof(double), me); assert(status==0);
+    status = ARMCI_Put(b2, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
 
-    int target = (me+1) % nproc;
-    printf("process %d gets from target %d\n",me,target);
-    status = ARMCI_Get(addrVec1[target], b2, bufSize*sizeof(double), target);
-    if (status!=0) printf("%d: ARMCI_Get failed at line %d of %s\n",me,__LINE__,__FILE__);
-
-    fflush(stdout);
-    MPI_Barrier(MPI_COMM_WORLD);
-
-//     for (i=0;i<bufSize;i++) printf("%d: b1[%d] = %f\n",me,i,b1[i]);
-//     for (i=0;i<bufSize;i++) printf("%d: b2[%d] = %f\n",me,i,b2[i]);
-    for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
+    int target;
+    int j;
+    for (j=0;j<nproc;j++){
+        target = (me+j) % nproc;
+        printf("process %d gets from target %d\n",me,target);
+        MPI_Barrier(MPI_COMM_WORLD);
+        t0 = MPI_Wtime();
+        status = ARMCI_Get(addrVec1[target], b2, bufSize*sizeof(double), target); assert(status==0);
+        t1 = MPI_Wtime();
+        ARMCI_Fence(target);
+        t2 = MPI_Wtime();
+        fflush(stdout);
+        for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
+    }
 
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
