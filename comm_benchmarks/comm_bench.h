@@ -51,7 +51,7 @@ privately owned rights.
 #include <time.h>
 
 #include "mpi.h"
-#include "armci.h"
+#include "../armci/src/armci.h"
 
 unsigned long long getticks(void);
 
