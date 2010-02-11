@@ -85,6 +85,7 @@ int main(int argc, char **argv)
     ARMCI_Init();
     int status;
     double t0,t1,t2,t3;
+    double tt0,tt1,tt2,tt3;
 
     int bufSize = ( argc>1 ? atoi(argv[1]) : 100 );
     if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
@@ -120,6 +121,7 @@ int main(int argc, char **argv)
         fflush(stdout);
         for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
     }
+    printf("%d: ARMCI_Get local and remote completion in %f and %f seconds\n",me,t1-t0,t2-t0);
 
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
