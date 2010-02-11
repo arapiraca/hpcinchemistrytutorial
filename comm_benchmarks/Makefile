@@ -4,7 +4,28 @@
 #
 #############################################
 
-   ifeq ($(HOSTNAME),login1.surveyor.anl.gov)
+   ifeq ($(HOSTNAME),login1.surveyor.alcf.anl.gov)
+      BGP=YES
+   endif
+   ifeq ($(HOSTNAME),login2.surveyor.alcf.anl.gov)
+      BGP=YES
+   endif
+   ifeq ($(HOSTNAME),login3.surveyor.alcf.anl.gov)
+      BGP=YES
+   endif
+   ifeq ($(HOSTNAME),login4.surveyor.alcf.anl.gov)
+      BGP=YES
+   endif
+   ifeq ($(HOSTNAME),login5.surveyor.alcf.anl.gov)
+      BGP=YES
+   endif
+   ifeq ($(HOSTNAME),login6.surveyor.alcf.anl.gov)
+      BGP=YES
+   endif
+   ifeq ($(HOSTNAME),login7.surveyor.alcf.anl.gov)
+      BGP=YES
+   endif
+   ifeq ($(HOSTNAME),login8.surveyor.alcf.anl.gov)
       BGP=YES
    endif
    ifeq ($(BGP),YES)
