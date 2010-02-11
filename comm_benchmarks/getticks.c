@@ -1,4 +1,4 @@
-#if defined(USE_DCMF_TIMEBASE)
+#ifdef USE_DCMF_TIMEBASE
 
 #include "dcmf.h"
 
