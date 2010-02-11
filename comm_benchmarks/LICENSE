@@ -1,4 +1,3 @@
-/***************************************************************************
 
                   COPYRIGHT
 
@@ -36,31 +35,3 @@ warranty express or implied, or assumes any legal liability or responsibility
 for the accuracy, completeness, or usefulness of any information, apparatus,
 product, or process disclosed, or represents that its use would not infringe
 privately owned rights.
-
- ***************************************************************************/
-
-#ifndef CUBLAS_UTILS_H
-#define CUBLAS_UTILS_H
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-
-#ifdef CUDA
-#include "cuda_runtime.h"
-#include "cublas.h"
-#endif
-
-void start_cublas(int printMake);
-void stop_cublas(void);
-float* alloc_device_floats(int num);
-double* alloc_device_doubles(int num);
-void free_device_floats(float* ptr);
-void free_device_doubles(double* ptr);
-void push_floats(int num, float* h_ptr, float* d_ptr);
-void push_doubles(int num, double* h_ptr, double* d_ptr);
-void pull_floats(int num, float* d_ptr, float* h_ptr);
-void pull_doubles(int num, double* d_ptr, double* h_ptr);
-
-#endif

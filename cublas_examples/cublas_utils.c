@@ -38,9 +38,10 @@ product, or process disclosed, or represents that its use would not infringe
 privately owned rights.
 
  ***************************************************************************/
-#ifdef CUDA
 
 #include "cublas_utils.h"
+
+#ifdef CUDA
 
 void start_cublas(int printMask)
 {
@@ -227,6 +228,68 @@ void pull_doubles(int num, double* h_ptr, double* d_ptr)
         printf("! cannot pull %d doubles from device\n",num);
         fflush(stdout);
     }
+}
+
+#else
+
+void start_cublas(int printMask)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+void stop_cublas(void)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+float* alloc_device_floats(int num)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+double* alloc_device_doubles(int num)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+void free_device_floats(float* ptr)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+void free_device_doubles(double* ptr)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+void push_floats(int num, float* h_ptr, float* d_ptr)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+void push_doubles(int num, double* h_ptr, double* d_ptr)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+void pull_floats(int num, float* d_ptr, float* h_ptr)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
+}
+
+void pull_doubles(int num, double* d_ptr, double* h_ptr)
+{
+    printf("! CUDA not enabled\n");
+    fflush(stdout);
 }
 
 #endif

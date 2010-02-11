@@ -39,28 +39,20 @@ privately owned rights.
 
  ***************************************************************************/
 
-#ifndef CUBLAS_UTILS_H
-#define CUBLAS_UTILS_H
+#ifndef COMM_BENCH_H
+#define COMM_BENCH_H
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
-#ifdef CUDA
-#include "cuda_runtime.h"
-#include "cublas.h"
-#endif
+#include "mpi.h"
+#include "armci.h"
 
-void start_cublas(int printMake);
-void stop_cublas(void);
-float* alloc_device_floats(int num);
-double* alloc_device_doubles(int num);
-void free_device_floats(float* ptr);
-void free_device_doubles(double* ptr);
-void push_floats(int num, float* h_ptr, float* d_ptr);
-void push_doubles(int num, double* h_ptr, double* d_ptr);
-void pull_floats(int num, float* d_ptr, float* h_ptr);
-void pull_doubles(int num, double* d_ptr, double* h_ptr);
+unsigned long long getticks(void);
 
 #endif

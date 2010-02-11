@@ -94,13 +94,15 @@ int main(int argc, char** argv)
 
     t = 0;
     dim[t++] = 1;
-    for ( i = 1 ; i < 20 ; i++ ) dim[t++] = i*10;  //   10 to  200 by 10
-    for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
-    for ( i = 5 ; i < 11 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
-#ifdef BIGTESTS
-    for ( i = 6 ; i < 10 ; i++ ) dim[t++] = i*200; // 1200 to 1800 by 200
-    for ( i = 4 ; i < 11 ; i++ ) dim[t++] = i*500; // 2000 to 5000 by 500
-#endif
+//     for ( i = 1 ; i < 20 ; i++ ) dim[t++] = i*10;  //   10 to  200 by 10
+//     for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
+//     for ( i = 5 ; i < 11 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
+// #ifdef BIGTESTS
+//     for ( i = 6 ; i < 10 ; i++ ) dim[t++] = i*200; // 1200 to 1800 by 200
+//     for ( i = 4 ; i < 11 ; i++ ) dim[t++] = i*500; // 2000 to 5000 by 500
+// #endif
+    int j = 64;
+    for ( i = 10*j ; i <= 20*j ; i+=j ) { dim[t++] = i-1; dim[t++] = i; dim[t++] = i+1; }
     ntests = t;
 
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);

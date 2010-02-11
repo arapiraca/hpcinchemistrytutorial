@@ -15,36 +15,31 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      MPI = YES
+      GA = YES
       BIGTESTS = YES
    endif
 
    # Fusion
    ifeq ($(HOSTNAME),flogin1.lcrc.anl.gov)
-      TARGET=LINUX64
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
-      INTEL_DIR = 
-      MKL_DIR = /soft/mkl/10.2.2.025
-      CUDA_DIR =
-      LIB_BITS =
-      CUDA = NO
-      MKL = YES
-      OPENMP = YES
-      BIGTESTS = YES
+      FUSION = YES
    endif
    ifeq ($(HOSTNAME),flogin2.lcrc.anl.gov)
-      TARGET=LINUX64
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
-      INTEL_DIR = 
-      MKL_DIR = /soft/mkl/10.2.2.025
-      CUDA_DIR =
-      LIB_BITS =
-      CUDA = NO
-      MKL = YES
-      OPENMP = YES
-      BIGTESTS = YES
+      FUSION = YES
    endif
-   #ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
+   ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
+      FUSION = YES
+   endif
+   ifeq ($(HOSTNAME),flogin1)
+      FUSION = YES
+   endif
+   ifeq ($(HOSTNAME),flogin2)
+      FUSION = YES
+   endif
    ifeq ($(HOSTNAME),flogin3)
+      FUSION = YES
+   endif
+   ifeq ($(FUSION),YES)
       TARGET=LINUX64
       OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
       INTEL_DIR = 
@@ -54,47 +49,25 @@
       CUDA = NO
       MKL = YES
       OPENMP = YES
+      MPI = YES
+      GA = YES
       BIGTESTS = YES
    endif
 
    # Lincoln
    ifeq ($(HOSTNAME),honest1.ncsa.uiuc.edu)
-      TARGET=LINUX64
-      OPT = -O3 -xT
-      INTEL_DIR = 
-      MKL_DIR = /usr/local/intel/mkl/10.2.2
-      CUDA_DIR = /usr/local/cuda-2.2/cuda
-      LIB_BITS =
-      CUDA = YES
-      MKL = YES
-      OPENMP = YES
-      BIGTESTS = YES
+      LINCOLN=YES
    endif
    ifeq ($(HOSTNAME),honest2.ncsa.uiuc.edu)
-      TARGET=LINUX64
-      OPT = -O3 -xT
-      INTEL_DIR = 
-      MKL_DIR = /usr/local/intel/mkl/10.2.2
-      CUDA_DIR = /usr/local/cuda-2.2/cuda
-      LIB_BITS =
-      CUDA = YES
-      MKL = YES
-      OPENMP = YES
-      BIGTESTS = YES
+      LINCOLN=YES
    endif
    ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
-      TARGET=LINUX64
-      OPT = -O3 -xT
-      INTEL_DIR = 
-      MKL_DIR = /usr/local/intel/mkl/10.2.2
-      CUDA_DIR = /usr/local/cuda-2.2/cuda
-      LIB_BITS =
-      CUDA = YES
-      MKL = YES
-      OPENMP = YES
-      BIGTESTS = YES
+      LINCOLN=YES
    endif
    ifeq ($(HOSTNAME),honest4.ncsa.uiuc.edu)
+      LINCOLN=YES
+   endif
+   ifeq ($(LINCOLN),YES)
       TARGET=LINUX64
       OPT = -O3 -xT
       INTEL_DIR = 
@@ -104,6 +77,8 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      MPI = YES
+      GA = YES
       BIGTESTS = YES
    endif
 
@@ -114,8 +89,6 @@
       INTEL_DIR = /opt/intel/Compiler/11.1/059
       MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
       CUDA_DIR = /opt/cuda
-      #MPI_PREFIX=/software/mpich/intel-build-mpich2-trunk/
-      #MPI_VENDOR=MPICH
       MPI_PREFIX=/software/open-mpi/gnu-build
       MPI_VENDOR=OMPI
       GA_PREFIX=/software/ga/ga-4-2
@@ -123,6 +96,8 @@
       CUDA = YES
       MKL = YES
       OPENMP = YES
+      MPI = YES
+      GA = YES
       BIGTESTS = NO
    endif
 
@@ -147,15 +122,21 @@
       LIB += $(CUBLAS_LIB)
    endif
 
-   INC += -I$(GA_PREFIX)/include
-   LIB += -L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
-
-   ifeq ($(MPI_VENDOR),OMPI)
-      LIB += -L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
-   else
-      LIB += -L$(MPI_PREFIX)/lib -lmpich  -lopa -lrt
+   ifeq ($(GA),YES)
+      DEFINES += -DGA
+      INC += -I$(GA_PREFIX)/include
+      LIB += -L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
    endif
-   INC += -I$(MPI_PREFIX)/include
+
+   ifeq ($(MPI),YES)
+      DEFINES += -DMPI
+      ifeq ($(MPI_VENDOR),OMPI)
+         LIB += -L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
+      else
+         LIB += -L$(MPI_PREFIX)/lib -lmpich  -lopa -lrt
+      endif
+      INC += -I$(MPI_PREFIX)/include
+   endif
 
    ifeq ($(MKL),YES)
       DEFINES += -DMKL
@@ -183,8 +164,9 @@
 #
 #############################################
 
-OBJECTS = blas_gemm_test.o cublas_gemm_test.o ga_utils.o blas_utils.o cublas_utils.o getticks.o # cpuid.o
+OBJECTS = gagpu_gemm.o blas_gemm_test.o cublas_gemm_test.o ga_utils.o blas_utils.o cublas_utils.o getticks.o # cpuid.o
 
+#all: refresh bin
 all: bin
 
 bin: test_driver.x dmp_gemm_driver.x
@@ -205,6 +187,9 @@ dmp_gemm_driver.o: dmp_gemm_driver.c blas_gemm_test.h
 
 test_driver.o: test_driver.c blas_gemm_test.h
 	$(CC) $(CFLAGS) $(INC) -c test_driver.c
+
+gagpu_gemm.o: gagpu_gemm.c ga_utils.h cublas_utils.h
+	$(CC) $(CFLAGS) $(INC) -c gagpu_gemm.c
 
 blas_gemm_test.o: blas_gemm_test.c blas_utils.h
 	$(CC) $(CFLAGS) $(INC) -c blas_gemm_test.c

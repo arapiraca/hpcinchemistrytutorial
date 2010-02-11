@@ -28,15 +28,12 @@
  *                                                                         *
  ***************************************************************************/
 
-//#define USE_LOOPS
-//#define USE_GSL
-//#define USE_BLAS
-#define USE_GOTO
-
 #include "driver.h"
 
-//void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
-void dgemm(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
+//#define USE_BLAS
+
+void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
+//void dgemm(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
 
 /***************************************************************************
  *                                                                         *
@@ -163,7 +160,7 @@ int matmul(int rank, int blksz)
     	}
     }
 
-    NGA_Release_update(g_b,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
+    NGA_Release_update(g_a,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
 
     NGA_Distribution(g_b,me,lo_b,hi_b);
     NGA_Access(g_b,lo_b,hi_b,&p_in,&ld_b[0]);
@@ -201,7 +198,7 @@ int matmul(int rank, int blksz)
     	printf("! nproc     = %10d\n",nproc);
     	printf("! ntask     = %10d\n",ntask);
     	printf("! task/proc = %8.1f\n",(1.0*ntask)/nproc);
-	    fflush(stdout);\
+	    fflush(stdout);
     }
 	//printf("proc %d is here\n",me);
 	//fflush(stdout);
@@ -256,114 +253,22 @@ int matmul(int rank, int blksz)
                     t_get_b += (double) (MPI_Wtime() - temp);
 
     				/**************************************/
-
-//    				memset(p_d,0,blksz * blksz * sizeof(double));
-
-#define LOOP_ALG_3
-
-#ifdef USE_LOOPS
-  #ifdef LOOP_ALG_1
+#ifdef USE_BLAS
+                    temp = MPI_Wtime(); 
+                    dgemm_("T","T",&blksz,&blksz,&blksz,&one,p_b,&blksz,p_a,&blksz,&zero,p_d,&blksz);
+                    t_dgemm += (double) (MPI_Wtime() - temp);
+#else
+                    memset(p_d,0,blksz * blksz * sizeof(double));
     				for (i = 0 ; i < blksz ; i++ ){
     					for (j = 0 ; j < blksz ; j++ ){
-    						temp = 0;
+    						temp = 0.0;
     						for (k = 0 ; k < blksz ; k++ ){
-    							temp += p_a[ blksz * i + k ] * p_b[ blksz * k + j ];
+    							temp += p_a[ blksz * k + i ] * p_b[ blksz * j + k ];
       						}
     						p_d[ blksz * i + j ] = temp;
     					}
     				}
-  #endif
-
-  #ifdef LOOP_ALG_2
-                    double aik;
-
-    				memset(p_d,0,blksz * blksz * sizeof(double));
-
-    				for (i = 0 ; i < blksz ; i++ ){
-    					for (k = 0 ; k < blksz ; k++ ){
-    					    aik = p_a[ blksz * i + k ];
-    					    for (j = 0 ; j < blksz ; j++ ){
-    						    p_d[ blksz * i + j ] += aik * p_b[ blksz * k + j ];
-      						}
-    					}
-    				}
-  #endif
-
-  #ifdef LOOP_ALG_3
-                    double aik;
-
-                    if ( 0 != (blksz % 4) ){
-    	                if (me == 0) printf("%s: blksz is not a multiple of 4\n",__FILE__);
-                        return(1);
-                    }
-
-    				memset(p_d,0,blksz * blksz * sizeof(double));
-
-    				for (i = 0 ; i < blksz ; i++ ){
-    					for (k = 0 ; k < blksz ; k++ ){
-    					    aik = p_a[ blksz * i + k ];
-    					    for (j = 0 ; j < blksz ; j+=4 ){
-    						    p_d[ blksz * i + j     ] += aik * p_b[ blksz * k + j     ];
-    						    p_d[ blksz * i + j + 1 ] += aik * p_b[ blksz * k + j + 1 ];
-    						    p_d[ blksz * i + j + 2 ] += aik * p_b[ blksz * k + j + 2 ];
-    						    p_d[ blksz * i + j + 3 ] += aik * p_b[ blksz * k + j + 3 ];
-      						}
-    					}
-    				}
-  #endif
-
-  #ifdef LOOP_ALG_4
-                    double aik;
-                    int blksz2,peel;
-
-                    peel = (blksz % 4);
-                    blksz2 = blksz - peel;
-
-                    memset(p_d,0,blksz * blksz * sizeof(double));
-
-                    for (i = 0 ; i < blksz ; i++ ){
-                        for (k = 0 ; k < blksz ; k++ ){
-                            aik = p_a[ blksz * i + k ];
-                            for (j = 0 ; j < blksz2 ; j+=4 ){
-                                p_d[ blksz * i + j     ] += aik * p_b[ blksz * k + j     ];
-                                p_d[ blksz * i + j + 1 ] += aik * p_b[ blksz * k + j + 1 ];
-                                p_d[ blksz * i + j + 2 ] += aik * p_b[ blksz * k + j + 2 ];
-                                p_d[ blksz * i + j + 3 ] += aik * p_b[ blksz * k + j + 3 ];
-                            }
-                            for (j = 0 ; j < peel ; j++ ){
-                                p_d[ blksz * i + j ] += aik * p_b[ blksz * k + j ];
-                            }
-                        }
-                    }
-  #endif
-
 #endif
-
-#ifdef USE_GSL
-                    temp = MPI_Wtime(); 
-    				cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,blksz,blksz,blksz,
-    				              one,p_a,blksz,p_b,blksz,zero,p_d,blksz);
-                    t_dgemm += (double) (MPI_Wtime() - temp);
-#endif
-
-#ifdef USE_BLAS
-                    temp = MPI_Wtime(); 
-                    dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_b,&blksz,p_a,&blksz,&zero,p_d,&blksz);
-                    t_dgemm += (double) (MPI_Wtime() - temp);
-#endif
-
-#ifdef USE_ESSL
-                    temp = MPI_Wtime(); 
-    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
-                    t_dgemm += (double) (MPI_Wtime() - temp);
-#endif
-
-#ifdef USE_GOTO
-                    temp = MPI_Wtime(); 
-    				dgemm_("n","n",&blksz,&blksz,&blksz,&one,p_a,&blksz,p_b,&blksz,&zero,p_d,&blksz);
-                    t_dgemm += (double) (MPI_Wtime() - temp);
-#endif
-
     				/**************************************/
 
                     temp = MPI_Wtime(); 
@@ -397,7 +302,7 @@ int matmul(int rank, int blksz)
 
     if (me == 0){
     	printf("! My dgemm took %f seconds\n",(double) (finish - start) );
-	    fflush(stdout);\
+	    fflush(stdout);
     }
 
     for (i = 0 ; i < nproc; i++){
@@ -406,7 +311,7 @@ int matmul(int rank, int blksz)
             printf("! GA_Get B time on node %d = %f seconds\n", me, (double) t_get_b );
             printf("! GA_Acc C time on node %d = %f seconds\n", me, (double) t_acc_d );
             printf("!   DGEMM  time on node %d = %f seconds\n", me, (double) t_dgemm );
-	        fflush(stdout);\
+	        fflush(stdout);
         }
         GA_Sync();
     }
@@ -428,15 +333,16 @@ int matmul(int rank, int blksz)
     start = MPI_Wtime(); 
 
     // GA_Dgemm uses Fortran ordering, hence the double 'T'
-    GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
+    GA_Dgemm('n','n',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
 
     finish = MPI_Wtime(); 
+    GA_Transpose(g_c1,g_c2);
 
     GA_Sync();
 
     if (me == 0){
-    	printf("! GA_Dgemm took %f seconds\n",(double) (finish - start) );
-	    fflush(stdout);\
+    	printf("\n! GA_Dgemm took %f seconds\n",(double) (finish - start) );
+	    fflush(stdout);
     }
 
     //GA_Transpose(g_c1,g_c2);
@@ -449,13 +355,14 @@ int matmul(int rank, int blksz)
  * begin error evaluation
  */
 
-    alpha = 1.0;
-    beta = -1.0;
-    //GA_Add(&alpha,g_c2,&beta,g_d,g_error);
+    alpha =  1.0;
+    beta  = -1.0;
+    error =  0.0;
+    GA_Add(&alpha,g_c2,&beta,g_d,g_error);
 
-    //GA_Norm1(g_error,&error);
+    GA_Norm1(g_error,&error);
 
-    if (me == 0) printf("! error = %f\n",error);
+    if (me == 0) printf("\n! error = %f\n",error);
 
 /*
  * terminate data structures

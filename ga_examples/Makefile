@@ -1,5 +1,5 @@
 MY_ROOT=.
-#DEBUG=YES
+DEBUG=YES
 #HPM_PROFILING=YES
 
 #############################################
@@ -39,8 +39,13 @@ ifeq ($(TARGET),LINUX64)
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
 
-   GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
-   BLAS=$(GOTO)
+   #MLK=-L/opt/intel/Compiler/11.1/059/mkl -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential
+   #BLAS=$(MKL)
+
+   #GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
+   #BLAS=$(GOTO)
+
+   BLAS=-llapack -lblas
 
    EXTRAS=-lgomp -lgfortran -lm -lpthread
 

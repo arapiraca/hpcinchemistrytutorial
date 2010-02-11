@@ -42,6 +42,13 @@ privately owned rights.
 #include "ga_utils.h"
 #include "cublas_utils.h"
 
+/* internal functions */
+#ifdef GA
+void randomize_global_2d_float(int g_in);
+void randomize_global_2d_double(int g_in);
+#endif
+
+/* declared for use only in the following function */
 int gethostname(char *name, size_t len);
 
 void print_hostname(int printMask)
@@ -55,25 +62,74 @@ void print_hostname(int printMask)
     }
 }
 
+int parallel_nproc(void)
+{
+    int nproc;
+#ifdef MPI
+    MPI_Comm_size(MPI_COMM_WORLD,&nproc);
+#else
+  #ifdef GA
+    nproc = GA_Nnodes();
+  #else
+    nproc = 1;
+  #endif
+#endif
+    return nproc;
+}
+
+int parallel_me(void)
+{
+    int me;
+#ifdef MPI
+    MPI_Comm_rank(MPI_COMM_WORLD,&me);
+#else
+  #ifdef GA
+    me    = GA_Nodeid();
+  #else
+    me    = 0;
+  #endif
+#endif
+    return me;
+}
+
+void parallel_sync(void)
+{
+    int me;
+#ifdef GA
+    GA_Sync();
+#else
+  #ifdef MPI
+    MPI_Barrier(MPI_COMM_WORLD);
+  #endif
+#endif
+
+}
+
 void start_parallel(int* argc, char*** argv, int* me, int* nproc)
 {
+#if defined(MPI)
     int desired = MPI_THREAD_MULTIPLE;
     int provided;
     MPI_Init_thread(argc, argv, desired, &provided);
+#endif
 
-    MPI_Comm_rank(MPI_COMM_WORLD,me);
-    MPI_Comm_size(MPI_COMM_WORLD,nproc);
+    *me    = parallel_me();
+    *nproc = parallel_nproc();
 
-    if ( (provided!=MPI_THREAD_MULTIPLE) && (*me==0) )
+#if defined(MPI)
+    if (provided!=MPI_THREAD_MULTIPLE)
        fprintf(stderr,"MPI_THREAD_MULTIPLE not provided\n");
-    else fprintf(stderr,"! MPI_Init_thread succeeded\n");
+    else if (*me==0) fprintf(stderr,"! MPI_Init_thread succeeded\n");
+#endif
 
+#if defined(GA)
     GA_Initialize();
     fprintf(stderr,"! GA_Initialize succeeded\n");
 
     const int ma_stack = 32*1024*1024;
     const int ma_heap  =  2*1024*1024;
     MA_init(MT_DBL, ma_stack, ma_heap);
+#endif
 
     start_cublas(*me);
 
@@ -81,27 +137,42 @@ void start_parallel(int* argc, char*** argv, int* me, int* nproc)
 
 }
 
-void stop_parallel(int me)
+void stop_parallel()
 {
+    int me = parallel_me();
+
+#ifdef GA
     if (me==0) GA_Print_stats();
+#endif
 
     stop_cublas();
 
+#ifdef GA
     GA_Terminate();
     fprintf(stderr,"! GA_Terminate succeeded\n");
+#endif
+
+#if defined(MPI)
     MPI_Finalize();
     fprintf(stderr,"! MPI_Finalize succeeded\n");
+#endif
 }
 
 void zero_global(int g_a)
 {
+#ifdef GA
     GA_Zero(g_a);
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
+#endif
 }
 
 int alloc_global_2d(int precision, int rows, int cols, int printMask)
 {
-    int status;
     int g_in;
+#ifdef GA
+    int status;
     int ga_type;
     const int ndim = 2;
     int dims[ndim];
@@ -130,16 +201,121 @@ int alloc_global_2d(int precision, int rows, int cols, int printMask)
     status = GA_Allocate(g_in);
     if ((status==0) && (printMask==0))
         printf("%s: GA_Allocate failed at line %d\n",__FILE__,__LINE__);
-
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
+#endif
     return g_in;
 }
 
 void copy_global(int g_in, int g_out)
 {
+#ifdef GA
     GA_Copy(g_in, g_out);
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
+#endif
 }
 
 void free_global(int g_in)
 {
+#ifdef GA
     GA_Destroy(g_in);
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
+#endif
 }
+
+void randomize_global(int g_in)
+{
+#ifdef GA
+    int ga_type;
+    int ndim;
+    const int maxdim=8;
+    int dims[maxdim];
+
+    NGA_Inquire(g_in, &ga_type, &ndim, dims);
+
+    if (ndim==2 && ga_type==MT_REAL) randomize_global_2d_float(g_in);
+    if (ndim==2 && ga_type==MT_DBL)  randomize_global_2d_double(g_in);
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
+#endif
+}
+
+#ifdef GA
+void randomize_global_2d_float(int g_in)
+{
+    int me = parallel_me();
+
+    const int ndim = 2;
+
+    int lo[ndim];
+    int hi[ndim];
+    int rng[ndim];
+    int ld[ndim-1];
+
+    float* p_in;
+
+    NGA_Distribution(g_in,me,lo,hi);
+    NGA_Access(g_in,lo,hi,&p_in,&ld[0]);
+
+    rng[0] = hi[0] - lo[0] + 1;
+    rng[1] = hi[1] - lo[1] + 1;
+
+    int i,j;
+
+    for(i=0; i<rng[0]; i++){
+        for(j=0; j<rng[1]; j++){
+            p_in[ ld[0] * i + j ] = (float) rand() * 0.000000001;
+        }
+    }
+    NGA_Release_update(g_in,lo,hi); /* this function does nothing as of GA 4.2 */
+
+}
+
+void randomize_global_2d_double(int g_in)
+{
+    int me = parallel_me();
+
+    const int ndim = 2;
+
+    int lo[ndim];
+    int hi[ndim];
+    int rng[ndim];
+    int ld[ndim-1];
+
+    double* p_in;
+
+    NGA_Distribution(g_in,me,lo,hi);
+    NGA_Access(g_in,lo,hi,&p_in,&ld[0]);
+
+    rng[0] = hi[0] - lo[0] + 1;
+    rng[1] = hi[1] - lo[1] + 1;
+
+    int i,j;
+
+    for(i=0; i<rng[0]; i++){
+        for(j=0; j<rng[1]; j++){
+            p_in[ ld[0] * i + j ] = (double) rand() * 0.000000001;
+        }
+    }
+    NGA_Release_update(g_in,lo,hi); /* this function does nothing as of GA 4.2 */
+
+}
+#endif
+
+
+// int multiply_globals(int precision, int rows, int cols, )
+// {
+//     int g_a, g_b, g_c;
+// #ifdef GA
+//     GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
+// #else
+//     printf("! GA not enabled\n");
+//     fflush(stdout);
+// #endif
+// }

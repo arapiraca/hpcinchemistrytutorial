@@ -47,24 +47,32 @@ privately owned rights.
 #include <string.h>
 #include <math.h>
 
-#include "macdecls.h"
-#include "armci.h"
-#include "sndrcv.h"
-#include "ga.h"
+#ifdef GA
+  #include "macdecls.h"
+  #include "armci.h"
+  #include "sndrcv.h"
+  #include "ga.h"
+#endif
 
-#include "mpi.h"
+#ifdef MPI
+  #include "mpi.h"
+#endif
 
 void print_hostname(int printMask);
 
-void start_parallel(int* argc, char*** argv, int* me, int* nproc);
-void stop_parallel(int me);
+int parallel_nproc(void);
+int parallel_me(void);
+void parallel_sync(void);
 
-void zero_global(int g_a);
+void start_parallel(int* argc, char*** argv, int* me, int* nproc);
+void stop_parallel();
 
 int alloc_global_2d(int precision, int rows, int cols, int printMask);
-
+void zero_global(int g_a);
 void copy_global(int g_in, int g_out);
 void free_global(int g_a);
+
+void randomize_global(int g_in);
 
 #endif
 
