@@ -122,7 +122,7 @@ int main(int argc, char **argv)
         t2 = MPI_Wtime();
         fflush(stdout);
         for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
-        if (me==0) printf("%8d %8d %14.8f %14.8f $14.4f\n",me,target,t1-t0,t2-t0,bufSize*sizeof(double)/(1024*1024)/(t2-t0));
+        printf("%8d %8d %14.8f %14.8f %14.4f\n",me,target,t1-t0,t2-t0,bufSize*sizeof(double)/(1024*1024)/(t2-t0));
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
