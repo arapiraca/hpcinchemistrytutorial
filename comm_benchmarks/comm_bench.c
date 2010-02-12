@@ -111,9 +111,13 @@ int main(int argc, char **argv)
     int target;
     int j;
     double bandwidth;
-    if (me==0) printf("ARMCI_Get performance test for buffer size = %d doubles\n",bufSize);
-    if (me==0) printf("  host   target    local (s)     total (s)    effective BW (MB/s)\n");
-    fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (me==0){
+        printf("ARMCI_Get performance test for buffer size = %d doubles\n",bufSize);
+        printf("  host   target    local (s)     total (s)    effective BW (MB/s)\n");
+        printf("==============================================================\n");
+        fflush(stdout);
+    }
     MPI_Barrier(MPI_COMM_WORLD);
     for (j=0;j<nproc;j++){
         fflush(stdout);
@@ -132,6 +136,8 @@ int main(int argc, char **argv)
         printf("%4d     %4d       %9.6f     %9.6f        %9.3f\n",me,target,t1-t0,t2-t0,bandwidth);
         fflush(stdout);
         MPI_Barrier(MPI_COMM_WORLD);
+        if (me==0) printf("==============================================================\n");
+        fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
