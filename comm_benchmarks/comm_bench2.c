@@ -43,6 +43,10 @@ privately owned rights.
 
 int main(int argc, char **argv)
 {
+#ifndef HAVE_BGP_PERSONALITY
+    printf("BlueGene/P only!!!!!!!!!\n");
+    return(911);
+#else
     int desired = MPI_THREAD_MULTIPLE;
     int provided;
     MPI_Init_thread(&argc, &argv, desired, &provided);
@@ -108,54 +112,63 @@ int main(int argc, char **argv)
     status = ARMCI_Put(b2, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
     ARMCI_Barrier();
 
-    int target;
-#ifdef HAVE_BGP_PERSONALITY
-    uint32_t torus_me[4];
-    uint32_t torus_target[4];
-#endif
-    int j;
+    _BGP_Personality_t pers;
+    Kernel_GetPersonality(&pers, sizeof(pers));
+
+    uint32_t xSize = BGP_Personality_xSize(&pers);
+    uint32_t ySize = BGP_Personality_ySize(&pers);
+    uint32_t zSize = BGP_Personality_zSize(&pers);
+
+    uint32_t torusMe[4];
+    assert(0==Kernel_Rank2Coord(me,&torusMe[0],&torusMe[1],&torusMe[2],&torusMe[3]));
+
+    uint32_t xJump,yJump,zJump;
+
+    uint32_t torusTarget[4];
+    uint32_t target;
+    uint32_t numnodes; // dummy
+
     double bandwidth;
+
     MPI_Barrier(MPI_COMM_WORLD);
     if (me==0){
-        printf("ARMCI_Get performance test for buffer size = %d doubles\n",bufSize);
-#ifdef HAVE_BGP_PERSONALITY
+        printf("ARMCI_Get performance test on %d nodes for %d doubles\n",nproc,bufSize);
         printf("  jump (x,y,z)   host (x,y,z) target (x,y,z) local (s)     total (s)    effective BW (MB/s)\n");
-#else
-        printf("  jump    host   target    local (s)     total (s)    effective BW (MB/s)\n");
-#endif
         printf("==============================================================\n");
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
-    for (j=0;j<nproc;j++){
-        fflush(stdout);
-        target = (me+j) % nproc;
-        MPI_Barrier(MPI_COMM_WORLD);
-        t0 = MPI_Wtime();
-        status = ARMCI_Get(addrVec1[target], b2, bufSize*sizeof(double), target); assert(status==0);
-        t1 = MPI_Wtime();
-        ARMCI_Fence(target);
-        t2 = MPI_Wtime();
-        fflush(stdout);
-        for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
-        bandwidth = 1.0*bufSize*sizeof(double);
-        bandwidth /= (t2-t0);
-        bandwidth /= (1024*1024);
-#ifdef HAVE_BGP_PERSONALITY
-        assert(0==Kernel_Rank2Coord(me,&torus_me[0],&torus_me[1],&torus_me[2],&torus_me[3]));
-        assert(0==Kernel_Rank2Coord(target,&torus_target[0],&torus_target[1],&torus_target[2],&torus_target[3]));
-        printf("(%2d,%2d,%2d) (%2d,%2d,%2d) (%2d,%2d,%2d)   %9.6f     %9.6f        %9.3f\n",
-               abs(torus_me[0]-torus_target[0]),abs(torus_me[1]-torus_target[1]),abs(torus_me[2]-torus_target[2]),
-               torus_me[0],torus_me[1],torus_me[2],
-               torus_target[0],torus_target[1],torus_target[2],
-               t1-t0,t2-t0,bandwidth);
-#else
-        printf("%4d     %4d     %4d       %9.6f     %9.6f        %9.3f\n",j,me,target,t1-t0,t2-t0,bandwidth);
-#endif // HAVE_BGP_PERSONALITY
-        fflush(stdout);
-        MPI_Barrier(MPI_COMM_WORLD);
-        if (me==0) printf("==============================================================\n");
-        fflush(stdout);
+    for (xJump=0;xJump<xSize;xJump++){
+        torusTarget[0] = (torusMe[0]+xJump)%xSize;
+        for (yJump=0;yJump<ySize;yJump++){
+            torusTarget[1] = (torusMe[1]+yJump)%ySize;
+            for (zJump=0;zJump<zSize;zJump++){
+                fflush(stdout);
+                torusTarget[2] = (torusMe[2]+zJump)%zSize;
+                torusTarget[3] = torusMe[3];
+                assert(0==Kernel_Coord2Rank(torusTarget[0],torusTarget[1],torusTarget[2],torusTarget[3],&target,&numnodes));
+                MPI_Barrier(MPI_COMM_WORLD);
+                t0 = MPI_Wtime();
+                status = ARMCI_Get(addrVec1[target], b2, bufSize*sizeof(double), target); assert(status==0);
+                t1 = MPI_Wtime();
+                ARMCI_Fence(target);
+                t2 = MPI_Wtime();
+                fflush(stdout);
+                for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
+                bandwidth = 1.0*bufSize*sizeof(double);
+                bandwidth /= (t2-t0);
+                bandwidth /= (1024*1024);
+                printf("(%2d,%2d,%2d) (%2d,%2d,%2d) (%2d,%2d,%2d)   %9.6f     %9.6f        %9.3f\n",
+                       abs(torusMe[0]-torusTarget[0]),abs(torusMe[1]-torusTarget[1]),abs(torusMe[2]-torusTarget[2]),
+                       torusMe[0],torusMe[1],torusMe[2],
+                       torusTarget[0],torusTarget[1],torusTarget[2],
+                       t1-t0,t2-t0,bandwidth);
+                fflush(stdout);
+                MPI_Barrier(MPI_COMM_WORLD);
+                if (me==0) printf("==============================================================\n");
+                fflush(stdout);
+            }
+        }
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -174,6 +187,7 @@ int main(int argc, char **argv)
     MPI_Finalize();
 
     return(0);
+#endif // HAVE_BGP_PERSONALITY
 }
 
 

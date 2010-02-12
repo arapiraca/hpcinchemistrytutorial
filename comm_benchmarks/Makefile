@@ -30,7 +30,7 @@
    endif
    ifeq ($(BGP),YES)
       TARGET=BGP
-      CC=mpicc
+      CC=mpixlc_r
       OPT = -O3
       MPI = NO # that is, LIB and INC not needed
       GA = YES
@@ -133,12 +133,19 @@
       GCC = $(CC)
       DEFINES += -DHAVE_DCMF_TIMEBASE
       DEFINES += -DHAVE_BGP_PERSONALITY
+      INC += -I/bgsys/drivers/ppcfloor/arch/include
    endif
 
    LIB += -lm -lpthread
 
    COPT = $(OPT)
-   CFLAGS = -g -std=c99 $(COPT) $(INC) $(DEFINES)
+   CFLAGS = -g $(COPT)
+   ifeq ($(CC),mpixlc_r)
+      CFLAGS += -qlanglvl=extc99
+   else
+      CFLAGS += -std=c99 
+   endif
+   CFLAGS += $(INC) $(DEFINES)
 
    LD = $(CC)
    LDFLAGS = -g $(OPT)
@@ -149,16 +156,22 @@
 #
 #############################################
 
-all: refresh bin
-# all: bin
+#all: refresh bin
+all: bin
 
-bin: comm_bench.x
+bin: comm_bench.x comm_bench2.x
 
 comm_bench.x: comm_bench.o getticks.o
 	$(LD) $(LDFLAGS) comm_bench.o getticks.o $(LIB) -o comm_bench.x
 
+comm_bench2.x: comm_bench2.o getticks.o
+	$(LD) $(LDFLAGS) comm_bench2.o getticks.o $(LIB) -o comm_bench2.x
+
 comm_bench.o: comm_bench.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench.c
+
+comm_bench2.o: comm_bench2.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench2.c
 
 getticks.o: getticks.c
 	$(GCC) -c getticks.c
