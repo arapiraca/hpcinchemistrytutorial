@@ -106,12 +106,16 @@ int main(int argc, char **argv)
 
     status = ARMCI_Put(b1, addrVec1[me], bufSize*sizeof(double), me); assert(status==0);
     status = ARMCI_Put(b2, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
+    ARMCI_Barrier();
 
     int target;
     int j;
+    double bandwidth;
+    if (me==0) printf("ARMCI_Get performance test for buffer size = %d doubles\n",bufSize);
+    if (me==0) printf("  host   target    local (s)     total (s)    effective BW (MB/s)\n");
+    fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
     for (j=0;j<nproc;j++){
-        if (me==0) printf("ARMCI_Get performance test for buffer size = %d doubles\n",bufSize);
-        if (me==0) printf("host    target     local time (s)    total time (s)    effective BW (MB/s)\n");
         fflush(stdout);
         target = (me+j) % nproc;
         MPI_Barrier(MPI_COMM_WORLD);
@@ -122,8 +126,12 @@ int main(int argc, char **argv)
         t2 = MPI_Wtime();
         fflush(stdout);
         for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
-        printf("%8d %8d %14.8f %14.8f %14.4f\n",me,target,t1-t0,t2-t0,bufSize*sizeof(double)/(1024*1024)/(t2-t0));
+        bandwidth = 1.0*bufSize*sizeof(double);
+        bandwidth /= (t2-t0);
+        bandwidth /= (1024*1024);
+        printf("%4d     %4d       %9.6f     %9.6f        %9.3f\n",me,target,t1-t0,t2-t0,bandwidth);
         fflush(stdout);
+        MPI_Barrier(MPI_COMM_WORLD);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
