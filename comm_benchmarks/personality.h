@@ -39,24 +39,12 @@ privately owned rights.
 
  ***************************************************************************/
 
-#ifndef COMM_BENCH_H
-#define COMM_BENCH_H
+#ifndef PERSONALITY_H
+#define PERSONALITY_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
+#include <unistd.h>
+#include <common/bgp_personality.h>
+#include <common/bgp_personality_inlines.h>
+#include <spi/kernel_interface.h>
 
-#include <mpi.h>
-#include "../armci/src/armci.h"
-
-unsigned long long getticks(void);
-
-#ifdef HAVE_BGP_PERSONALITY
-#include "personality.h"
-#endif // HAVE_BGP_PERSONALITY
-
-#endif // COMM_BENCH_H
+#endif // PERSONALITY_H

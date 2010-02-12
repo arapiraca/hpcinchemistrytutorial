@@ -1,8 +1,12 @@
-#ifdef USE_DCMF_TIMEBASE
+#ifdef HAVE_DCMF_TIMEBASE
 
 #include "dcmf.h"
 
-#define getticks DCMF_Timebase
+static __inline__ unsigned long long getticks(void)
+{
+     return DCMF_Timebase();
+}
+
 
 #else
 
@@ -51,7 +55,7 @@ static __inline__ unsigned long long getticks(void)
   return(result);
 }
 
-#endif
+#endif // targets
 
-#endif
+#endif // HAVE_DCMF_TIMEBASE
 

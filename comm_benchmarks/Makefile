@@ -131,7 +131,8 @@
    endif
    ifeq ($(TARGET),BGP)
       GCC = $(CC)
-      DEFINES += -DUSE_DCMF_TIMEBASE
+      DEFINES += -DHAVE_DCMF_TIMEBASE
+      DEFINES += -DHAVE_BGP_PERSONALITY
    endif
 
    LIB += -lm -lpthread
