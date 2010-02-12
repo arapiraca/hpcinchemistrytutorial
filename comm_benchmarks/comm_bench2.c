@@ -123,6 +123,7 @@ int main(int argc, char **argv)
     assert(0==Kernel_Rank2Coord(me,&torusMe[0],&torusMe[1],&torusMe[2],&torusMe[3]));
 
     uint32_t xJump,yJump,zJump;
+    uint32_t count;
 
     uint32_t torusTarget[4];
     uint32_t target;
@@ -130,19 +131,22 @@ int main(int argc, char **argv)
 
     double bandwidth;
 
+    fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
     if (me==0){
         printf("ARMCI_Get performance test on %d nodes for %d doubles\n",nproc,bufSize);
-        printf("  jump (x,y,z)   host (x,y,z) target (x,y,z) local (s)     total (s)    effective BW (MB/s)\n");
-        printf("==============================================================\n");
-        fflush(stdout);
+        printf("iter  jump  (x,y,z)  host  (x,y,z) target (x,y,z)   local (s)     total (s)    effective BW (MB/s)\n");
+        printf("===================================================================================================\n");
     }
-    MPI_Barrier(MPI_COMM_WORLD);
+    fflush(stdout);
+    count = 0;
     for (xJump=0;xJump<xSize;xJump++){
         torusTarget[0] = (torusMe[0]+xJump)%xSize;
         for (yJump=0;yJump<ySize;yJump++){
             torusTarget[1] = (torusMe[1]+yJump)%ySize;
             for (zJump=0;zJump<zSize;zJump++){
+                count++;
+                MPI_Barrier(MPI_COMM_WORLD);
                 fflush(stdout);
                 torusTarget[2] = (torusMe[2]+zJump)%zSize;
                 torusTarget[3] = torusMe[3];
@@ -158,14 +162,15 @@ int main(int argc, char **argv)
                 bandwidth = 1.0*bufSize*sizeof(double);
                 bandwidth /= (t2-t0);
                 bandwidth /= (1024*1024);
-                printf("(%2d,%2d,%2d) (%2d,%2d,%2d) (%2d,%2d,%2d)   %9.6f     %9.6f        %9.3f\n",
+                printf("%4d (%2d,%2d,%2d) (%2d,%2d,%2d) (%2d,%2d,%2d)   %9.6f     %9.6f        %9.3f\n",
+                       count,
                        abs(torusMe[0]-torusTarget[0]),abs(torusMe[1]-torusTarget[1]),abs(torusMe[2]-torusTarget[2]),
                        torusMe[0],torusMe[1],torusMe[2],
                        torusTarget[0],torusTarget[1],torusTarget[2],
                        t1-t0,t2-t0,bandwidth);
                 fflush(stdout);
                 MPI_Barrier(MPI_COMM_WORLD);
-                if (me==0) printf("==============================================================\n");
+                if (me==0) printf("===================================================================================================\n");
                 fflush(stdout);
             }
         }
