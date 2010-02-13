@@ -95,9 +95,9 @@ int main(){
         atomic_set(_lock,j);
         _copy=_lock;
         c=_copy;
-        atomic_lock(_lock);
+        rc = atomic_trylock(_lock);
         l=_lock;
-        printf("atomic_lock before: _lock = %d after: _lock = %d\n",c,l);
+        printf("atomic_trylock before: _lock = %d after: _lock = %d return = %d\n",c,l,rc);
     }
 
     printf("==================================\n");
@@ -117,9 +117,9 @@ int main(){
         atomic_set(_lock,j);
         _copy=_lock;
         c=_copy;
-        rc = atomic_trylock(_lock);
+        atomic_lock(_lock);
         l=_lock;
-        printf("atomic_trylock before: _lock = %d after: _lock = %d return = %d\n",c,l,rc);
+        printf("atomic_lock before: _lock = %d after: _lock = %d\n",c,l);
     }
 
     printf("==================================\n");
