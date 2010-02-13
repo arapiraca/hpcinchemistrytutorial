@@ -21,14 +21,14 @@ typedef tbb::atomic<uint32_t> atomic_t;
 //
 #define atomic_lock(m)                                  \
 ({                                                      \
-    while (!m.compare_and_swap(1,0));                   \
+    while (m.compare_and_swap(1,0));                    \
 })
 // effect:
 // if m=0 then m=1 and return 0
 // if m=1 then         return 1
 #define atomic_trylock(m)                               \
 ({                                                      \
-    m.compare_and_swap(1,0);                            \
+    !m.compare_and_swap(1,0);                           \
 })
 // effect: m=0
 #define atomic_unlock(m)                                \
