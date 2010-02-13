@@ -79,6 +79,7 @@ int main(){
     uint32_t i,j;
     atomic_t _lock,_copy;
     uint32_t l,c;
+    uint32_t rc;
 
     printf("==================================\n");
     for (i=0;i<10;i++){
@@ -110,8 +111,16 @@ int main(){
         printf("atomic_unlock before: _lock = %d after: _lock = %d\n",c,l);
     }
 
-    //printf("==================================\n");
-    //int rc = atomic_trylock(_lock);
+    printf("==================================\n");
+    for (i=0;i<10;i++){
+        j=i%2;
+        atomic_set(_lock,j);
+        _copy=_lock;
+        c=_copy;
+        rc = atomic_trylock(_lock);
+        l=_lock;
+        printf("atomic_trylock before: _lock = %d after: _lock = %d return = %d\n",c,l,rc);
+    }
 
     printf("==================================\n");
     return(0);
