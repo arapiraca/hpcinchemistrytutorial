@@ -8,6 +8,11 @@
 #include <tbb/atomic.h>
 typedef tbb::atomic<uint32_t> atomic_t;
 
+#define get_atomic_val(m) \
+({                                                      \
+    m;                                                  \
+})
+
 #define atomic_set(m,val)                               \
 ({                                                      \
     m = val;                                            \
@@ -40,6 +45,11 @@ typedef tbb::atomic<uint32_t> atomic_t;
 
 #include <bpcore/bgp_atomic_ops.h>
 typedef _BGP_Atomic atomic_t;
+
+#define get_atomic_val(m) \
+({                                                      \
+    m.atom;                                             \
+})
 
 #define atomic_set(m, val)                              \
 ({                                                      \
@@ -85,7 +95,7 @@ int main(){
     for (i=0;i<10;i++){
         j=i%2;
         atomic_set(_lock,j);
-        l=_lock;
+        l=get_atomic_val(_lock);
         printf("after atomic_set(_lock,%d), _lock = %d\n",j,l);
     }
     
@@ -94,9 +104,9 @@ int main(){
         j=i%2;
         atomic_set(_lock,j);
         _copy=_lock;
-        c=_copy;
+        c=get_atomic_val(_copy);
         rc = atomic_trylock(_lock);
-        l=_lock;
+        l=get_atomic_val(_lock);
         printf("atomic_trylock before: _lock = %d after: _lock = %d return = %d\n",c,l,rc);
     }
 
@@ -105,9 +115,9 @@ int main(){
         j=i%2;
         atomic_set(_lock,j);
         _copy=_lock;
-        c=_copy;
+        c=get_atomic_val(_copy);
         atomic_unlock(_lock);
-        l=_lock;
+        l=get_atomic_val(_lock);
         printf("atomic_unlock before: _lock = %d after: _lock = %d\n",c,l);
     }
 
@@ -116,9 +126,9 @@ int main(){
         j=i%2;
         atomic_set(_lock,j);
         _copy=_lock;
-        c=_copy;
+        c=get_atomic_val(_copy);
         atomic_lock(_lock);
-        l=_lock;
+        l=get_atomic_val(_lock);
         printf("atomic_lock before: _lock = %d after: _lock = %d\n",c,l);
     }
 
