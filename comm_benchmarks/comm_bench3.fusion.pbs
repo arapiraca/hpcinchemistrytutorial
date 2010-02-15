@@ -1,0 +1,10 @@
+#!/bin/bash
+#PBS -N comm_bench3
+#PBS -l nodes=8:ppn=8
+#PBS -l walltime=0:30:00
+#PBS -q shared
+#PBS -j oe
+
+export MPIRUN=/soft/mvapich2/1.4-intel-11.1.059/bin/mpiexec
+
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench3.x
