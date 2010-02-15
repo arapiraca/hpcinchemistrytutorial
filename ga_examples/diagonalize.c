@@ -69,9 +69,10 @@ int diagonalize(int rank)
     status = GA_Allocate(g_a); assert(status!=0);
     int g_v = GA_Duplicate(g_a,"eigenvectors"); assert(g_v!=0);
 
-    double val = 0.1;
-    GA_Fill(g_a, &val);
-    val = 74.9;
+    double val = 10;
+    //GA_Fill(g_a, &val);
+    GA_Randomize(g_a, &val);
+    val = 20;
     GA_Shift_diagonal(g_a, &val);
     if (rank<40) GA_Print(g_a);
     GA_Zero(g_v);
