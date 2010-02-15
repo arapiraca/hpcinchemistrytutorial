@@ -33,6 +33,8 @@
       CC=mpixlc_r
       OPT = -O3
       MPI = NO # that is, LIB and INC not needed
+      #MPI_PREFIX = 
+      #MPI_VENDOR = MPICH
       GA = YES
       GA_PREFIX = /gpfs/home/jhammond/ga-cvs-dev
    endif
@@ -43,7 +45,10 @@
       CC = gcc
       OPT = -O3
       MPI = YES
+      MPI_PREFIX = 
+      MPI_VENDOR = MPICH
       GA = YES
+      GA_PREFIX = 
    endif
 
    # Fusion
@@ -67,10 +72,13 @@
    endif
    ifeq ($(FUSION),YES)
       TARGET=LINUX64
-      CC = gcc
+      CC = icc
       OPT = -O3
       MPI = YES
+      MPI_PREFIX = /soft/mvapich2/1.4-intel-11.1.059
+      MPI_VENDOR = MVAPICH
       GA = YES
+      GA_PREFIX = /homes/jhammond/ga-cvs-dev
    endif
 
    # Lincoln
@@ -91,7 +99,10 @@
       CC = gcc
       OPT = -O3
       MPI = YES
+      MPI_PREFIX = 
+      MPI_VENDOR = MPICH
       GA = YES
+      GA_PREFIX = 
    endif
 
    # Megatron
@@ -100,10 +111,10 @@
       CC = gcc
       OPT = -O3
       MPI = YES
-      GA = YES
-      GA_PREFIX = /software/ga/ga-4-2
       MPI_PREFIX = /software/open-mpi/gnu-build
       MPI_VENDOR = OMPI
+      GA = YES
+      GA_PREFIX = /software/ga/ga-4-2
    endif
 
    DEFINES =
@@ -121,7 +132,11 @@
       ifeq ($(MPI_VENDOR),OMPI)
          LIB += -L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
       else
-         LIB += -L$(MPI_PREFIX)/lib -lmpich  -lopa -lrt
+         ifeq ($(MPI_VENDOR),MVAPICH)
+            LIB += -L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
+         else # MPICH
+            LIB += -L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
+         endif
       endif
       INC += -I$(MPI_PREFIX)/include
    endif
@@ -159,10 +174,10 @@
 #all: refresh bin
 all: bin
 
-bin: comm_bench.x comm_bench2.x comm_bench3.x
+bin: comm_bench1.x comm_bench2.x comm_bench3.x
 
-comm_bench.x: comm_bench.o getticks.o
-	$(LD) $(LDFLAGS) comm_bench.o getticks.o $(LIB) -o comm_bench.x
+comm_bench1.x: comm_bench1.o getticks.o
+	$(LD) $(LDFLAGS) comm_bench1.o getticks.o $(LIB) -o comm_bench1.x
 
 comm_bench2.x: comm_bench2.o getticks.o
 	$(LD) $(LDFLAGS) comm_bench2.o getticks.o $(LIB) -o comm_bench2.x
@@ -170,8 +185,8 @@ comm_bench2.x: comm_bench2.o getticks.o
 comm_bench3.x: comm_bench3.o getticks.o
 	$(LD) $(LDFLAGS) comm_bench3.o getticks.o $(LIB) -o comm_bench3.x
 
-comm_bench.o: comm_bench.c comm_bench.h
-	$(CC) $(CFLAGS) $(INC) -c comm_bench.c
+comm_bench1.o: comm_bench1.c comm_bench1.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c
 
 comm_bench2.o: comm_bench2.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench2.c

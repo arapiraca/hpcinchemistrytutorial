@@ -39,11 +39,7 @@ privately owned rights.
 
  ***************************************************************************/
 
-#include "comm_bench.h"
-
-#ifdef HAVE_BGP_PERSONALITY
-#include "personality.h"
-#endif // HAVE_BGP_PERSONALITY
+#include "comm_bench2.h"
 
 int main(int argc, char **argv)
 {
