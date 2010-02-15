@@ -39,46 +39,63 @@ privately owned rights.
 
  ***************************************************************************/
 
+#include "driver.h"
 
-#ifndef DRIVER_H
-#define DRIVER_H
+int diagonalize(int rank)
+{
+    int me,nproc;
+    int status;
+    int ndim = 2;
+    int dims[ndim];
+    int chunk[ndim];
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
-#include <assert.h>
+    nproc=GA_Nnodes();
+    me=GA_Nodeid();
 
-#ifdef DCMF
-#include "dcmf.h"
-#else
-unsigned long long DCMF_Timebase(void);
-#endif
+    dims[0] = rank;
+    dims[1] = rank;
+    chunk[0] = -1;
+    chunk[1] = -1;
 
-#include "macdecls.h"
-#include "../armci/src/armci.h"
-#include "sndrcv.h"
-#include "ga.h"
-#include "mpi.h"
+    if (me == 0) printf("! GA_Diag_std: rank %d matrix\n",rank);
 
-#ifdef USE_ESSL
-    #include "essl.h"
-#endif
+    double* eig = (double*) ARMCI_Malloc_local(rank*sizeof(double)); assert(eig!=NULL);
 
-#ifdef USE_GSL
-    #include "gsl/gsl_math.h"
-    #include "gsl/gsl_cblas.h"
-#endif
+    int g_a= GA_Create_handle();
+    GA_Set_array_name(g_a,"input matrix");
+    GA_Set_data(g_a,ndim,dims,MT_DBL);
+    GA_Set_chunk(g_a,chunk);
+    GA_Set_pgroup(g_a,GA_Pgroup_get_world());
+    status = GA_Allocate(g_a); assert(status!=0);
+    int g_v = GA_Duplicate(g_a,"eigenvectors"); assert(g_v!=0);
 
-#ifdef HPM_PROFILING
-    void HPM_Init(void);
-    void HPM_Start(char *);
-    void HPM_Stop(char *);
-    void HPM_Print(void);
-#endif
+    double val = 0.1;
+    GA_Fill(g_a, &val);
+    val = 74.9;
+    GA_Shift_diagonal(g_a, &val);
+    if (rank<40) GA_Print(g_a);
+    GA_Zero(g_v);
 
-double start,finish,timing;
+    GA_Sync();
+    double start = MPI_Wtime();
 
-#endif
+    if (me == 0) printf("! starting GA_Diag_std\n");
+    GA_Diag_std(g_a,g_v,eig);
+
+    GA_Sync();
+    double finish = MPI_Wtime();
+
+    if (rank<40) GA_Print(g_v);
+    int i;
+    if (me == 0) for (i=0;i<rank;i++) printf("eigenvalue %d = %f\n",i,eig[i]);
+
+    if (me == 0) printf("! diagonalize took %f seconds\n",finish-start);
+    fflush(stdout);
+
+    GA_Destroy(g_v);
+    GA_Destroy(g_a);
+
+    status = ARMCI_Free_local(eig); assert(status==0);
+
+    return(0);
+}

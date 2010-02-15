@@ -32,9 +32,9 @@ ifeq ($(TARGET),LINUX64)
    MPI_INC=-I$(MPI_PREFIX)/include
    MPI_LIB=-L$(MPI_PREFIX)/lib -lmpi
 
-   GA_PREFIX=/software/ga/ga-4-2
+   GA_PREFIX=/software/ga/ga-cvs-dev
    GA_INC=-I$(GA_PREFIX)/include
-   GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lma -larmci -ltcgmsg-mpi
+   GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lpeigs -lma -larmci -ltcgmsg-mpi
 
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
@@ -148,7 +148,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o
 
 all: driver.x
 
@@ -157,7 +157,7 @@ refresh: realclean all
 driver.x: $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver_$(TARGET).x
 
-$%.o: %.c
+$%.o: %.c driver.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
 
 clean:

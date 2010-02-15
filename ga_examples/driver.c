@@ -98,17 +98,18 @@ int main(int argc, char **argv)
     if (argc > 1){
         test = atoi(argv[1]);
     } else {
-        printf("0 = hello\n");
-        printf("1 = simple\n");
-        printf("2 = transpose\n");
-        printf("3 = matmul\n");
-        printf("4 = matmul2\n");
-        printf("5 = matvec\n");
-        printf("6 = gemm_test\n");
-        printf("7 = overlap\n");
-        printf("8 = ga_dgemm_test\n");
-        printf("9 = bigtest\n");
-        return(1);        
+        printf(" 0 = hello\n");
+        printf(" 1 = simple\n");
+        printf(" 2 = transpose\n");
+        printf(" 3 = matmul\n");
+        printf(" 4 = matmul2\n");
+        printf(" 5 = matvec\n");
+        printf(" 6 = gemm_test\n");
+        printf(" 7 = overlap\n");
+        printf(" 8 = ga_dgemm_test\n");
+        printf(" 9 = bigtest\n");
+        printf("10 = diagonalize\n");
+        return(1);
     }
 
     if (me == 0){
@@ -260,6 +261,18 @@ int main(int argc, char **argv)
         if(status != 0){
             if (me == 0){
                 printf("%s: bigtest() failed at line %d\n",__FILE__,__LINE__);
+                fflush(stdout);
+            }
+        }
+    } else if (test == 10){
+        if(me == 0){
+            printf("Running diagonalize with %d processes\n",nproc);
+            fflush(stdout);
+        }
+        status = diagonalize(rank);
+        if(status != 0){
+            if (me == 0){
+                printf("%s: diagonalize() failed at line %d\n",__FILE__,__LINE__);
                 fflush(stdout);
             }
         }
