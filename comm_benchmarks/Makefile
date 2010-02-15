@@ -159,7 +159,7 @@
 #all: refresh bin
 all: bin
 
-bin: comm_bench.x comm_bench2.x
+bin: comm_bench.x comm_bench2.x comm_bench3.x
 
 comm_bench.x: comm_bench.o getticks.o
 	$(LD) $(LDFLAGS) comm_bench.o getticks.o $(LIB) -o comm_bench.x
@@ -167,11 +167,17 @@ comm_bench.x: comm_bench.o getticks.o
 comm_bench2.x: comm_bench2.o getticks.o
 	$(LD) $(LDFLAGS) comm_bench2.o getticks.o $(LIB) -o comm_bench2.x
 
+comm_bench3.x: comm_bench3.o getticks.o
+	$(LD) $(LDFLAGS) comm_bench3.o getticks.o $(LIB) -o comm_bench3.x
+
 comm_bench.o: comm_bench.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench.c
 
 comm_bench2.o: comm_bench2.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench2.c
+
+comm_bench3.o: comm_bench3.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench3.c
 
 getticks.o: getticks.c
 	$(GCC) -c getticks.c

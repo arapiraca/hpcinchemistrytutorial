@@ -81,41 +81,52 @@ int main(int argc, char **argv)
         }
     }
 
-    if (me==0) printf("%d: ARMCI_Init\n",me);
-    ARMCI_Init();
     int status;
-    double t0,t1,t2,t3;
-    double tt0,tt1,tt2,tt3;
+    double t0,t1,t2,t3,t4,t5;
+    double tt0,tt1,tt2,tt3,tt4;
 
     int bufSize = ( argc>1 ? atoi(argv[1]) : 100 );
     if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
 
-    /* register remote pointers */
-    double** addrVec1 = (double **) malloc( nproc * sizeof(void *) );
-    double** addrVec2 = (double **) malloc( nproc * sizeof(void *) );
-    ARMCI_Malloc( (void **) addrVec1, bufSize * sizeof(double) );
-    ARMCI_Malloc( (void **) addrVec2, bufSize * sizeof(double) );
-    MPI_Barrier(MPI_COMM_WORLD);
+    /* allocate RMA buffers */
+    double* b1;
+    double* b2;
+    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &b1);
+    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &b2);
 
-    double* b1 = (double*) ARMCI_Malloc_local( bufSize * sizeof(double) ); assert(b1!=NULL);
-    double* b2 = (double*) ARMCI_Malloc_local( bufSize * sizeof(double) ); assert(b2!=NULL);
+    /* register remote pointers */
+    MPI_Win w1;
+    MPI_Win w2;
+    status = MPI_Win_create(b1, bufSize * sizeof(double), sizeof(double),
+                            MPI_INFO_NULL, MPI_COMM_WORLD, &w1);
+    status = MPI_Win_create(b2, bufSize * sizeof(double), sizeof(double),
+                            MPI_INFO_NULL, MPI_COMM_WORLD, &w2);
+    MPI_Barrier(MPI_COMM_WORLD);
 
     int i;
     for (i=0;i<bufSize;i++) b1[i]=1.0*me;
     for (i=0;i<bufSize;i++) b2[i]=-1.0;
 
-    status = ARMCI_Put(b1, addrVec1[me], bufSize*sizeof(double), me); assert(status==0);
-    status = ARMCI_Put(b2, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
-    ARMCI_Barrier();
+    status = MPI_Win_fence(MPI_MODE_NOPRECEDE, w1);
+    status = MPI_Win_lock(MPI_LOCK_EXCLUSIVE, me, MPI_MODE_NOCHECK, w1);
+    status = MPI_Put(b1, bufSize, MPI_DOUBLE, me, 0, bufSize, MPI_DOUBLE, w1);
+    status = MPI_Win_unlock(me, w1);
+    status = MPI_Win_fence(MPI_MODE_NOSUCCEED, w1);
+
+    status = MPI_Win_fence(MPI_MODE_NOPRECEDE, w2);
+    status = MPI_Win_lock(MPI_LOCK_EXCLUSIVE, me, MPI_MODE_NOCHECK, w2);
+    status = MPI_Put(b2, bufSize, MPI_DOUBLE, me, 0, bufSize, MPI_DOUBLE, w2);
+    status = MPI_Win_unlock(me, w2);
+    status = MPI_Win_fence(MPI_MODE_NOSUCCEED, w2);
 
     int target;
     int j;
-    double bandwidth;
+    double bandwidth,bandwidth1,bandwidth2;
     MPI_Barrier(MPI_COMM_WORLD);
     if (me==0){
-        printf("ARMCI_Get performance test for buffer size = %d doubles\n",bufSize);
-        printf("  jump    host   target    local (s)     total (s)    effective BW (MB/s)\n");
-        printf("==============================================================\n");
+        printf("MPI_Get performance test for buffer size = %d doubles\n",bufSize);
+        printf("  jump    host   target       get (s)       +lock (s)    BW (MB/s)     +fence (s)    BW (MB/s)\n");
+        printf("========================================================================================\n");
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
@@ -124,33 +135,38 @@ int main(int argc, char **argv)
         target = (me+j) % nproc;
         MPI_Barrier(MPI_COMM_WORLD);
         t0 = MPI_Wtime();
-        status = ARMCI_Get(addrVec1[target], b2, bufSize*sizeof(double), target); assert(status==0);
+        status = MPI_Win_fence(MPI_MODE_NOPRECEDE, w2);
         t1 = MPI_Wtime();
-        ARMCI_Fence(target);
+        status = MPI_Win_lock(MPI_LOCK_EXCLUSIVE, target, MPI_MODE_NOCHECK, w1);
         t2 = MPI_Wtime();
+        status = MPI_Get(b2, bufSize, MPI_DOUBLE, target, 0, bufSize, MPI_DOUBLE, w1);
+        t3 = MPI_Wtime();
+        status = MPI_Win_unlock(target, w1);
+        t4 = MPI_Wtime();
+        status = MPI_Win_fence(MPI_MODE_NOSUCCEED, w2);
+        t5 = MPI_Wtime();
         fflush(stdout);
         for (i=0;i<bufSize;i++) assert( b2[i]==(1.0*target) );
         bandwidth = 1.0*bufSize*sizeof(double);
-        bandwidth /= (t2-t0);
         bandwidth /= (1024*1024);
-        printf("%4d     %4d     %4d       %9.6f     %9.6f        %9.3f\n",j,me,target,t1-t0,t2-t0,bandwidth);
+        bandwidth1 = bandwidth/(t4-t1);
+        bandwidth2 = bandwidth/(t5-t0);
+        printf("%4d     %4d     %4d       %9.6f     %9.6f    %9.3f     %9.6f    %9.3f\n",
+               j,me,target,t3-t2,t4-t1,bandwidth1,t5-t0,bandwidth2);
         fflush(stdout);
         MPI_Barrier(MPI_COMM_WORLD);
-        if (me==0) printf("==============================================================\n");
+        if (me==0) printf("========================================================================================\n");
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
-    status = ARMCI_Free_local(b2); assert(status==0);
-    status = ARMCI_Free_local(b1); assert(status==0);
+    status = MPI_Win_free(&w2);
+    status = MPI_Win_free(&w1);
 
-    status = ARMCI_Free(addrVec1[me]); assert(status==0);
-    status = ARMCI_Free(addrVec2[me]); assert(status==0);
+    status = MPI_Free_mem(b2);
+    status = MPI_Free_mem(b1);
 
     MPI_Barrier(MPI_COMM_WORLD);
-
-    if (me==0) printf("%d: ARMCI_Finalize\n",me);
-    ARMCI_Finalize();
 
     if (me==0) printf("%d: MPI_Finalize\n",me);
     MPI_Finalize();
