@@ -188,10 +188,10 @@ comm_bench3.x: comm_bench3.o getticks.o
 comm_bench1.o: comm_bench1.c comm_bench1.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c
 
-comm_bench2.o: comm_bench2.c comm_bench.h
+comm_bench2.o: comm_bench2.c comm_bench2.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench2.c
 
-comm_bench3.o: comm_bench3.c comm_bench.h
+comm_bench3.o: comm_bench3.c comm_bench3.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench3.c
 
 getticks.o: getticks.c
