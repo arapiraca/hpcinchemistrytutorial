@@ -85,7 +85,9 @@ int main(int argc, char **argv)
     double t0,t1,t2,t3,t4,t5;
     double tt0,tt1,tt2,tt3,tt4;
 
-    int bufSize = ( argc>1 ? atoi(argv[1]) : 100 );
+    int a;
+    if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
+    int bufSize = ( argc>1 ? atoi(argv[1]) : 1000000 );
     if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
 
     /* allocate RMA buffers */
