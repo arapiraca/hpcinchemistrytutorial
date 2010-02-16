@@ -99,8 +99,10 @@ int main(int argc, char **argv)
     /* register remote pointers */
     MPI_Win w1;
     MPI_Win w2;
+    if (me==0) printf("%d: MPI_Win_create 1\n",me);
     status = MPI_Win_create(b1, bufSize * sizeof(double), sizeof(double),
                             MPI_INFO_NULL, MPI_COMM_WORLD, &w1);
+    if (me==0) printf("%d: MPI_Win_create 2\n",me);
     status = MPI_Win_create(b2, bufSize * sizeof(double), sizeof(double),
                             MPI_INFO_NULL, MPI_COMM_WORLD, &w2);
     MPI_Barrier(MPI_COMM_WORLD);
@@ -109,16 +111,26 @@ int main(int argc, char **argv)
     for (i=0;i<bufSize;i++) b1[i]=1.0*me;
     for (i=0;i<bufSize;i++) b2[i]=-1.0;
 
+    if (me==0) printf("%d: MPI_Win_fence 1\n",me);
     status = MPI_Win_fence(MPI_MODE_NOPRECEDE, w1);
+    if (me==0) printf("%d: MPI_Win_lock 1\n",me);
     status = MPI_Win_lock(MPI_LOCK_EXCLUSIVE, me, MPI_MODE_NOCHECK, w1);
+    if (me==0) printf("%d: MPI_Put 1\n",me);
     status = MPI_Put(b1, bufSize, MPI_DOUBLE, me, 0, bufSize, MPI_DOUBLE, w1);
+    if (me==0) printf("%d: MPI_Win_unlock 1\n",me);
     status = MPI_Win_unlock(me, w1);
+    if (me==0) printf("%d: MPI_Win_fence 1\n",me);
     status = MPI_Win_fence(MPI_MODE_NOSUCCEED, w1);
 
+    if (me==0) printf("%d: MPI_Win_fence 2\n",me);
     status = MPI_Win_fence(MPI_MODE_NOPRECEDE, w2);
+    if (me==0) printf("%d: MPI_Win_lock 2\n",me);
     status = MPI_Win_lock(MPI_LOCK_EXCLUSIVE, me, MPI_MODE_NOCHECK, w2);
+    if (me==0) printf("%d: MPI_Put 2\n",me);
     status = MPI_Put(b2, bufSize, MPI_DOUBLE, me, 0, bufSize, MPI_DOUBLE, w2);
+    if (me==0) printf("%d: MPI_Win_unlock 2\n",me);
     status = MPI_Win_unlock(me, w2);
+    if (me==0) printf("%d: MPI_Win_fence 2\n",me);
     status = MPI_Win_fence(MPI_MODE_NOSUCCEED, w2);
 
     int target;
