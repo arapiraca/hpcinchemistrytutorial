@@ -1,0 +1,3 @@
+#!/bin/csh
+qsub -n 4 -t 30 /gpfs/home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 100000
+qsub -n 4 -t 30 /gpfs/home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench3_LINUX64.x 100000
