@@ -91,22 +91,26 @@ int main(int argc, char **argv)
     if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
 
     /* allocate RMA buffers */
-    double* b1;
-    double* b2;
-    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &b1);
-    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &b2);
+    double* m1;
+    double* m2;
+    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &m1);
+    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &m2);
 
     /* register remote pointers */
     MPI_Win w1;
     MPI_Win w2;
     if (me==0) printf("%d: MPI_Win_create 1\n",me);
-    status = MPI_Win_create(b1, bufSize * sizeof(double), sizeof(double),
+    status = MPI_Win_create(m1, bufSize * sizeof(double), sizeof(double),
                             MPI_INFO_NULL, MPI_COMM_WORLD, &w1);
     if (me==0) printf("%d: MPI_Win_create 2\n",me);
-    status = MPI_Win_create(b2, bufSize * sizeof(double), sizeof(double),
+    status = MPI_Win_create(m2, bufSize * sizeof(double), sizeof(double),
                             MPI_INFO_NULL, MPI_COMM_WORLD, &w2);
     MPI_Barrier(MPI_COMM_WORLD);
 
+    double* b1;
+    double* b2;
+    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &b1);
+    status = MPI_Alloc_mem(bufSize * sizeof(double), MPI_INFO_NULL, &b2);
     int i;
     for (i=0;i<bufSize;i++) b1[i]=1.0*me;
     for (i=0;i<bufSize;i++) b2[i]=-1.0;
