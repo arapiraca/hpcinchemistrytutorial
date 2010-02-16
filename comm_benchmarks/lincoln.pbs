@@ -6,4 +6,14 @@
 #PBS -q lincoln_debug
 #PBS -V
 
-mpiexec /u/ac/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 2000000
+np=`wc -l < $PBS_NODEFILE`
+nn=`sort -u $PBS_NODEFILE | wc -l`
+echo Number of nodes is $nn
+echo Number of processors is $np
+
+cd $PBS_O_WORKDIR
+#cdjob $PBS_JOBID
+
+time /usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/bin/mpirun_rsh -np $np -hostfile $PBS_NODEFILE comm_bench1_LINUX64.x 2000000
+time /usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/bin/mpirun_rsh -np $np -hostfile $PBS_NODEFILE comm_bench3_LINUX64.x 2000000
+

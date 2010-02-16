@@ -43,7 +43,7 @@ privately owned rights.
 
 int main(int argc, char **argv)
 {
-    int desired = MPI_THREAD_MULTIPLE;
+    int desired = MPI_THREAD_SINGLE;
     int provided;
     MPI_Init_thread(&argc, &argv, desired, &provided);
 
