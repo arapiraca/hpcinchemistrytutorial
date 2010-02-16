@@ -48,12 +48,12 @@
       CC = gcc
       OPT = -O3
       MPI = YES
-      #MPI_PREFIX = /soft/apps/mpich2-1.2.1
-      MPI_PREFIX = /home/jhammond/gadzooks/mpich2-1.3a1
+      MPI_PREFIX = /soft/apps/mpich2-1.2.1
+      #MPI_PREFIX = /home/jhammond/gadzooks
       MPI_VENDOR = MPICH
       GA = YES
       GA_PREFIX = /home/jhammond/gadzooks/ga-cvs-dev
-      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc
+      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc #-lmpl
    endif
 
    # Fusion
@@ -180,7 +180,7 @@
 #all: refresh bin
 all: bin
 
-bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x
+bin: hello_$(TARGET).x comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x
 
 comm_bench1_$(TARGET).x: comm_bench1_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench1_$(TARGET).x
@@ -202,6 +202,9 @@ comm_bench3_$(TARGET).o: comm_bench3.c comm_bench3.h
 
 getticks_$(TARGET).o: getticks.c
 	$(GCC) -c getticks.c -o getticks_$(TARGET).o
+
+hello_$(TARGET).x: hello.c
+	mpicc hello.c -o hello_$(TARGET).x
 
 refresh: realclean bin
 
