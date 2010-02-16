@@ -1,7 +1,14 @@
 #!/bin/sh
+
+MPI_HOME=/soft/apps/mpich2-1.2.1
+#MPI_HOME=/home/jhammond/gadzooks
+
+#$MPI_HOME/bin/mpd
+
 # -n <# nodes>
-mpdboot -n 4 -f $COBALT_NODEFILE
+$MPI_HOME/bin/mpdboot -n 4 -f $COBALT_NODEFILE
+
 # -np <# process to start>
-mpirun -np 16 comm_bench1_LINUX64.x 250000
-mpirun -np 16 comm_bench3_LINUX64.x 250000
+$MPI_HOME/bin/mpirun -np 4 comm_bench1_LINUX64.x 250000
+$MPI_HOME/bin/mpirun -np 4 comm_bench3_LINUX64.x 250000
 
