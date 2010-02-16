@@ -4,22 +4,34 @@
 #
 #############################################
 
+   ifeq ($(HOSTNAME),krakenpf11)
+     MACHINE=KRAKEN
+   endif
+   ifeq ($(MACHINE),KRAKEN)
+      TARGET=LINUX64
+      CC=cc
+      OPT = -O3
+      MPI = NO
+      GA = YES
+      GA_PREFIX = /nics/b/home/hammond/ga-cvs-dev
+   endif
+
    ifeq ($(HOSTNAME),cu0login1)
-      CHINOOK=YES
+      MACHINE=CHINOOK
    endif
    ifeq ($(HOSTNAME),cu0login2)
-      CHINOOK=YES
+      MACHINE=CHINOOK
    endif
    ifeq ($(HOSTNAME),cu0login3)
-      CHINOOK=YES
+      MACHINE=CHINOOK
    endif
    ifeq ($(HOSTNAME),cu0login4)
-      CHINOOK=YES
+      MACHINE=CHINOOK
    endif
    ifeq ($(HOSTNAME),cu0login5)
-      CHINOOK=YES
+      MACHINE=CHINOOK
    endif
-   ifeq ($(CHINOOK),YES)
+   ifeq ($(MACHINE),CHINOOK)
       TARGET=LINUX64
       CC=pathcc
       OPT = -O3
@@ -31,30 +43,30 @@
    endif
 
    ifeq ($(HOSTNAME),login1.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
    ifeq ($(HOSTNAME),login2.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
    ifeq ($(HOSTNAME),login3.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
    ifeq ($(HOSTNAME),login4.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
    ifeq ($(HOSTNAME),login5.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
    ifeq ($(HOSTNAME),login6.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
    ifeq ($(HOSTNAME),login7.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
    ifeq ($(HOSTNAME),login8.surveyor.alcf.anl.gov)
-      BGP=YES
+      MACHINE=BGP
    endif
-   ifeq ($(BGP),YES)
+   ifeq ($(MACHINE),BGP)
       TARGET=BGP
       CC=mpixlc_r
       OPT = -O3
@@ -67,9 +79,9 @@
 
    # Gadzooks
    ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
-      GADZOOKS=YES
+      MACHINE=GADZOOKS
    endif
-   ifeq ($(GADZOOKS),YES)
+   ifeq ($(MACHINE),GADZOOKS)
       TARGET=LINUX64
       CC = gcc
       OPT = -O3
@@ -84,24 +96,24 @@
 
    # Fusion
    ifeq ($(HOSTNAME),flogin1.lcrc.anl.gov)
-      FUSION = YES
+      MACHINE=FUSION
    endif
    ifeq ($(HOSTNAME),flogin2.lcrc.anl.gov)
-      FUSION = YES
+      MACHINE=FUSION
    endif
    ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
-      FUSION = YES
+      MACHINE=FUSION
    endif
    ifeq ($(HOSTNAME),flogin1)
-      FUSION = YES
+      MACHINE=FUSION
    endif
    ifeq ($(HOSTNAME),flogin2)
-      FUSION = YES
+      MACHINE=FUSION
    endif
    ifeq ($(HOSTNAME),flogin3)
-      FUSION = YES
+      MACHINE=FUSION
    endif
-   ifeq ($(FUSION),YES)
+   ifeq ($(MACHINE),FUSION)
       TARGET=LINUX64
       CC = icc
       OPT = -O3
@@ -114,18 +126,18 @@
 
    # Lincoln
    ifeq ($(HOSTNAME),honest1.ncsa.uiuc.edu)
-      LINCOLN=YES
+      MACHINE=LINCOLN
    endif
    ifeq ($(HOSTNAME),honest2.ncsa.uiuc.edu)
-      LINCOLN=YES
+      MACHINE=LINCOLN
    endif
    ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
-      LINCOLN=YES
+      MACHINE=LINCOLN
    endif
    ifeq ($(HOSTNAME),honest4.ncsa.uiuc.edu)
-      LINCOLN=YES
+      MACHINE=LINCOLN
    endif
-   ifeq ($(LINCOLN),YES)
+   ifeq ($(MACHINE),LINCOLN)
       TARGET=LINUX64
       CC = gcc
       OPT = -O3
@@ -190,7 +202,11 @@
    ifeq ($(CC),mpixlc_r)
       CFLAGS += -qlanglvl=extc99
    else
-      CFLAGS += -std=c99 
+      ifeq ($(CC),cc)
+         CFLAGS += 
+      else
+         CFLAGS += -std=c99 
+      endif
    endif
    CFLAGS += $(INC) $(DEFINES)
 
@@ -206,7 +222,7 @@
 #all: refresh bin
 all: bin
 
-bin: hello_$(TARGET).x comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x
+bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x
 
 comm_bench1_$(TARGET).x: comm_bench1_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench1_$(TARGET).x
