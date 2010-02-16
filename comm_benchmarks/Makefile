@@ -103,10 +103,11 @@
       CC = gcc
       OPT = -O3
       MPI = YES
-      MPI_PREFIX = 
-      MPI_VENDOR = MPICH
+      MPI_PREFIX = /usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/
+      MPI_VENDOR = MVAPICH
+      EXTRA_LIBS = -L/usr/local/ofed-1.2.5.5-patch/lib64
       GA = YES
-      GA_PREFIX = 
+      GA_PREFIX = /u/ac/jhammond/ga-cvs-dev
    endif
 
    # Megatron
