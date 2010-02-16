@@ -36,8 +36,8 @@
       CC=pathcc
       OPT = -O3
       MPI = YES
-      MPI_PREFIX = /apps/mpi/mvapich2/1.4-pathscale-3.2
-      MPI_VENDOR = MVAPICH
+      MPI_PREFIX = /apps/mpi/hp/2.03.00.00-20081112
+      MPI_VENDOR = HP 
       GA = YES
       GA_PREFIX = /home/jhammond/ga-cvs-dev
    endif
@@ -178,8 +178,13 @@
       else
          ifeq ($(MPI_VENDOR),MVAPICH)
             LIB += -L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
-         else # MPICH
-            LIB += -L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
+         else
+            ifeq ($(MPI_VENDOR),HP)
+               INC += -I$(MPI_PREFIX)/include/64
+               LIB += -L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
+            else # MPICH
+               LIB += -L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
+            endif
          endif
       endif
       INC += -I$(MPI_PREFIX)/include

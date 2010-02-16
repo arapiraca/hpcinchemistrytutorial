@@ -1,16 +1,20 @@
 #!/bin/csh -f
 #MSUB -l nodes=16:ppn=1,walltime=00:10:00
 #MSUB -A gc30794
-#MSUB -e comm_bench1.err
-#MSUB -o comm_bench1.out
-#MSUB -N comm_bench1
+#MSUB -e comm_bench3.err
+#MSUB -o comm_bench3.out
+#MSUB -N comm_bench3
 #MSUB -m ea
 #MSUB -V
 
 source /etc/profile.d/modules.csh
 source /home/scicons/bin/set_modulepath.csh
 
-module purge
+module load pnnl_env
 module load mvapich2/1.4
 
-mpirun -srun -n 16 -N 16 /home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x
+/apps/mpi/mvapich2/1.4-pathscale-3.2/bin/mpirun -srun -n 16 -N 16 /home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench3_LINUX64.x 1000
+/apps/mpi/mvapich2/1.4-pathscale-3.2/bin/mpirun -srun -n 16 -N 16 /home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench3_LINUX64.x 10000
+/apps/mpi/mvapich2/1.4-pathscale-3.2/bin/mpirun -srun -n 16 -N 16 /home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench3_LINUX64.x 100000
+/apps/mpi/mvapich2/1.4-pathscale-3.2/bin/mpirun -srun -n 16 -N 16 /home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench3_LINUX64.x 1000000
+/apps/mpi/mvapich2/1.4-pathscale-3.2/bin/mpirun -srun -n 16 -N 16 /home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench3_LINUX64.x 10000000
