@@ -42,6 +42,30 @@
       GA_PREFIX = /home/jhammond/ga-cvs-dev
    endif
 
+   ifeq ($(HOSTNAME),login1.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login2.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login3.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login4.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login5.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login6.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login7.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login8.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
    ifeq ($(HOSTNAME),login1.surveyor.alcf.anl.gov)
       MACHINE=BGP
    endif
