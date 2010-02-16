@@ -48,11 +48,12 @@
       CC = gcc
       OPT = -O3
       MPI = YES
-      MPI_PREFIX = /soft/apps/mpich2-1.2.1
+      #MPI_PREFIX = /soft/apps/mpich2-1.2.1
+      MPI_PREFIX = /home/jhammond/gadzooks/mpich2-1.3a1
       MPI_VENDOR = MPICH
-      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc
       GA = YES
-      GA_PREFIX = /home/jhammond/ga-cvs-dev-gadzooks
+      GA_PREFIX = /home/jhammond/gadzooks/ga-cvs-dev
+      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc
    endif
 
    # Fusion
@@ -181,31 +182,31 @@ all: bin
 
 bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x
 
-comm_bench1_$(TARGET).x: comm_bench1.o getticks.o
-	$(LD) $(LDFLAGS) comm_bench1.o getticks.o $(LIB) -o comm_bench1_$(TARGET).x
+comm_bench1_$(TARGET).x: comm_bench1_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench1_$(TARGET).x
 
-comm_bench2_$(TARGET).x: comm_bench2.o getticks.o
-	$(LD) $(LDFLAGS) comm_bench2.o getticks.o $(LIB) -o comm_bench2_$(TARGET).x
+comm_bench2_$(TARGET).x: comm_bench2_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench2_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench2_$(TARGET).x
 
-comm_bench3_$(TARGET).x: comm_bench3.o getticks.o
-	$(LD) $(LDFLAGS) comm_bench3.o getticks.o $(LIB) -o comm_bench3_$(TARGET).x
+comm_bench3_$(TARGET).x: comm_bench3_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench3_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench3_$(TARGET).x
 
-comm_bench1.o: comm_bench1.c comm_bench1.h
-	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c
+comm_bench1_$(TARGET).o: comm_bench1.c comm_bench1.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c -o comm_bench1_$(TARGET).o
 
-comm_bench2.o: comm_bench2.c comm_bench2.h
-	$(CC) $(CFLAGS) $(INC) -c comm_bench2.c
+comm_bench2_$(TARGET).o: comm_bench2.c comm_bench2.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench2.c -o comm_bench2_$(TARGET).o
 
-comm_bench3.o: comm_bench3.c comm_bench3.h
-	$(CC) $(CFLAGS) $(INC) -c comm_bench3.c
+comm_bench3_$(TARGET).o: comm_bench3.c comm_bench3.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench3.c -o comm_bench3_$(TARGET).o
 
-getticks.o: getticks.c
-	$(GCC) -c getticks.c
+getticks_$(TARGET).o: getticks.c
+	$(GCC) -c getticks.c -o getticks_$(TARGET).o
 
 refresh: realclean bin
 
 clean:
-	rm -f *.o
+	rm -f *_$(TARGET).o
 
 realclean: clean
 	rm -f *_$(TARGET).x
