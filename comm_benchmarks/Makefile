@@ -4,6 +4,32 @@
 #
 #############################################
 
+   ifeq ($(HOSTNAME),cu0login1)
+      CHINOOK=YES
+   endif
+   ifeq ($(HOSTNAME),cu0login2)
+      CHINOOK=YES
+   endif
+   ifeq ($(HOSTNAME),cu0login3)
+      CHINOOK=YES
+   endif
+   ifeq ($(HOSTNAME),cu0login4)
+      CHINOOK=YES
+   endif
+   ifeq ($(HOSTNAME),cu0login5)
+      CHINOOK=YES
+   endif
+   ifeq ($(CHINOOK),YES)
+      TARGET=LINUX64
+      CC=pathcc
+      OPT = -O3
+      MPI = YES
+      MPI_PREFIX = /apps/mpi/mvapich2/1.4-pathscale-3.2
+      MPI_VENDOR = MVAPICH
+      GA = YES
+      GA_PREFIX = /home/jhammond/ga-cvs-dev
+   endif
+
    ifeq ($(HOSTNAME),login1.surveyor.alcf.anl.gov)
       BGP=YES
    endif
