@@ -41,14 +41,18 @@
 
    # Gadzooks
    ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
+      GADZOOKS=YES
+   endif
+   ifeq ($(GADZOOKS),YES)
       TARGET=LINUX64
       CC = gcc
       OPT = -O3
       MPI = YES
-      MPI_PREFIX = 
+      MPI_PREFIX = /soft/apps/mpich2-1.2.1
       MPI_VENDOR = MPICH
+      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc
       GA = YES
-      GA_PREFIX = 
+      GA_PREFIX = /home/jhammond/ga-cvs-dev-gadzooks
    endif
 
    # Fusion
@@ -151,7 +155,7 @@
       INC += -I/bgsys/drivers/ppcfloor/arch/include
    endif
 
-   LIB += -lm -lpthread
+   LIB += -lm -lpthread $(EXTRA_LIBS)
 
    COPT = $(OPT)
    CFLAGS = -g $(COPT)
@@ -174,16 +178,16 @@
 #all: refresh bin
 all: bin
 
-bin: comm_bench1.x comm_bench2.x comm_bench3.x
+bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x
 
-comm_bench1.x: comm_bench1.o getticks.o
-	$(LD) $(LDFLAGS) comm_bench1.o getticks.o $(LIB) -o comm_bench1.x
+comm_bench1_$(TARGET).x: comm_bench1.o getticks.o
+	$(LD) $(LDFLAGS) comm_bench1.o getticks.o $(LIB) -o comm_bench1_$(TARGET).x
 
-comm_bench2.x: comm_bench2.o getticks.o
-	$(LD) $(LDFLAGS) comm_bench2.o getticks.o $(LIB) -o comm_bench2.x
+comm_bench2_$(TARGET).x: comm_bench2.o getticks.o
+	$(LD) $(LDFLAGS) comm_bench2.o getticks.o $(LIB) -o comm_bench2_$(TARGET).x
 
-comm_bench3.x: comm_bench3.o getticks.o
-	$(LD) $(LDFLAGS) comm_bench3.o getticks.o $(LIB) -o comm_bench3.x
+comm_bench3_$(TARGET).x: comm_bench3.o getticks.o
+	$(LD) $(LDFLAGS) comm_bench3.o getticks.o $(LIB) -o comm_bench3_$(TARGET).x
 
 comm_bench1.o: comm_bench1.c comm_bench1.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c
@@ -203,5 +207,5 @@ clean:
 	rm -f *.o
 
 realclean: clean
-	rm -f *.x
+	rm -f *_$(TARGET).x
 
