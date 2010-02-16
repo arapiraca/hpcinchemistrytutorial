@@ -4,14 +4,27 @@
 #PBS -j oe
 #PBS -l walltime=0:30:00,size=144
 
+SIZE=10000000
+
 export CRAY_PORTALS_USE_BLOCKING_POLL=1
 export MPICH_MAX_SHORT_MSG_SIZE=16000
 
-cd $PBS_O_WORKDIR
+export JOB_DIR=/nics/b/home/hammond/hpcinchemistrytutorial/comm_benchmarks
+export SCRATCH_DIR=/lustre/scratch/$USER
 
-aprun -n $PBS_NNODES /nics/b/home/hammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 1000
-aprun -n $PBS_NNODES /nics/b/home/hammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 10000
-aprun -n $PBS_NNODES /nics/b/home/hammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 100000
-aprun -n $PBS_NNODES /nics/b/home/hammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 1000000
-aprun -n $PBS_NNODES /nics/b/home/hammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 10000000
+echo "WIPE OLD SCRATCH"
+rm -f $SCRATCH_DIR/comm.$PBS_NNODES\_$PBS_JOBID
 
+echo "MAKE NEW SCRATCH"
+mkdir -p $SCRATCH_DIR/comm.$PBS_NNODES\_$PBS_JOBID
+
+echo "ENTER NEW SCRATCH"
+cd $SCRATCH_DIR/comm.$PBS_NNODES\_$PBS_JOBID
+
+echo "COPY BINARY"
+cp /nics/b/home/hammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x ./comm_bench1_LINUX64.x
+
+echo "RUN JOBS"
+
+aprun -n $PBS_NNODES ./comm_bench1_LINUX64.x $SIZE  > comm_bench1\_$SIZE.$PBS_NNODES\_$PBS_JOBID.out
+cp comm_bench1\_$SIZE.$PBS_NNODES\_$PBS_JOBID.out $JOB_DIR/.
