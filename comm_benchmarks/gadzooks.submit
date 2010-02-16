@@ -1,3 +1,2 @@
-#!/bin/csh
-qsub -n 4 -t 30 ./comm_bench1_LINUX64.x 100000
-qsub -n 4 -t 30 ./comm_bench3_LINUX64.x 100000
+#!/bin/sh
+qsub -n 4 -t 30 ./gadzooks.run
