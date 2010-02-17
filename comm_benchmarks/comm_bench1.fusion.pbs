@@ -3,12 +3,12 @@
 #PBS -l nodes=12:ppn=1
 #PBS -l walltime=0:30:00
 #PBS -j oe
-#PBS -q shared
 
 export MPIRUN=/soft/mvapich2/1.4-intel-11.1.059/bin/mpiexec
 
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1.x 1000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1.x 10000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1.x 100000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1.x 1000000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1.x 10000000
+export MA_USE_ARMCI_MEM=y
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 1000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 10000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 100000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 1000000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 10000000
