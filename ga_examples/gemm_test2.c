@@ -63,6 +63,9 @@ int gemm_test2(int dim1, int dim2, int dim3)
         printf("dim3=%d\n",dim3);
     } else { return(1); }
 
+    unsigned long long start,finish;
+    unsigned long long t_loops,t_dgemm;
+
     int i,j,k;
 
     double alpha=(double)rand()/RAND_MAX;
@@ -82,6 +85,7 @@ int gemm_test2(int dim1, int dim2, int dim3)
 
     double* p_c=(double *) malloc(rowc*colc*sizeof(double));
     for (i=0;i<(rowc*colc);i++) p_c[i]=0.0;
+    start = getticks();
     for (i=0;i<dim1;i++ ){
         for (j=0;j<dim2;j++ ){
             p_c[i+j*rowc] *= beta;
@@ -90,17 +94,24 @@ int gemm_test2(int dim1, int dim2, int dim3)
             }
         }
     }
+    finish = getticks();
+    t_loops = finish - start;
+    printf("! time for loops=%llu ticks\n",t_loops);
 
     double* p_d=(double *) malloc(rowc*colc*sizeof(double));
     for (i=0;i<(rowc*colc);i++) p_d[i]=0.0;
+    start = getticks();
     dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
+    finish = getticks();
+    t_dgemm = finish - start;
+    printf("! time for dgemm=%llu ticks\n",t_dgemm);
     double error3=0.0;
     for (i=0;i<rowc;i++ ){
         for (j=0;j<colc;j++ ){
-            printf("%4d %4d %20.14f %20.14f\n",i,j,p_c[i+j*rowc],p_d[i+j*rowc]);
+//             printf("%4d %4d %20.14f %20.14f\n",i,j,p_c[i+j*rowc],p_d[i+j*rowc]);
             error3+=abs(p_c[i+j*rowc]-p_d[i+j*rowc]);
             assert(abs(p_c[i+j*rowc]-p_d[i+j*rowc])<1e-14);
-        }
+         }
     }
     printf("! dgemm error=%20.14f\n",error3);
     free(p_d);

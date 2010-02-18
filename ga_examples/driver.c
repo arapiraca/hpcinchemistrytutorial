@@ -50,16 +50,10 @@ int matmul2(int dim1, int dim2); // matrix multiplication for symmetric matrices
 int matvec(int dim1, int dim2); // fake sparse matrix-vector product
 int gemm_test(int dim1);
 int overlap(int len); // test of comm/comp overlap
+int ga_dgemm_test(int dim1);
 int bigtest(int dim1);
 int diagonalize(int dim1);
-int gemm_test2(dim1,dim2,dim3);
-
-#ifndef DCMF
-unsigned long long DCMF_Timebase(void)
-{
-    return (unsigned long long) clock();
-}
-#endif
+int gemm_test2(int dim1, int dim2, int dim3);
 
 int main(int argc, char **argv)
 {
@@ -90,20 +84,22 @@ int main(int argc, char **argv)
     int test = ( argc>1 ? atoi(argv[1]) :  911 );
     int dim1 = ( argc>2 ? atoi(argv[2]) : 1000 );
     int dim2 = ( argc>3 ? atoi(argv[3]) :   -1 );
-    int dim3 = ( argc>3 ? atoi(argv[3]) :   -1 );
+    int dim3 = ( argc>4 ? atoi(argv[4]) :   -1 );
 
     if (test==911){
-        printf(" 0 = hello\n");
-        printf(" 1 = simple\n");
-        printf(" 2 = transpose\n");
-        printf(" 3 = matmul\n");
-        printf(" 4 = matmul2\n");
-        printf(" 5 = matvec\n");
-        printf(" 6 = gemm_test\n");
-        printf(" 7 = overlap\n");
-        printf(" 8 = ga_dgemm_test\n");
-        printf(" 9 = bigtest\n");
-        printf("10 = diagonalize\n");
+        printf(" <test> = name(args)\n");
+        printf(" 0 = hello()\n");
+        printf(" 1 = simple()\n");
+        printf(" 2 = transpose(dim1,dim2)\n");
+        printf(" 3 = matmul(dim1,dim2)\n");
+        printf(" 4 = matmul2(dim1,dim2)\n");
+        printf(" 5 = matvec(dim1,dim2)\n");
+        printf(" 6 = gemm_test(dim1)\n");
+        printf(" 7 = overlap(dim1)\n");
+        printf(" 8 = ga_dgemm_test(dim1)\n");
+        printf(" 9 = bigtest(dim1)\n");
+        printf("10 = diagonalize(dim1)\n");
+        printf("11 = gemm_test2(dim1,dim2,dim3)\n");
         return(1);
     }
 
@@ -114,7 +110,7 @@ int main(int argc, char **argv)
         printf("The result of GA_Nnodes is %d\n",nproc); fflush(stdout);
 #endif
 
-    int status;
+    int status=1;
     if (test==0)       status = hello();
     else if (test==1)  status = simple();
     else if (test==2)  status = transpose(dim1,dim2);
@@ -134,7 +130,7 @@ int main(int argc, char **argv)
     HPM_Print();
 #endif
 
-    if ((me==0) && (test != 0) && (test != 6)) GA_Print_stats();
+    if ((me==0) && (test != 0) && (test != 6) && (test != 11)) GA_Print_stats();
 
     GA_Terminate();
     MPI_Finalize();

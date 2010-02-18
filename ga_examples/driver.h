@@ -54,7 +54,9 @@ privately owned rights.
 #ifdef DCMF
 #include "dcmf.h"
 #else
-unsigned long long DCMF_Timebase(void);
+#define DCMF_Timebase getticks
+// #define DCMF_Timebase clock
+unsigned long long getticks(void);
 #endif
 
 #include "macdecls.h"
@@ -78,7 +80,5 @@ unsigned long long DCMF_Timebase(void);
     void HPM_Stop(char *);
     void HPM_Print(void);
 #endif
-
-double start,finish,timing;
 
 #endif

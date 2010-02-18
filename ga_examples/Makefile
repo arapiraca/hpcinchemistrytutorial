@@ -150,7 +150,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o getticks.o 
 
 all: driver.x
 
@@ -158,6 +158,9 @@ refresh: realclean all
 
 driver.x: $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver_$(TARGET).x
+
+getticks.o: getticks.c
+	gcc -c getticks.c
 
 $%.o: %.c driver.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
