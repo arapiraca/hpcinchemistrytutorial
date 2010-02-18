@@ -167,7 +167,8 @@
 OBJECTS = gagpu_gemm.o blas_gemm_test.o cublas_gemm_test.o ga_utils.o blas_utils.o cublas_utils.o getticks.o # cpuid.o
 
 #all: refresh bin
-all: bin
+#all: bin
+all: armci_gpu_sgemm.x
 
 bin: test_driver.x dmp_gemm_driver.x
 #
@@ -179,9 +180,15 @@ test_driver.x: test_driver.o $(OBJECTS)
 
 dmp_gemm_driver.x: dmp_gemm_driver.o $(OBJECTS)
 	$(LD) $(LDFLAGS) dmp_gemm_driver.o $(OBJECTS) $(LIB) $(PBLAS) -o dmp_gemm_driver.x
+
+armci_gpu_sgemm.x: armci_gpu_sgemm.o $(OBJECTS)
+	$(LD) $(LDFLAGS) armci_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o armci_gpu_sgemm.x
 #
 # OBJECTS
 #
+armci_gpu_sgemm.o: armci_gpu_sgemm.c
+	$(CC) $(CFLAGS) $(INC) -c armci_gpu_sgemm.c
+
 dmp_gemm_driver.o: dmp_gemm_driver.c blas_gemm_test.h
 	$(CC) $(CFLAGS) $(INC) -c dmp_gemm_driver.c
 

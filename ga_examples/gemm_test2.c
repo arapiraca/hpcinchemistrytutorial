@@ -55,7 +55,27 @@ privately owned rights.
 unsigned long long getticks(void);
 
 //void dgemm_(char transa, char transb,int* rank, int* rank, int* rank, double* alpha, double* p_b, int* rank, double* p_a, int* rank, double* beta, double* p_c, int *rank);
-void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
+#ifdef BLAS_USES_LONG
+    void dgemm_(char* , char* ,long* , long* , long* , double* , double* , long* , double* , long* , double* , double* , long* );
+    #define BLAS_INT long
+#else
+    void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
+    #define BLAS_INT int
+#endif
+
+#ifdef GOTO
+    #define BLAS_NAME "GotoBLAS"
+#elif defined(MKL)
+    #define BLAS_NAME "Intel MKL"
+#elif defined(NETLIB)
+    #define BLAS_NAME "Netlib"
+#else
+    #error "What BLAS are you using?"
+#endif
+
+void* amalloc(size_t size);
+
+#define MEMORY_ALLOCATOR amalloc
 
 int gemm_test2(int dim1, int dim2, int dim3)
 {
@@ -73,19 +93,19 @@ int gemm_test2(int dim1, int dim2, int dim3)
     double alpha=(double)rand()/RAND_MAX;
     double beta =(double)rand()/RAND_MAX;
 
-    int rowc = dim1;
-    int rowa = dim1;
-    int cola = dim3;
-    int rowb = dim3;
-    int colb = dim2;
-    int colc = dim2;
+    BLAS_INT rowc = dim1;
+    BLAS_INT rowa = dim1;
+    BLAS_INT cola = dim3;
+    BLAS_INT rowb = dim3;
+    BLAS_INT colb = dim2;
+    BLAS_INT colc = dim2;
 
-    double* p_a =(double *) malloc(rowa*cola*sizeof(double));
+    double* p_a =(double *) MEMORY_ALLOCATOR(rowa*cola*sizeof(double));
     for (i=0;i<(rowa*cola);i++) p_a[i]=(double)rand()/RAND_MAX;
-    double* p_b =(double *) malloc(rowb*colb*sizeof(double));
+    double* p_b =(double *) MEMORY_ALLOCATOR(rowb*colb*sizeof(double));
     for (i=0;i<(rowb*colb);i++) p_b[i]=(double)rand()/RAND_MAX;
 
-    double* p_c=(double *) malloc(rowc*colc*sizeof(double));
+    double* p_c=(double *) MEMORY_ALLOCATOR(rowc*colc*sizeof(double));
     for (i=0;i<(rowc*colc);i++) p_c[i]=0.0;
     start = getticks();
     for (i=0;i<dim1;i++ ){
@@ -98,15 +118,16 @@ int gemm_test2(int dim1, int dim2, int dim3)
     }
     finish = getticks();
     t_loops = finish - start;
-    printf("! time for loops=%llu ticks\n",t_loops);
+    printf("! time for %15s dgemm=%12llu ticks\n","triple-loops",t_loops);
 
-    double* p_d=(double *) malloc(rowc*colc*sizeof(double));
+    double* p_d=(double *) MEMORY_ALLOCATOR(rowc*colc*sizeof(double));
     for (i=0;i<(rowc*colc);i++) p_d[i]=0.0;
     start = getticks();
     dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
     finish = getticks();
     t_dgemm = finish - start;
-    printf("! time for dgemm=%llu ticks\n",t_dgemm);
+    printf("! time for %15s dgemm=%12llu ticks\n",BLAS_NAME,t_dgemm);
+    printf("! %s is %6.2f times faster than loops\n",BLAS_NAME,((double)t_loops)/t_dgemm);
     double error3=0.0;
     for (i=0;i<rowc;i++ ){
         for (j=0;j<colc;j++ ){

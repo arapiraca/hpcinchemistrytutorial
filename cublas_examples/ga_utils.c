@@ -117,9 +117,29 @@ void start_parallel(int* argc, char*** argv, int* me, int* nproc)
     *nproc = parallel_nproc();
 
 #if defined(MPI)
-    if (provided!=MPI_THREAD_MULTIPLE)
-       fprintf(stderr,"MPI_THREAD_MULTIPLE not provided\n");
-    else if (*me==0) fprintf(stderr,"! MPI_Init_thread succeeded\n");
+    if (*me==0) fprintf(stderr,"! MPI_Init_thread succeeded\n");
+    switch (provided)
+    {
+        case MPI_THREAD_MULTIPLE:
+            if (*me==0) printf("%d: provided = MPI_THREAD_MULTIPLE\n",me);
+            break;
+
+        case MPI_THREAD_SERIALIZED:
+            if (*me==0) printf("%d: provided = MPI_THREAD_SERIALIZED\n",me);
+            break;
+
+        case MPI_THREAD_FUNNELED:
+            if (*me==0) printf("%d: provided = MPI_THREAD_FUNNELED\n",me);
+            break;
+
+        case MPI_THREAD_SINGLE:
+            if (*me==0) printf("%d: provided = MPI_THREAD_SINGLE\n",me);
+            break;
+
+        default:
+            if (*me==0) printf("%d: MPI_Init_thread returned an invalid value of <provided>.\n",me);
+            return(provided);
+    }
 #endif
 
 #if defined(GA)

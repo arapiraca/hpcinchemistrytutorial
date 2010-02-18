@@ -41,18 +41,21 @@ ifeq ($(TARGET),LINUX64)
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
 
-   MLK=-L/opt/intel/Compiler/11.1/059/mkl -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential
-#    BLAS=$(MKL)
+#    MLK=-L/opt/intel/Compiler/11.1/059/mkl -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential
+#    BLAS_INC=-DMKL
+#    BLAS_LIB=$(MKL)
 
-   #GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
-   #BLAS=$(GOTO)
+   GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
+   BLAS_INC=-DBLAS_USES_LONG -DGOTO
+   BLAS_LIB=$(GOTO)
 
-   BLAS=$(MKL) -llapack -lblas
+#    BLAS_INC=-DNETLIB
+#    BLAS_LIB=-llapack -lblas
 
    EXTRAS=-lgomp -lgfortran -lm -lpthread
 
-   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(GSL_LIB) $(BLAS) $(EXTRAS)
-   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(GSL_INC)
+   LIB=-L$(MY_ROOT) $(GA_LIB) $(MPI_LIB) $(GSL_LIB) $(BLAS_LIB) $(EXTRAS)
+   INC=-I$(MY_ROOT) $(GA_INC) $(MPI_INC) $(GSL_INC) $(BLAS_INC)
 
    OPT = -O3 -m64 -malign-double
    OPT+= -march=core2 -mtune=core2
@@ -150,7 +153,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o getticks.o
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o aligned_malloc.o getticks.o
 
 all: driver.x
 

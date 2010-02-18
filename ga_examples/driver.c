@@ -106,7 +106,7 @@ int main(int argc, char **argv)
     if (me==0) printf("Running test %d\n",test); fflush(stdout);
 
 #ifdef DEBUG
-    if ((me==0) && (test != 0) && (test != 6))
+    if ((me==0) && (test != 0) && (test != 6) && (test != 11))
         printf("The result of GA_Nnodes is %d\n",nproc); fflush(stdout);
 #endif
 
