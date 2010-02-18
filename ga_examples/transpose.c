@@ -71,6 +71,7 @@ int transpose(int rank,int blksz)
     int ld_a[1],ld_c[1];
     int pg_world;   // world processor group
     double alpha,beta,error;
+    double start,finish;
     double t_a,t_c;
     double* p_in; // pointers for local access to GAs
     double* p_a;  // pointers for local access to GAs

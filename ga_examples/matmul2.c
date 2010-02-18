@@ -69,7 +69,8 @@ int matmul2(int rank, int blksz)
     int ld_a[1],ld_b[1],ld_d[1];
     int pg_world;   // world processor group
     double alpha,beta,error;
-    double zero = 0.0;
+    double start,finish;
+//     double zero = 0.0;
     double one  = 1.0;
     double temp;
     double* p_in; // pointers for local access to GAs

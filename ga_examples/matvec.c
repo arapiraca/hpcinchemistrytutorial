@@ -57,8 +57,9 @@ int matvec(int rank, int blksz)
 //    int rng_x[1],rng_y[1];
     int ld_x[1],ld_y[1];
     int pg_world;   // world processor group
-    double zero = 0.0;
+//     double zero = 0.0;
     double one  = 1.0;
+    double start,finish;
     double* p_x;  // pointers for local access to GAs
     double* p_y;  // pointers for local access to GAs
     double* p_A;  // pointers for local access to GAs

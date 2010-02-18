@@ -61,8 +61,9 @@ int ga_dgemm_test(int rank)
     int dims[2];
     int chunk[2];
     int pg_world;   // world processor group
-    double alpha,beta,error;
+    double alpha,beta;
     double one  = 1.0;
+    double start,finish;
 
     nproc=GA_Nnodes();
     me=GA_Nodeid();
@@ -125,7 +126,7 @@ int ga_dgemm_test(int rank)
 
     if (me == 0){
     	printf("! GA_Dgemm took %f seconds\n",(double) (finish - start) );
-	    fflush(stdout);\
+	    fflush(stdout);
     }
 
 /*

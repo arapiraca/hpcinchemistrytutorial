@@ -52,6 +52,8 @@ privately owned rights.
     #include "gsl/gsl_cblas.h"
 #endif
 
+unsigned long long getticks(void);
+
 //void dgemm_(char transa, char transb,int* rank, int* rank, int* rank, double* alpha, double* p_b, int* rank, double* p_a, int* rank, double* beta, double* p_c, int *rank);
 void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
 

@@ -109,8 +109,6 @@ int overlap(int len)
     GA_Zero(g_b);
     //GA_Print_distribution(g_a);
 
-    start = DCMF_Timebase(); 
-
     p_a = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
     p_b = (double *)ARMCI_Malloc_local((armci_size_t) len * sizeof(double));
 

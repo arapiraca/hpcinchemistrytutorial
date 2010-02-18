@@ -41,13 +41,13 @@ ifeq ($(TARGET),LINUX64)
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
 
-   #MLK=-L/opt/intel/Compiler/11.1/059/mkl -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential
-   #BLAS=$(MKL)
+   MLK=-L/opt/intel/Compiler/11.1/059/mkl -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential
+#    BLAS=$(MKL)
 
    #GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
    #BLAS=$(GOTO)
 
-   BLAS=-llapack -lblas
+   BLAS=$(MKL) -llapack -lblas
 
    EXTRAS=-lgomp -lgfortran -lm -lpthread
 
@@ -64,7 +64,7 @@ ifeq ($(TARGET),LINUX64)
 
    CC=$(MPI_PREFIX)/bin/mpicc
    COPT = $(OPT)
-   CFLAGS=-g $(COPT) -Wall $(INC)
+   CFLAGS=-g $(COPT) -Wall -Werror $(INC)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
       CPPFLAGS+=-DDEBUG
@@ -150,7 +150,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o getticks.o 
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o getticks.o
 
 all: driver.x
 
