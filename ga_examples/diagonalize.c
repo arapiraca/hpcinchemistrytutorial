@@ -72,8 +72,8 @@ int diagonalize(int rank)
     double val = 10;
     //GA_Fill(g_a, &val);
     GA_Randomize(g_a, &val);
-    val = 20;
-    GA_Shift_diagonal(g_a, &val);
+    //val = 20;
+    //GA_Shift_diagonal(g_a, &val);
     if (rank<40) GA_Print(g_a);
     GA_Zero(g_v);
 

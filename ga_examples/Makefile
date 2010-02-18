@@ -2,6 +2,8 @@ MY_ROOT=.
 DEBUG=YES
 #HPM_PROFILING=YES
 
+TARGET=LINUX64
+
 #############################################
 #
 #               Linux (32-bit)
@@ -148,7 +150,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o
 
 all: driver.x
 

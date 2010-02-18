@@ -55,85 +55,57 @@ privately owned rights.
 //void dgemm_(char transa, char transb,int* rank, int* rank, int* rank, double* alpha, double* p_b, int* rank, double* p_a, int* rank, double* beta, double* p_c, int *rank);
 void dgemm_(char* , char* ,int* , int* , int* , double* , double* , int* , double* , int* , double* , double* , int* );
 
-int gemm_test(int rank)
+int gemm_test2(int dim1, int dim2, int dim3)
 {
-
-    printf("rank=%d\n",rank);
+    if ((dim1>0) && (dim2>0) && (dim3>0)){
+        printf("dim1=%d\n",dim1);
+        printf("dim2=%d\n",dim2);
+        printf("dim3=%d\n",dim3);
+    } else { return(1); }
 
     int i,j,k;
 
     double alpha=(double)rand()/RAND_MAX;
     double beta =(double)rand()/RAND_MAX;
 
-    double* p_a =(double *) malloc(rank*rank*sizeof(double));
-    for (i=0;i<(rank*rank);i++) p_a[i]=(double)rand()/RAND_MAX;
-    double* p_b =(double *) malloc(rank*rank*sizeof(double));
-    for (i=0;i<(rank*rank);i++) p_b[i]=(double)rand()/RAND_MAX;
+    int rowc = dim1;
+    int rowa = dim1;
+    int cola = dim3;
+    int rowb = dim3;
+    int colb = dim2;
+    int colc = dim2;
 
-    double* p_c0=(double *) malloc(rank*rank*sizeof(double));
-    for (i=0;i<(rank*rank);i++) p_c0[i]=0.0;
-    for (i=0;i<rank;i++ ){
-        for (j=0;j<rank;j++ ){
-            p_c0[rank*i+j] *= beta;
-            for (k=0;k<rank;k++ ){
-                p_c0[rank*i+j]+=alpha*p_a[rank*i+k]*p_b[rank*k+j];
+    double* p_a =(double *) malloc(rowa*cola*sizeof(double));
+    for (i=0;i<(rowa*cola);i++) p_a[i]=(double)rand()/RAND_MAX;
+    double* p_b =(double *) malloc(rowb*colb*sizeof(double));
+    for (i=0;i<(rowb*colb);i++) p_b[i]=(double)rand()/RAND_MAX;
+
+    double* p_c=(double *) malloc(rowc*colc*sizeof(double));
+    for (i=0;i<(rowc*colc);i++) p_c[i]=0.0;
+    for (i=0;i<dim1;i++ ){
+        for (j=0;j<dim2;j++ ){
+            p_c[i+j*rowc] *= beta;
+            for (k=0;k<dim3;k++ ){
+                p_c[i+j*rowc]+=alpha*p_a[i+k*rowa]*p_b[k+j*rowb];
             }
         }
     }
 
-#ifdef USE_LOOPS
-    double* p_c1=(double *) malloc(rank*rank*sizeof(double));
-    for (i=0;i<(rank*rank);i++) p_c1[i]=0.0;
-    double aik;
-    for (i=0;i<rank;i++ ){
-        for (k=0;k<rank;k++ ){
-            aik=alpha*p_a[rank*i+k];
-            for (j=0;j<rank;j++ ){
-                p_c1[rank*i+j]+=aik*p_b[rank*k+j];
-            }
-        }
-    }
-    double error1=0.0;
-    for (i=0;i<rank;i++ ){
-        for (j=0;j<rank;j++ ){
-            error1+=abs(p_c0[i*rank+j] - p_c1[i*rank+j]);
-            assert(p_c0[i*rank+j]==p_c1[i*rank+j]);
-        }
-    }
-    printf("! loops error=%20.14f\n",error1);
-    free(p_c1);
-#endif
-
-#ifdef USE_GSL
-    double* p_c2=(double *) malloc(rank*rank*sizeof(double));
-    for (i=0;i<(rank*rank);i++) p_c2[i]=0.0;
-	cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,rank,rank,rank,
-                alpha,p_a,rank,p_b,rank,beta,p_c2,rank);
-    double error2=0.0;
-    for (i=0;i<rank;i++ ){
-        for (j=0;j<rank;j++ ){
-            error2+=abs(p_c0[i*rank+j] - p_c2[i*rank+j]);
-            assert(p_c0[i*rank+j]==p_c2[i*rank+j]);
-        }
-    }
-    printf("! cblas_dgemm error=%20.14f\n",error2);
-    free(p_c2);
-#endif
-
-    double* p_c3=(double *) malloc(rank*rank*sizeof(double));
-    for (i=0;i<(rank*rank);i++) p_c3[i]=0.0;
-   	dgemm_("n","n",&rank,&rank,&rank,&alpha,p_b,&rank,p_a,&rank,&beta,p_c3,&rank);
+    double* p_d=(double *) malloc(rowc*colc*sizeof(double));
+    for (i=0;i<(rowc*colc);i++) p_d[i]=0.0;
+    dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
     double error3=0.0;
-    for (i=0;i<rank;i++ ){
-        for (j=0;j<rank;j++ ){
-            error3+=abs(p_c0[i*rank+j] - p_c3[i*rank+j]);
-            assert(p_c0[i*rank+j]==p_c3[i*rank+j]);
+    for (i=0;i<rowc;i++ ){
+        for (j=0;j<colc;j++ ){
+            printf("%4d %4d %20.14f %20.14f\n",i,j,p_c[i+j*rowc],p_d[i+j*rowc]);
+            error3+=abs(p_c[i+j*rowc]-p_d[i+j*rowc]);
+            assert(abs(p_c[i+j*rowc]-p_d[i+j*rowc])<1e-14);
         }
     }
     printf("! dgemm error=%20.14f\n",error3);
-    free(p_c3);
+    free(p_d);
 
-    free(p_c0);
+    free(p_c);
     free(p_b);
     free(p_a);
 
