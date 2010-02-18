@@ -164,13 +164,12 @@
 #
 #############################################
 
-OBJECTS = gagpu_gemm.o blas_gemm_test.o cublas_gemm_test.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
+OBJECTS = gagpu_gemm.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
 
 #all: refresh bin
-#all: bin
-all: armci_gpu_sgemm.x gemm_test2.x
+all: bin
 
-bin: test_driver.x dmp_gemm_driver.x
+bin: test_driver.x armci_gpu_sgemm.x gemm_test2.x
 #
 # SERIAL/PARALLEL BLAS BINARIES
 #
@@ -205,8 +204,14 @@ gagpu_gemm.o: gagpu_gemm.c ga_utils.h cublas_utils.h
 blas_gemm_test.o: blas_gemm_test.c blas_utils.h
 	$(CC) $(CFLAGS) $(INC) -c blas_gemm_test.c
 
+blas_gemm_test2.o: blas_gemm_test2.c blas_utils.h
+	$(CC) $(CFLAGS) $(INC) -c blas_gemm_test2.c
+
 cublas_gemm_test.o: cublas_gemm_test.c cublas_utils.h blas_utils.h
 	$(CC) $(CFLAGS) $(INC) -c cublas_gemm_test.c
+
+cublas_gemm_test2.o: cublas_gemm_test2.c cublas_utils.h blas_utils.h
+	$(CC) $(CFLAGS) $(INC) -c cublas_gemm_test2.c
 
 gemm_test2.o: gemm_test2.c
 	$(CC) $(CFLAGS) $(INC) -c gemm_test2.c

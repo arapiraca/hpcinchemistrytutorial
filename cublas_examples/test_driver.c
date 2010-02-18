@@ -55,10 +55,9 @@ int gethostname(char *name, size_t len);
 int main(int argc, char** argv)
 {
     int threads;
-    int i, t;
     int precision;
     int ntests = 100;
-    int dim[ntests];
+    int dim[ntests][3];
     float f_alpha = 1.0;
     float f_beta = 0.0;
     double d_alpha = 1.0;
@@ -92,20 +91,23 @@ int main(int argc, char** argv)
     }
 #endif
 
-    t = 0;
-    dim[t++] = 1;
-//     for ( i = 1 ; i < 20 ; i++ ) dim[t++] = i*10;  //   10 to  200 by 10
-//     for ( i = 4 ; i < 10 ; i++ ) dim[t++] = i*50;  //  200 to  450 by 50
-//     for ( i = 5 ; i < 11 ; i++ ) dim[t++] = i*100; //  500 to  900 by 100
-// #ifdef BIGTESTS
-//     for ( i = 6 ; i < 10 ; i++ ) dim[t++] = i*200; // 1200 to 1800 by 200
-//     for ( i = 4 ; i < 11 ; i++ ) dim[t++] = i*500; // 2000 to 5000 by 500
-// #endif
-    int j = 64;
-    for ( i = 10*j ; i <= 20*j ; i+=j ) { dim[t++] = i-1; dim[t++] = i; dim[t++] = i+1; }
-    ntests = t;
+    int t = 0;
+    dim[t][0] = dim[t][1] = dim[t][2] = 1; t++;
+    int i,j,k;
+    for (i=1;i<3;i++){
+        for (j=1;j<3;j++){
+            for (k=1;k<3;k++){
+                dim[t][0] = 400*i;
+                dim[t][1] = 400*j;
+                dim[t][2] = 400*k;
+                t++;
+            }
+        }
+    }
 
-    for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = %d\n",t,dim[t]);
+
+    ntests = t;
+    for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = (%d,%d,%d)\n",t,dim[t][0],dim[t][1],dim[t][2]);
     fflush(stderr);
 
     threads = 2;
@@ -121,9 +123,10 @@ int main(int argc, char** argv)
     for ( t = 0 ; t < ntests ; t++)
     {
         if ( precision==1 ) { 
-            run_blas_sgemm_test(dim[t], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]); }
-        else if (precision==2 ) {
-            run_blas_dgemm_test(dim[t], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]); }
+            run_blas_sgemm_test2(dim[t][0], dim[t][1], dim[t][2], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]);
+        } else if (precision==2 ) {
+            run_blas_dgemm_test2(dim[t][0], dim[t][1], dim[t][2], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]);
+        }
     }
 
 #ifdef CUDA
@@ -148,11 +151,14 @@ int main(int argc, char** argv)
     for ( t = 0 ; t < ntests ; t++)
     {
         if ( precision==1 ) {
-            run_cublas_sgemm_test(dim[t], f_alpha, f_beta, &cublas_excl_time[t], &cublas_excl_Gflops[t],
-                                                           &cublas_incl_time[t], &cublas_incl_Gflops[t]); }
-        else if  (precision==2 ) {
-            run_cublas_dgemm_test(dim[t], d_alpha, d_beta, &cublas_excl_time[t], &cublas_excl_Gflops[t],
-                                                           &cublas_incl_time[t], &cublas_incl_Gflops[t]); }
+            run_cublas_sgemm_test2(dim[t][0], dim[t][1], dim[t][2], f_alpha, f_beta,
+                                   &cublas_excl_time[t], &cublas_excl_Gflops[t],
+                                   &cublas_incl_time[t], &cublas_incl_Gflops[t]);
+        } else if  (precision==2 ) {
+            run_cublas_dgemm_test2(dim[t][0], dim[t][1], dim[t][2], d_alpha, d_beta,
+                                   &cublas_excl_time[t], &cublas_excl_Gflops[t],
+                                   &cublas_incl_time[t], &cublas_incl_Gflops[t]);
+        }
     }
 
     status = cublasShutdown();
@@ -192,25 +198,25 @@ int main(int argc, char** argv)
 
 #endif
 
-    if ( precision==1 ) printf("   dim        SGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
-    if ( precision==2 ) printf("   dim        DGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==1 ) printf("  dim  dim2  dim3        SGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==2 ) printf("  dim  dim2  dim3        DGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
     for ( t = 0 ; t < ntests ; t++ )
     {
 #ifdef CUDA
         ratio = cublas_incl_Gflops[t] / blas_Gflops[t];
         if ( blas_Gflops[t] > cublas_incl_Gflops[t] ){
-            printf("%6d %8.3f Gflops <== %6.3f     %8.3f Gflops %8.3f Gflops\n",
-                    dim[t],blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+            printf("%5d %5d %5d %8.3f Gflops <== %6.3f     %8.3f Gflops %8.3f Gflops\n",
+                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
 
         else if ( blas_Gflops[t] < cublas_incl_Gflops[t] ) {
-            printf("%6d %8.3f Gflops     %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
-                    dim[t],blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+            printf("%5d %5d %5d %8.3f Gflops     %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
+                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
         else {
-            printf("%6d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
-                    dim[t],blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+            printf("%5d %5d %5d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
+                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
 #else
-            printf("%6d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
-                   dim[t],blas_Gflops[t],0.0,0.0,0.0);
+            printf("%5d %5d %5d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
+                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],0.0,0.0,0.0);
 #endif
     }
     fflush(stdout);

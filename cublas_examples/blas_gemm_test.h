@@ -47,11 +47,23 @@ privately owned rights.
 #include <string.h>
 #include <math.h>
 
-#ifdef MKL
-  #include "mkl.h"
+
+#ifdef BLAS_USES_LONG
+  #define BLAS_INT long
+  #ifdef MKL
+    #include "mkl.h"
+  #else
+    void sgemm_(char* , char* ,long* , long* , long* , float* , float* , long* , float* , long* , float* , float* , long* );
+    void dgemm_(char* , char* ,long* , long* , long* , double*, double*, long* , double*, long* , double*, double*, long* );
+  #endif
 #else
-  sgemm(char*, char*, int*, int*, int*, float* , float*, int*, float*, int*, float*, float*, int*);
-  dgemm(char*, char*, int*, int*, int*, double* , double*, int*, double*, int*, double*, double*, int*);
+  #define BLAS_INT int
+  #ifdef MKL
+    #include "mkl.h"
+  #else
+    void sgemm_(char* , char* ,int* , int* , int* , float* , float* , int* , float* , int* , float* , float* , int* );
+    void dgemm_(char* , char* ,int* , int* , int* , double*, double*, int* , double*, int* , double*, double*, int* );
+  #endif
 #endif
 
 #ifdef OPENMP
@@ -60,8 +72,10 @@ privately owned rights.
 
 #include "blas_utils.h"
 
-void run_blas_sgemm_test(int dim, float alpha, float beta, double* time, double* Gflops);
+void run_blas_sgemm_test(int dim, float  alpha, float  beta, double* time, double* Gflops);
 void run_blas_dgemm_test(int dim, double alpha, double beta, double* time, double* Gflops);
+void run_blas_sgemm_test2(int dim1, int dim2, int dim3, float  alpha, float  beta, double* time, double* Gflops);
+void run_blas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double beta, double* time, double* Gflops);
 
 #endif
 
