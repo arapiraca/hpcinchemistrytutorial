@@ -7,51 +7,52 @@
    # Gadzooks
    ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
       TARGET=LINUX64
-      OPT = -O3 -xHost -static-intel
-      INTEL_DIR = /soft/apps/intel-cc-11.0.074
-      MKL_DIR = /soft/apps/intel-cc-11.0.074/mkl
-      CUDA_DIR = /soft/apps/cuda-2.3/cuda
-      LIB_BITS = 64
-      CUDA = YES
-      MKL = YES
-      OPENMP = YES
-      MPI = YES
-      GA = YES
-      BIGTESTS = YES
+      OPT=-O3 -xHost -static-intel
+      INTEL_DIR=/soft/apps/intel-cc-11.0.074
+      MKL_DIR=/soft/apps/intel-cc-11.0.074/mkl
+      CUDA_DIR=/soft/apps/cuda-2.3/cuda
+      LIB_BITS=64
+      CUDA=YES
+      MKL=YES
+      OPENMP=YES
+      MPI=YES
+      GA=YES
+      GA_PREFIX=/home/jhammond/ga-cvs-dev/
+      BIGTESTS=YES
    endif
 
    # Fusion
    ifeq ($(HOSTNAME),flogin1.lcrc.anl.gov)
-      FUSION = YES
+      FUSION=YES
    endif
    ifeq ($(HOSTNAME),flogin2.lcrc.anl.gov)
-      FUSION = YES
+      FUSION=YES
    endif
    ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
-      FUSION = YES
+      FUSION=YES
    endif
    ifeq ($(HOSTNAME),flogin1)
-      FUSION = YES
+      FUSION=YES
    endif
    ifeq ($(HOSTNAME),flogin2)
-      FUSION = YES
+      FUSION=YES
    endif
    ifeq ($(HOSTNAME),flogin3)
-      FUSION = YES
+      FUSION=YES
    endif
    ifeq ($(FUSION),YES)
       TARGET=LINUX64
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
-      INTEL_DIR = 
-      MKL_DIR = /soft/mkl/10.2.2.025
+      OPT=-O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
+      INTEL_DIR=
+      MKL_DIR=/soft/mkl/10.2.2.025
       CUDA_DIR =
       LIB_BITS =
-      CUDA = NO
-      MKL = YES
-      OPENMP = YES
-      MPI = YES
-      GA = YES
-      BIGTESTS = YES
+      CUDA=NO
+      MKL=YES
+      OPENMP=YES
+      MPI=YES
+      GA=YES
+      BIGTESTS=YES
    endif
 
    # Lincoln
@@ -69,36 +70,38 @@
    endif
    ifeq ($(LINCOLN),YES)
       TARGET=LINUX64
-      OPT = -O3 -xT
-      INTEL_DIR = 
-      MKL_DIR = /usr/local/intel/mkl/10.2.2
-      CUDA_DIR = /usr/local/cuda-2.2/cuda
+      OPT=-O3 -xT
+      INTEL_DIR=
+      MKL_DIR=/usr/local/intel/mkl/10.2.2
+      CUDA_DIR=/usr/local/cuda-2.2/cuda
       LIB_BITS =
-      CUDA = YES
-      MKL = YES
-      OPENMP = YES
-      MPI = YES
-      GA = YES
-      BIGTESTS = YES
+      CUDA=YES
+      MKL=YES
+      OPENMP=YES
+      MPI=YES
+      MPI_PREFIX=/usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/
+      GA=YES
+      GA_PREFIX=/u/ac/jhammond/ga-cvs-dev/
+      BIGTESTS=YES
    endif
 
    # Megatron
    ifeq ($(HOSTNAME),megatron)
       TARGET=LINUX64
-      OPT = -O3 -xSSE2,SSE3,SSSE3,SSE4.1
-      INTEL_DIR = /opt/intel/Compiler/11.1/059
-      MKL_DIR = /opt/intel/Compiler/11.1/059/mkl
-      CUDA_DIR = /opt/cuda
+      OPT=-O3 -xSSE2,SSE3,SSSE3,SSE4.1
+      INTEL_DIR=/opt/intel/Compiler/11.1/059
+      MKL_DIR=/opt/intel/Compiler/11.1/059/mkl
+      CUDA_DIR=/opt/cuda
       MPI_PREFIX=/software/open-mpi/gnu-build
       MPI_VENDOR=OMPI
       GA_PREFIX=/software/ga/ga-4-2
-      LIB_BITS = 64
-      CUDA = YES
-      MKL = YES
-      OPENMP = YES
-      MPI = YES
-      GA = YES
-      BIGTESTS = NO
+      LIB_BITS=64
+      CUDA=YES
+      MKL=YES
+      OPENMP=YES
+      MPI=YES
+      GA=YES
+      BIGTESTS=NO
    endif
 
    DEFINES =
@@ -116,7 +119,7 @@
    endif
 
    ifeq ($(CUDA),YES)
-      CUBLAS_LIB = -L${CUDA_DIR}/lib${LIB_BITS} -lcublas
+      CUBLAS_LIB=-L${CUDA_DIR}/lib${LIB_BITS} -lcublas
       DEFINES += -DCUDA
       INC += -I${CUDA_DIR}/include
       LIB += $(CUBLAS_LIB)
@@ -147,16 +150,16 @@
 
    LIB += -lm -lpthread
 
-   FC = ifort
-   FOPT = $(OPT)
-   FFLAGS = -g $(COPT) $(INC) $(DEFINES)
+   FC=ifort
+   FOPT=$(OPT)
+   FFLAGS=-g $(COPT) $(INC) $(DEFINES)
 
-   CC = icc
-   COPT = $(OPT)
-   CFLAGS = -g -std=c99 $(COPT) $(INC) $(DEFINES)
+   CC=icc
+   COPT=$(OPT)
+   CFLAGS=-g -std=c99 $(COPT) $(INC) $(DEFINES)
 
-   LD = $(CC)
-   LDFLAGS = -g $(OPT)
+   LD=$(CC)
+   LDFLAGS=-g $(OPT)
 
 #############################################
 #
@@ -164,7 +167,7 @@
 #
 #############################################
 
-OBJECTS = gagpu_gemm.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
+OBJECTS=gagpu_gemm.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
 
 #all: refresh bin
 all: bin

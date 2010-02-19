@@ -50,7 +50,7 @@ privately owned rights.
 
 #ifdef GA
   #include "macdecls.h"
-  #include "armci.h"
+  #include "../armci/src/armci.h"
   #include "sndrcv.h"
   #include "ga.h"
 #endif
