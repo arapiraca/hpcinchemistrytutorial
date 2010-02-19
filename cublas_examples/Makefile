@@ -16,6 +16,7 @@
       MKL=YES
       OPENMP=YES
       MPI=YES
+      MPI_PREFIX=/soft/apps/mpich2-1.2.1
       GA=YES
       GA_PREFIX=/home/jhammond/ga-cvs-dev/
       BIGTESTS=YES

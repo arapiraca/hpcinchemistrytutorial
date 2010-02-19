@@ -1,5 +1,2 @@
-#!/bin/csh
-qsub -n 1 -t 30 /gpfs/home/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 1
-qsub -n 1 -t 30 /gpfs/home/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1
-qsub -n 1 -t 30 /gpfs/home/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 2
-qsub -n 1 -t 30 /gpfs/home/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2
+#!/bin/sh
+qsub -n 4 -t 30 ./gadzooks.run
