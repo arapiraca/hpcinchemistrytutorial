@@ -46,10 +46,11 @@ privately owned rights.
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 #ifdef CUDA
-#include "cuda_runtime.h"
-#include "cublas.h"
+  #include "cuda_runtime.h"
+  #include "cublas.h"
 #endif
 
 void start_cublas(int printMake);
@@ -60,7 +61,7 @@ void free_device_floats(float* ptr);
 void free_device_doubles(double* ptr);
 void push_floats(int num, float* h_ptr, float* d_ptr);
 void push_doubles(int num, double* h_ptr, double* d_ptr);
-void pull_floats(int num, float* d_ptr, float* h_ptr);
-void pull_doubles(int num, double* d_ptr, double* h_ptr);
+void pull_floats(int num, float* h_ptr, float* d_ptr);
+void pull_doubles(int num, double* h_ptr, double* d_ptr);
 
 #endif

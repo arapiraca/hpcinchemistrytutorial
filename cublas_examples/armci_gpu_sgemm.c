@@ -39,128 +39,138 @@ privately owned rights.
 
  ***************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
-
-#include <mpi.h>
-#include "../armci/src/armci.h"
+#include "ga_utils.h"
+#include "blas_gemm_test.h"
+#include "cublas_gemm_test.h"
 
 int main(int argc, char **argv)
 {
-    int desired = MPI_THREAD_SINGLE;
-    int provided;
-    MPI_Init_thread(&argc, &argv, desired, &provided);
+    int me, nproc;
+    int armci_not_ga = 1;
+    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga);
 
-    int me;
-    int nproc;
-    MPI_Comm_rank(MPI_COMM_WORLD,&me);
-    MPI_Comm_size(MPI_COMM_WORLD,&nproc);
-
-    switch (provided) {
-        case MPI_THREAD_MULTIPLE:
-            if (me==0) printf("%d: provided = MPI_THREAD_MULTIPLE\n",me);
-            break;
-        case MPI_THREAD_SERIALIZED:
-            if (me==0) printf("%d: provided = MPI_THREAD_SERIALIZED\n",me);
-            break;
-        case MPI_THREAD_FUNNELED:
-            if (me==0) printf("%d: provided = MPI_THREAD_FUNNELED\n",me);
-            break;
-        case MPI_THREAD_SINGLE:
-            if (me==0) printf("%d: provided = MPI_THREAD_SINGLE\n",me);
-            break;
-        default:
-            if (me==0) printf("%d: MPI_Init_thread returned an invalid value of <provided>.\n",me);
-            return(provided);
-    }
-
-    if (me==0) printf("%d: ARMCI_Init\n",me);
-    ARMCI_Init();
     int status;
-    float t0,t1,t2,t3;
-    float tt0,tt1,tt2,tt3;
 
-    int a;
-    if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
-    int bufSize = ( argc>1 ? atoi(argv[1]) : 1000000 );
-    if (me==0) printf("%d: bufSize = %d floats\n",me,bufSize);
+    if (me==0 && argc!=4) printf("./armci_gpu_sgemm.x <tilesize> <numtile1> <numtile2> <numtile3>\n");
+    if (me==0) for (int a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
+
+    int tilesize = ( argc>1 ? atoi(argv[1]) : 64 );
+    int numtile1 = ( argc>2 ? atoi(argv[2]) :  4 );
+    int numtile2 = ( argc>3 ? atoi(argv[3]) :  4 );
+    int numtile3 = ( argc>4 ? atoi(argv[4]) :  4 );
+    assert((tilesize>0) && (numtile1>0) && (numtile2>0) && (numtile3>0));
+
+    /* scale by the tile dimensions */
+    int dim1 = numtile1 * tilesize;
+    int dim2 = numtile2 * tilesize;
+    int dim3 = numtile3 * tilesize;
+
+    /* bookkeeping matrix dimensions */
+    int sizeA = dim1 * dim3;
+    int sizeB = dim3 * dim2;
+    int sizeC = dim1 * dim2;
+    int sizeT = tilesize * tilesize;
+    if (me==0) printf("dim1 = %d\n",dim1);
+    if (me==0) printf("dim2 = %d\n",dim2);
+    if (me==0) printf("dim3 = %d\n",dim3);
+    if (me==0) printf("tilesize = %d\n",tilesize);
 
     /* register remote pointers */
-    float** winA = (float **) malloc( nproc * sizeof(void *) );
-    float** winB = (float **) malloc( nproc * sizeof(void *) );
-    float** winC = (float **) malloc( nproc * sizeof(void *) );
-    ARMCI_Malloc( (void **) winA, bufSize * sizeof(float) );
-    ARMCI_Malloc( (void **) winB, bufSize * sizeof(float) );
-    ARMCI_Malloc( (void **) winC, bufSize * sizeof(float) );
-    MPI_Barrier(MPI_COMM_WORLD);
+//     float** winA = (float **) malloc( nproc * sizeof(void *) );
+//     float** winB = (float **) malloc( nproc * sizeof(void *) );
+//     float** winC = (float **) malloc( nproc * sizeof(void *) );
+//     ARMCI_Malloc( (void **) winA, sizeA * sizeof(float) );
+//     ARMCI_Malloc( (void **) winB, sizeB * sizeof(float) );
+//     ARMCI_Malloc( (void **) winC, sizeC * sizeof(float) );
+//     parallel_sync();
 
-    float* bufA = (float*) ARMCI_Malloc_local( bufSize * sizeof(float) ); assert(bufA!=NULL);
-    float* bufB = (float*) ARMCI_Malloc_local( bufSize * sizeof(float) ); assert(bufB!=NULL);
-    float* bufC = (float*) ARMCI_Malloc_local( bufSize * sizeof(float) ); assert(bufC!=NULL);
+    /* global lock array (GL) */
+    int GLsize = ( me==0 ? dim1*dim2 : 0 );
+    int** winGL = (int **) malloc( nproc * sizeof(void *) );
+    ARMCI_Malloc( (void **) winGL, GLsize * sizeof(int) );
+    parallel_sync();
+    for(int i=0;i<GLsize;i++) winGL[me][i] = (int) 0;
 
-    int i;
-    for (i=0;i<bufSize;i++) bufA[i]=1.0*me;
-    for (i=0;i<bufSize;i++) bufB[i]=1.0*me;
-    for (i=0;i<bufSize;i++) bufC[i]=-1.0;
+    float* bufA = alloc_host_floats(sizeA);
+    float* bufB = alloc_host_floats(sizeB);
+    float* bufC = alloc_host_floats(sizeC);
+    float* bufD = alloc_host_floats(sizeC);
 
-    status = ARMCI_Put(bufA, winA[me], bufSize*sizeof(float), me); assert(status==0);
-    status = ARMCI_Put(bufB, winB[me], bufSize*sizeof(float), me); assert(status==0);
-    status = ARMCI_Put(bufC, winC[me], bufSize*sizeof(float), me); assert(status==0);
-    ARMCI_Barrier();
+    if (me==0) randomize_floats(sizeA, bufA);
+    if (me==0) randomize_floats(sizeB, bufB);
+    if (me==0) randomize_floats(sizeC, bufC);
+    if (me==0) copy_host_floats(sizeC, bufC, bufD);
 
-    int target;
-    int j;
-    float bandwidth;
-    MPI_Barrier(MPI_COMM_WORLD);
-    if (me==0){
-        printf("ARMCI_Get performance test for buffer size = %d floats\n",bufSize);
-        printf("  jump    host   target    local (s)     total (s)    effective BW (MB/s)\n");
-        printf("==============================================================\n");
-        fflush(stdout);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    for (j=0;j<nproc;j++){
-        fflush(stdout);
-        target = (me+j) % nproc;
-        MPI_Barrier(MPI_COMM_WORLD);
-        t0 = MPI_Wtime();
-        status = ARMCI_Get(winA[target], bufB, bufSize*sizeof(float), target); assert(status==0);
-        t1 = MPI_Wtime();
-        ARMCI_Fence(target);
-        t2 = MPI_Wtime();
-        fflush(stdout);
-        for (i=0;i<bufSize;i++) assert( bufB[i]==(1.0*target) );
-        bandwidth = 1.0*bufSize*sizeof(float);
-        bandwidth /= (t2-t0);
-        bandwidth /= (1024*1024);
-        printf("%4d     %4d     %4d       %9.6f     %9.6f        %9.3f\n",j,me,target,t1-t0,t2-t0,bandwidth);
-        fflush(stdout);
-        MPI_Barrier(MPI_COMM_WORLD);
-        if (me==0) printf("==============================================================\n");
-        fflush(stdout);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Bcast(bufA, sizeA, MPI_FLOAT, /* root */ 0, MPI_COMM_WORLD);
+    MPI_Bcast(bufB, sizeB, MPI_FLOAT, /* root */ 0, MPI_COMM_WORLD);
+    MPI_Bcast(bufC, sizeC, MPI_FLOAT, /* root */ 0, MPI_COMM_WORLD);
+    MPI_Bcast(bufD, sizeC, MPI_FLOAT, /* root */ 0, MPI_COMM_WORLD);
 
-    status = ARMCI_Free_local(bufC); assert(status==0);
-    status = ARMCI_Free_local(bufB); assert(status==0);
-    status = ARMCI_Free_local(bufA); assert(status==0);
+    float* devAt = alloc_device_floats(sizeT);
+    float* devBt = alloc_device_floats(sizeT);
+    float* devCt = alloc_device_floats(sizeT);
 
-    status = ARMCI_Free(winC[me]); assert(status==0);
-    status = ARMCI_Free(winB[me]); assert(status==0);
-    status = ARMCI_Free(winA[me]); assert(status==0);
+    int mytasks = 0;
+    int t1,t2,t3;
+    float alpha = 1.0;
+    const float beta  = 1.0;
+    for (t1=0;t1<numtile1;t1++){
+        for (t2=0;t2<numtile2;t2++){
+            int oval, mval;
+            oval = ARMCI_Rmw(ARMCI_FETCH_AND_ADD, &mval, &winGL[0][t1+t2*numtile1], /* incr */ 1, /* rank */ 0);
+            //printf("%d: t1 = %2d t2 = %2d oval = %1d mval = %1d\n",me,t1,t2,oval,mval);
+            if (mval==0){
+                mytasks++;
+                printf("process %3d has grabbed task (%3d,%3d)\n",me,t1,t2);
+                push_floats(sizeT, /* h_ptr */ &bufC[t1+t2*numtile1], /* d_ptr */ devCt);
+                for (t3=0;t3<numtile3;t3++){
+                    push_floats(sizeT, /* h_ptr */ &bufA[t1+t3*numtile1], /* d_ptr */ devAt);
+                    push_floats(sizeT, /* h_ptr */ &bufB[t3+t2*numtile3], /* d_ptr */ devBt);
+                    cublasSgemm('n','n',tilesize,tilesize,tilesize,alpha,devAt,tilesize,devBt,tilesize,beta,devCt,tilesize);
+                    /**********************************************************/
+                    for (int i=0;i<tilesize;i++){
+                        for (int j=0;j<tilesize;j++){
+                            for (int k=0;k<tilesize;k++){
+                                bufD[t1+t2*numtile1 + i+j*tilesize] += alpha*
+                                    bufA[t1+t3*numtile1 + i+k*tilesize] *
+                                    bufB[t3+t2*numtile3 + k+j*tilesize];
+                            } // k
+                        } // j
+                    } // i
+                    /**********************************************************/
+                } // t3
+                pull_floats(sizeT, /* h_ptr */ &bufC[t1+t2*numtile1], /* d_ptr */ devCt);
+                /**********************************************************/
+                for (int i=0;i<tilesize;i++){
+                    for (int j=0;j<tilesize;j++){
+    //                     printf("%4d %4d %15.7f %15.7f\n",i,j,
+    //                            bufC[t1+t2*numtile1 + i+j*tilesize],
+    //                            bufD[t1+t2*numtile1 + i+j*tilesize]);
+                        assert(abs(bufC[t1+t2*numtile1 + i+j*tilesize]-
+                                bufD[t1+t2*numtile1 + i+j*tilesize])<1e-7);
+                    } // j
+                } // i
+                /**********************************************************/
+            } // mval==0
+        } // t2
+    } // t1
+    MPI_Allreduce(MPI_IN_PLACE, bufC, sizeC, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+    printf("process %3d accomplished %d tasks\n",me,mytasks);
 
-    MPI_Barrier(MPI_COMM_WORLD);
+    free_device_floats(devCt);
+    free_device_floats(devBt);
+    free_device_floats(devAt);
 
-    if (me==0) printf("%d: ARMCI_Finalize\n",me);
-    ARMCI_Finalize();
+    free_host_floats(bufC);
+    free_host_floats(bufB);
+    free_host_floats(bufA);
 
-    if (me==0) printf("%d: MPI_Finalize\n",me);
-    MPI_Finalize();
+//     status = ARMCI_Free(winC[me]); assert(status==0);
+//     status = ARMCI_Free(winB[me]); assert(status==0);
+//     status = ARMCI_Free(winA[me]); assert(status==0);
+
+    parallel_sync();
+    stop_parallel();
 
     return(0);
 }

@@ -105,7 +105,7 @@ void parallel_sync(void)
 
 }
 
-void start_parallel(int* argc, char*** argv, int* me, int* nproc)
+void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_ga)
 {
 #if defined(MPI)
     int desired = MPI_THREAD_MULTIPLE;
@@ -121,34 +121,39 @@ void start_parallel(int* argc, char*** argv, int* me, int* nproc)
     switch (provided)
     {
         case MPI_THREAD_MULTIPLE:
-            if (*me==0) printf("%d: provided = MPI_THREAD_MULTIPLE\n",me);
+            if (*me==0) printf("%d: provided = MPI_THREAD_MULTIPLE\n",*me);
             break;
 
         case MPI_THREAD_SERIALIZED:
-            if (*me==0) printf("%d: provided = MPI_THREAD_SERIALIZED\n",me);
+            if (*me==0) printf("%d: provided = MPI_THREAD_SERIALIZED\n",*me);
             break;
 
         case MPI_THREAD_FUNNELED:
-            if (*me==0) printf("%d: provided = MPI_THREAD_FUNNELED\n",me);
+            if (*me==0) printf("%d: provided = MPI_THREAD_FUNNELED\n",*me);
             break;
 
         case MPI_THREAD_SINGLE:
-            if (*me==0) printf("%d: provided = MPI_THREAD_SINGLE\n",me);
+            if (*me==0) printf("%d: provided = MPI_THREAD_SINGLE\n",*me);
             break;
 
         default:
-            if (*me==0) printf("%d: MPI_Init_thread returned an invalid value of <provided>.\n",me);
-            return(provided);
+            if (*me==0) printf("%d: MPI_Init_thread returned an invalid value of <provided>.\n",*me);
     }
 #endif
 
 #if defined(GA)
-    GA_Initialize();
-    fprintf(stderr,"! GA_Initialize succeeded\n");
+    if (armci_not_ga>0){
+        ARMCI_Init();
+        fprintf(stderr,"! ARMCI_Init succeeded\n");
+    } else {
+        GA_Initialize();
+        fprintf(stderr,"! GA_Initialize succeeded\n");
+        const int ma_stack = 32*1024*1024;
+        const int ma_heap  =  2*1024*1024;
+        MA_init(MT_DBL, ma_stack, ma_heap);
+    }
+#else
 
-    const int ma_stack = 32*1024*1024;
-    const int ma_heap  =  2*1024*1024;
-    MA_init(MT_DBL, ma_stack, ma_heap);
 #endif
 
     start_cublas(*me);

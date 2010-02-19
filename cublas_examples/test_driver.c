@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 {
     int threads;
     int precision;
-    int ntests = 100;
+    int ntests = 100000;
     int dim[ntests][3];
     float f_alpha = 1.0;
     float f_beta = 0.0;
@@ -64,6 +64,8 @@ int main(int argc, char** argv)
     double d_beta = 0.0;
     double blas_time[ntests];
     double blas_Gflops[ntests];
+
+    double start = gettime();
 
     char buf[256];
     if (gethostname(buf, (int) sizeof(buf)) != 0) buf[0] = 0;
@@ -94,12 +96,12 @@ int main(int argc, char** argv)
     int t = 0;
     dim[t][0] = dim[t][1] = dim[t][2] = 1; t++;
     int i,j,k;
-    for (i=1;i<3;i++){
-        for (j=1;j<3;j++){
-            for (k=1;k<3;k++){
-                dim[t][0] = 400*i;
-                dim[t][1] = 400*j;
-                dim[t][2] = 400*k;
+    for (i=0;i<12;i++){
+        for (j=0;j<12;j++){
+            for (k=0;k<12;k++){
+                dim[t][0] = pow(2,i);
+                dim[t][1] = pow(2,j);
+                dim[t][2] = pow(2,k);
                 t++;
             }
         }
@@ -221,7 +223,9 @@ int main(int argc, char** argv)
     }
     fflush(stdout);
 
-    fprintf(stderr,"# the test driver has finished!!!\n");
+    double finish = gettime();
+
+    fprintf(stderr,"# the test driver has finished in %5.1f seconds !!!\n",finish-start);
     fflush(stderr);
 
     return 0;

@@ -46,6 +46,7 @@ privately owned rights.
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 #ifdef GA
   #include "macdecls.h"
@@ -64,7 +65,7 @@ int parallel_nproc(void);
 int parallel_me(void);
 void parallel_sync(void);
 
-void start_parallel(int* argc, char*** argv, int* me, int* nproc);
+void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_ga);
 void stop_parallel();
 
 int alloc_global_2d(int precision, int rows, int cols, int printMask);

@@ -46,11 +46,20 @@ privately owned rights.
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <assert.h>
 
 #ifdef OPENMP
   #include "omp.h"
 #else
   #include <time.h>
+#endif
+
+#ifdef ARMCI
+  #include "../armci/src/armci.h"
+#endif
+
+#ifdef MPI
+  #include "mpi.h"
 #endif
 
 double gettime(void);

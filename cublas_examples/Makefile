@@ -123,7 +123,7 @@
    endif
 
    ifeq ($(GA),YES)
-      DEFINES += -DGA
+      DEFINES += -DGA -DARMCI
       INC += -I$(GA_PREFIX)/include
       LIB += -L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
    endif

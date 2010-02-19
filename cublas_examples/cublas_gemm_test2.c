@@ -102,7 +102,7 @@ void run_cublas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float bet
     push_floats(dim1*dim3, ha, da);
     push_floats(dim3*dim2, hb, db);
     if ( myalpha != 0.0) push_floats(dim1*dim2, hc, dc);
-    cublasSgemm('n','n',rowa,colb,cola,myalpha,da,rowa,db,rowb,beta,dc,rowc);
+    cublasSgemm('n','n',rowa,colb,cola,myalpha,da,rowa,db,rowb,mybeta,dc,rowc);
     pull_floats(dim1*dim2, hc, dc);
 
     /* run the timing */
@@ -119,7 +119,7 @@ void run_cublas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float bet
         if ( myalpha != 0.0) push_floats(dim1*dim2, hc, dc);
 
         tt_excl_start = gettime();
-        cublasSgemm('n','n',rowa,colb,cola,myalpha,da,rowa,db,rowb,beta,dc,rowc);
+        cublasSgemm('n','n',rowa,colb,cola,myalpha,da,rowa,db,rowb,mybeta,dc,rowc);
         cudaThreadSynchronize();
 
         /* check for errors */
