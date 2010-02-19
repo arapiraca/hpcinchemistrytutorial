@@ -6,6 +6,12 @@
 #PBS -q lincoln_debug
 #PBS -V
 
-MPI_HOME=/usr/local/mvapich2-1.2-intel-ofed-1.2.5.5
-$MPI_HOME/bin/mpdboot -n 4 -f $COBALT_NODEFILE
-$MPI_HOME/bin/mpirun -np 4 armci_gpu_sgemm.x 64 10 10 10
+np=`wc -l < $PBS_NODEFILE`
+nn=`sort -u $PBS_NODEFILE | wc -l`
+echo Number of nodes is $nn
+echo Number of processors is $np
+
+#cd $PBS_O_WORKDIR
+cdjob $PBS_JOBID
+
+time /usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/bin/mpirun_rsh -np $np -hostfile $PBS_NODEFILE armci_gpu_sgemm.x 64 10 10 10
