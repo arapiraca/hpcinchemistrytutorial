@@ -1,0 +1,4 @@
+#!/bin/sh
+MPI_HOME=/soft/apps/mpich2-1.2.1
+$MPI_HOME/bin/mpdboot -n 4 -f $COBALT_NODEFILE
+$MPI_HOME/bin/mpirun -np 4 
