@@ -18,7 +18,7 @@
       MPI=YES
       MPI_PREFIX=/soft/apps/mpich2-1.2.1
       GA=YES
-      GA_PREFIX=/home/jhammond/ga-cvs-dev/
+      GA_PREFIX=/home/jhammond/gadzooks/ga-cvs-dev/
       BIGTESTS=YES
    endif
 
