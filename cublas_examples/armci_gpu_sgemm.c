@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     //                            bufC[t1+t2*numtile1 + i+j*tilesize],
     //                            bufD[t1+t2*numtile1 + i+j*tilesize]);
                         assert(abs(bufC[t1+t2*numtile1 + i+j*tilesize]-
-                                bufD[t1+t2*numtile1 + i+j*tilesize])<1e-7);
+                                bufD[t1+t2*numtile1 + i+j*tilesize])<1e-5);
                     } // j
                 } // i
                 /**********************************************************/
