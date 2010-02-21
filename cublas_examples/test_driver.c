@@ -96,9 +96,9 @@ int main(int argc, char** argv)
     int t = 0;
     dim[t][0] = dim[t][1] = dim[t][2] = 1; t++;
     int i,j,k;
-    for (i=0;i<12;i++){
-        for (j=0;j<12;j++){
-            for (k=0;k<12;k++){
+    for (i=0;i<4;i++){
+        for (j=0;j<4;j++){
+            for (k=0;k<4;k++){
                 dim[t][0] = pow(2,i);
                 dim[t][1] = pow(2,j);
                 dim[t][2] = pow(2,k);

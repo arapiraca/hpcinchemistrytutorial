@@ -76,13 +76,13 @@ int main(int argc, char **argv)
     if (me==0) printf("tilesize = %d\n",tilesize);
 
     /* register remote pointers */
-//     float** winA = (float **) malloc( nproc * sizeof(void *) );
-//     float** winB = (float **) malloc( nproc * sizeof(void *) );
-//     float** winC = (float **) malloc( nproc * sizeof(void *) );
-//     ARMCI_Malloc( (void **) winA, sizeA * sizeof(float) );
-//     ARMCI_Malloc( (void **) winB, sizeB * sizeof(float) );
-//     ARMCI_Malloc( (void **) winC, sizeC * sizeof(float) );
-//     parallel_sync();
+    float** winA = (float **) malloc( nproc * sizeof(void *) );
+    float** winB = (float **) malloc( nproc * sizeof(void *) );
+    float** winC = (float **) malloc( nproc * sizeof(void *) );
+    ARMCI_Malloc( (void **) winA, sizeA * sizeof(float) );
+    ARMCI_Malloc( (void **) winB, sizeB * sizeof(float) );
+    ARMCI_Malloc( (void **) winC, sizeC * sizeof(float) );
+    parallel_sync();
 
     /* global lock array (GL) */
     int GLsize = ( me==0 ? dim1*dim2 : 0 );

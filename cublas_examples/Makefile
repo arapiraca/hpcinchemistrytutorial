@@ -127,7 +127,7 @@
    endif
 
    ifeq ($(GA),YES)
-      DEFINES += -DGA -DARMCI
+      DEFINES += -DGA -DARMCI # -DARMCI_MALLOC
       INC += -I$(GA_PREFIX)/include
       LIB += -L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
    endif
@@ -173,7 +173,7 @@ OBJECTS=gagpu_gemm.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cubla
 #all: refresh bin
 all: bin
 
-bin: test_driver.x armci_gpu_sgemm.x gemm_test2.x
+bin: test_driver.x mpicoll_gpu_sgemm.x armci_gpu_sgemm.x gemm_test2.x
 #
 # SERIAL/PARALLEL BLAS BINARIES
 #
@@ -187,6 +187,9 @@ dmp_gemm_driver.x: dmp_gemm_driver.o $(OBJECTS)
 armci_gpu_sgemm.x: armci_gpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) armci_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o armci_gpu_sgemm.x
 
+mpicoll_gpu_sgemm.x: mpicoll_gpu_sgemm.o $(OBJECTS)
+	$(LD) $(LDFLAGS) mpicoll_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o mpicoll_gpu_sgemm.x
+
 gemm_test2.x: gemm_test2.o $(OBJECTS)
 	$(LD) $(LDFLAGS) gemm_test2.o $(OBJECTS) $(LIB) $(PBLAS) -o gemm_test2.x
 #
@@ -195,6 +198,9 @@ gemm_test2.x: gemm_test2.o $(OBJECTS)
 #
 armci_gpu_sgemm.o: armci_gpu_sgemm.c
 	$(CC) $(CFLAGS) $(INC) -c armci_gpu_sgemm.c
+
+mpicoll_gpu_sgemm.o: mpicoll_gpu_sgemm.c
+	$(CC) $(CFLAGS) $(INC) -c mpicoll_gpu_sgemm.c
 
 dmp_gemm_driver.o: dmp_gemm_driver.c blas_gemm_test.h
 	$(CC) $(CFLAGS) $(INC) -c dmp_gemm_driver.c

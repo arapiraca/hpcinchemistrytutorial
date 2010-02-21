@@ -68,7 +68,7 @@ void zero_host_doubles(int num, double* ptr)
 
 float* alloc_host_floats(int num)
 {
-#ifdef ARMCI
+#ifdef ARMCI_MALLOC
     float* ptr = (float*) ARMCI_Malloc_local( num * sizeof(float) );
 #else
     float* ptr = (float*) malloc( num * sizeof(float) );
@@ -80,7 +80,7 @@ float* alloc_host_floats(int num)
 
 double* alloc_host_doubles(int num)
 {
-#ifdef ARMCI
+#ifdef ARMCI_MALLOC
     double* ptr = (double*) ARMCI_Malloc_local( num * sizeof(double) );
 #else
     double* ptr = (double*) malloc( num * sizeof(double) );
@@ -104,7 +104,7 @@ void copy_host_doubles(int num, double* in_ptr, double* out_ptr)
 
 void free_host_floats(float* ptr)
 {
-#ifdef ARMCI
+#ifdef ARMCI_MALLOC
     int status = ARMCI_Free_local(ptr);
     assert(status==0);
 #else
@@ -114,7 +114,7 @@ void free_host_floats(float* ptr)
 
 void free_host_doubles(double* ptr)
 {
-#ifdef ARMCI
+#ifdef ARMCI_MALLOC
     int status = ARMCI_Free_local(ptr);
     assert(status==0);
 #else

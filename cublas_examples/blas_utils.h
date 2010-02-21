@@ -54,7 +54,7 @@ privately owned rights.
   #include <time.h>
 #endif
 
-#ifdef ARMCI
+#ifdef ARMCI_MALLOC
   #include "../armci/src/armci.h"
 #endif
 

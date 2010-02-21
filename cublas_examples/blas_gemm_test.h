@@ -47,23 +47,22 @@ privately owned rights.
 #include <string.h>
 #include <math.h>
 
-
 #ifdef BLAS_USES_LONG
   #define BLAS_INT long
-  #ifdef MKL
-    #include "mkl.h"
-  #else
+//   #ifdef MKL
+//     #include "mkl.h"
+//   #else
     void sgemm_(char* , char* ,long* , long* , long* , float* , float* , long* , float* , long* , float* , float* , long* );
     void dgemm_(char* , char* ,long* , long* , long* , double*, double*, long* , double*, long* , double*, double*, long* );
-  #endif
+//   #endif
 #else
   #define BLAS_INT int
-  #ifdef MKL
-    #include "mkl.h"
-  #else
+//   #ifdef MKL
+//     #include "mkl.h"
+//   #else
     void sgemm_(char* , char* ,int* , int* , int* , float* , float* , int* , float* , int* , float* , float* , int* );
     void dgemm_(char* , char* ,int* , int* , int* , double*, double*, int* , double*, int* , double*, double*, int* );
-  #endif
+//   #endif
 #endif
 
 #ifdef OPENMP
