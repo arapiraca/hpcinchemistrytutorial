@@ -7,18 +7,18 @@
    # Breadboard
    ifeq ($(HOSTNAME),bblogin)
       TARGET=LINUX64
-      OPT = -O3
-      INTEL_DIR = /soft/intel/11.0.081
-      CUDA = YES
-      CUDA_DIR = /usr/local/cuda/
-      LIB_BITS = 
-      MKL = YES
-      MKL_DIR =  /soft/intel/11.0.081/mkl
+      OPT=-O3
+      INTEL_DIR=/soft/intel/11.0.081
+      CUDA=YES
+      CUDA_DIR=/usr/local/cuda/
+      LIB_BITS=
+      MKL=YES
+      MKL_DIR= /soft/intel/11.0.081/mkl
       MPI=YES
       MPI_PREFIX=/soft/apps/mpich2-1.2.1
       GA=YES
       GA_PREFIX=/home/jhammond/gadzooks/ga-cvs-dev/
-      OPENMP = YES
+      OPENMP=YES
    endif
 
    # Gadzooks
@@ -124,26 +124,26 @@
    LIB =
 
    ifeq ($(BIGTESTS),YES)
-      DEFINES += -DBIGTESTS
+      DEFINES+=-DBIGTESTS
    endif 
 
    ifeq ($(OPENMP),YES)
-      DEFINES += -DOPENMP
-      INC += -I$(INTEL_DIR)/include
-      LIB += -openmp
+      DEFINES+=-DOPENMP
+      INC+=-I$(INTEL_DIR)/include
+      LIB+=-openmp
    endif
 
    ifeq ($(CUDA),YES)
       CUBLAS_LIB=-L${CUDA_DIR}/lib${LIB_BITS} -lcublas -lcuda
-      DEFINES += -DCUDA
-      INC += -I${CUDA_DIR}/include
-      LIB += $(CUBLAS_LIB)
+      DEFINES+=-DCUDA
+      INC+=-I${CUDA_DIR}/include
+      LIB+=$(CUBLAS_LIB)
    endif
 
    ifeq ($(GA),YES)
-      DEFINES += -DGA -DARMCI # -DARMCI_MALLOC
-      INC += -I$(GA_PREFIX)/include
-      LIB += -L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
+      DEFINES+=-DGA -DARMCI # -DARMCI_MALLOC
+      INC+=-I$(GA_PREFIX)/include
+      LIB+=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
    endif
 
    ifeq ($(MPI),YES)
@@ -166,18 +166,18 @@
    endif
 
    ifeq ($(MKL),YES)
-      DEFINES += -DMKL
-      INC += -I${MKL_DIR}/include
-      PBLAS += -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
-      SBLAS += -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml
+      DEFINES+=-DMKL
+      INC+=-I${MKL_DIR}/include
+      PBLAS+=-L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
+      SBLAS+=-L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml
    else
-      PBLAS_LIB = -lblas -lpthread
-      SBLAS_LIB = -lblas -lpthread
-      PLIB += $(PBLAS_LIB)
-      SLIB += $(SBLAS_LIB)
+      PBLAS_LIB=-lblas -lpthread
+      SBLAS_LIB=-lblas -lpthread
+      PLIB+=$(PBLAS_LIB)
+      SLIB+=$(SBLAS_LIB)
    endif
 
-   LIB += -lm -lpthread
+   LIB+=-lm -lpthread
 
    FC=ifort
    FOPT=$(OPT)
