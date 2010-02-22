@@ -13,4 +13,4 @@ echo Number of processors is $np
 
 cd $PBS_O_WORKDIR
 
-time /usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/bin/mpirun_rsh -np $np -hostfile $PBS_NODEFILE armci_gpu_sgemm.x 64 10 10 10
+time /usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/bin/mpirun_rsh -np $np -hostfile $PBS_NODEFILE armci_gpu_sgemm.x 4096 3 3 3

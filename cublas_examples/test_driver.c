@@ -39,23 +39,23 @@ privately owned rights.
 
  ***************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <unistd.h>
-int gethostname(char *name, size_t len);
-
 #include "blas_gemm_test.h"
 
 #ifdef CUDA
 #include "cublas_gemm_test.h"
 #endif
 
-int main(int argc, char** argv)
+#include "ga_utils.h"
+
+int gethostname(char *name, size_t len);
+
+int main(int argc, char **argv)
 {
+    int me, nproc;
+    int armci_not_ga = 1;
+    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga);
+
     int threads;
-    int precision;
     int ntests = 100000;
     int dim[ntests][3];
     float f_alpha = 1.0;
@@ -73,8 +73,7 @@ int main(int argc, char** argv)
     fflush(stdout);
 
     /* default to single precision or command-line override */
-    if ( argc > 1 ) precision = atoi(argv[1]);
-    else            precision = 1;
+    int precision = ( argc>1 ? atoi(argv[1]) : 1 );
     if      ( precision == 1 ) printf("You have requested single-precision.\n");
     else if ( precision == 2 ) printf("You have requested double-precision.\n");
     else    {                  printf("Defaulting to single-precision.\n"); }
@@ -93,20 +92,24 @@ int main(int argc, char** argv)
     }
 #endif
 
+    int test = ( argc>2 ? atoi(argv[2]) :   1 );
+    int low  = ( argc>3 ? atoi(argv[3]) :  10 );
+    int high = ( argc>4 ? atoi(argv[4]) : 100 );
+    int jump = ( argc>5 ? atoi(argv[5]) :  10 );
+
     int t = 0;
     dim[t][0] = dim[t][1] = dim[t][2] = 1; t++;
     int i,j,k;
-    for (i=0;i<4;i++){
-        for (j=0;j<4;j++){
-            for (k=0;k<4;k++){
-                dim[t][0] = pow(2,i);
-                dim[t][1] = pow(2,j);
-                dim[t][2] = pow(2,k);
-                t++;
-            }
-        }
-    }
-
+    if (test==1)
+        for (i=low;i<=high;i+=jump){ dim[t][0] = i; dim[t][1] = i; dim[t][2] = i; t++; }
+    else if (test==2)
+        for (i=low;i<=high;i+=jump)
+            for (k=low;k<=high;k+=jump){ dim[t][0] = i; dim[t][1] = i; dim[t][2] = k; t++; }
+    else if (test==3)
+        for (i=low;i<=high;i+=jump)
+            for (j=low;j<=high;j+=jump)
+                for (k=low;k<=high;k+=jump){ dim[t][0] = i; dim[t][1] = j; dim[t][2] = k; t++; }
+    else assert(0);
 
     ntests = t;
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = (%d,%d,%d)\n",t,dim[t][0],dim[t][1],dim[t][2]);
@@ -228,5 +231,7 @@ int main(int argc, char** argv)
     fprintf(stderr,"# the test driver has finished in %5.1f seconds !!!\n",finish-start);
     fflush(stderr);
 
+    parallel_sync();
+    stop_parallel();
     return 0;
 }
