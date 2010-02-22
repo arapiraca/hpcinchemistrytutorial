@@ -45,6 +45,8 @@ privately owned rights.
 #include <math.h>
 #include <assert.h>
 #include <unistd.h>
+int getpagesize(void);
+int posix_memalign(void **memptr, size_t alignment, size_t size);
 
 #ifdef CUDA
   #include "cuda.h"
@@ -58,6 +60,7 @@ privately owned rights.
   #include <time.h>
 #endif
 
+unsigned long long getticks(void);
 inline double gettime(void)
 {
 #ifdef OPENMP
@@ -66,8 +69,6 @@ inline double gettime(void)
     return (double) time(NULL);
 #endif
 }
-
-unsigned long long getticks(void);
 
 int main(int argc, char **argv)
 {
@@ -79,17 +80,18 @@ int main(int argc, char **argv)
     double start, finish, time1, time2, bw1, bw2;
 
     size_t bufSize;
-    size_t maxSize = ( argc>1 ? atoi(argv[1]) : 1 );
+    size_t maxSize = ( argc>1 ? atoi(argv[1]) : 0 );
 
     unsigned char* h_ptr;
     unsigned char* d_ptr;
 
     size_t alignment = getpagesize();
 
-    for (size_t i=1; pow(2,i)<=maxSize; i++){
+    printf("...posix_memalign...\n");
+    for (size_t i=10; pow(2,i)<=maxSize; i++){
         bufSize=pow(2,i);
 
-        status = posix_memalign(&h_ptr, alignment, bufSize);
+        status = posix_memalign((void**)&h_ptr, alignment, bufSize);
         assert(status==0 && h_ptr!=NULL);
 
         cuStatus = cudaMalloc((void**)&d_ptr,bufSize);
@@ -117,8 +119,8 @@ int main(int argc, char **argv)
         bw2 = (double) bufSize;
         bw2 /= time2;
         bw2 /= (1024*1024);
-        printf("%10lu bytes IN: %8.6f seconds (%8.3f MB/s) OUT: %8.6f seconds (%8.3f MB/s)\n",
-                bufSize,        time1,         bw1,             time2,         bw2);
+        printf("%10lu KiB IN: %8.6f seconds ( %8.3f MiB/s) OUT: %8.6f seconds ( %8.3f MiB/s)\n",
+                bufSize>>10,  time1,         bw1,              time2,         bw2);
 
         cuStatus = cudaFree(d_ptr);
         assert(status==CUDA_SUCCESS);
@@ -126,7 +128,8 @@ int main(int argc, char **argv)
         free(h_ptr);
     }
 
-    for (size_t i=1; pow(2,i)<=maxSize; i++){
+    printf("...cudaMallocHost...\n");
+    for (size_t i=10; pow(2,i)<=maxSize; i++){
         bufSize=pow(2,i);
 
         cuStatus = cudaMallocHost((void**)&h_ptr, bufSize);
@@ -158,8 +161,9 @@ int main(int argc, char **argv)
         bw2 = (double) bufSize;
         bw2 /= time2;
         bw2 /= (1024*1024);
-        printf("%10lu bytes IN: %8.6f seconds (%8.3f MB/s) OUT: %8.6f seconds (%8.3f MB/s)\n",
-                bufSize,        time1,         bw1,             time2,         bw2);
+        printf("%10lu KiB IN: %8.6f seconds ( %8.3f MiB/s) OUT: %8.6f seconds ( %8.3f MiB/s)\n",
+                bufSize>>10,  time1,         bw1,              time2,         bw2);
+
 
         cuStatus = cudaFree(d_ptr);
         assert(status==CUDA_SUCCESS);

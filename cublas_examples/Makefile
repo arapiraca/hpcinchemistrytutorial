@@ -172,7 +172,7 @@
    CFLAGS=-g -std=c99 $(COPT) $(INC) $(DEFINES)
 
    LD=$(CC)
-   LDFLAGS=-g $(OPT)
+   LDFLAGS=-g -std=c99 $(OPT)
 
 #############################################
 #
