@@ -1,2 +1,2 @@
 #!/bin/sh
-test_driver_P.x 1 1 1501 1700 1
+test_driver_P.x 1 1 1001 1500 1
