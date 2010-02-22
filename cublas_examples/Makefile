@@ -4,22 +4,38 @@
 #
 #############################################
 
+   # Breadboard
+   ifeq ($(HOSTNAME),bblogin)
+      TARGET=LINUX64
+      OPT = -O3
+      INTEL_DIR = /soft/intel/11.0.081
+      CUDA = YES
+      CUDA_DIR = /usr/local/cuda/
+      LIB_BITS = 
+      MKL = YES
+      MKL_DIR =  /soft/intel/11.0.081/mkl
+      MPI=YES
+      MPI_PREFIX=/soft/apps/mpich2-1.2.1
+      GA=YES
+      GA_PREFIX=/home/jhammond/gadzooks/ga-cvs-dev/
+      OPENMP = YES
+   endif
+
    # Gadzooks
    ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
       TARGET=LINUX64
       OPT=-O3 -xHost -static-intel
       INTEL_DIR=/soft/apps/intel-cc-11.0.074
-      MKL_DIR=/soft/apps/intel-cc-11.0.074/mkl
+      CUDA=YES
       CUDA_DIR=/soft/apps/cuda-2.3/cuda
       LIB_BITS=64
-      CUDA=YES
       MKL=YES
-      OPENMP=YES
+      MKL_DIR=/soft/apps/intel-cc-11.0.074/mkl
       MPI=YES
       MPI_PREFIX=/soft/apps/mpich2-1.2.1
       GA=YES
       GA_PREFIX=/home/jhammond/gadzooks/ga-cvs-dev/
-      BIGTESTS=YES
+      OPENMP=YES
    endif
 
    # Fusion
@@ -45,18 +61,15 @@
       TARGET=LINUX64
       OPT=-O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
       INTEL_DIR=
-      MKL_DIR=/soft/mkl/10.2.2.025
-      CUDA_DIR =
-      LIB_BITS =
       CUDA=NO
       MKL=YES
-      OPENMP=YES
+      MKL_DIR=/soft/mkl/10.2.2.025
       MPI=YES
       MPI_PREFIX=/soft/mvapich2/1.4-intel-11.1.059
       MPI_VENDOR=MVAPICH
       GA=YES
       GA_PREFIX=/homes/jhammond/ga-cvs-dev
-      BIGTESTS=YES
+      OPENMP=YES
    endif
 
    # Lincoln
@@ -76,17 +89,16 @@
       TARGET=LINUX64
       OPT=-O3 -xT
       INTEL_DIR=
-      MKL_DIR=/usr/local/intel/mkl/10.2.2
+      CUDA=YES
       CUDA_DIR=/usr/local/cuda-2.2/cuda
       LIB_BITS =
-      CUDA=YES
       MKL=YES
-      OPENMP=YES
+      MKL_DIR=/usr/local/intel/mkl/10.2.2
       MPI=YES
       MPI_PREFIX=/usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/
       GA=YES
       GA_PREFIX=/u/ac/jhammond/ga-cvs-dev/
-      BIGTESTS=YES
+      OPENMP=YES
    endif
 
    # Megatron
@@ -94,18 +106,17 @@
       TARGET=LINUX64
       OPT=-O3 -xSSE2,SSE3,SSSE3,SSE4.1
       INTEL_DIR=/opt/intel/Compiler/11.1/059
-      MKL_DIR=/opt/intel/Compiler/11.1/059/mkl
+      CUDA=YES
       CUDA_DIR=/opt/cuda
+      LIB_BITS=64
+      MKL=YES
+      MKL_DIR=/opt/intel/Compiler/11.1/059/mkl
+      MPI=YES
       MPI_PREFIX=/software/open-mpi/gnu-build
       MPI_VENDOR=OMPI
-      GA_PREFIX=/software/ga/ga-4-2
-      LIB_BITS=64
-      CUDA=YES
-      MKL=YES
-      OPENMP=YES
-      MPI=YES
       GA=YES
-      BIGTESTS=NO
+      GA_PREFIX=/software/ga/ga-4-2
+      OPENMP=YES
    endif
 
    DEFINES =
@@ -159,6 +170,11 @@
       INC += -I${MKL_DIR}/include
       PBLAS += -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
       SBLAS += -L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml
+   else
+      PBLAS_LIB = -lblas -lpthread
+      SBLAS_LIB = -lblas -lpthread
+      PLIB += $(PBLAS_LIB)
+      SLIB += $(SBLAS_LIB)
    endif
 
    LIB += -lm -lpthread
