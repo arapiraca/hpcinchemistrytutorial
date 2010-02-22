@@ -115,11 +115,11 @@ int main(int argc, char **argv)
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = (%d,%d,%d)\n",t,dim[t][0],dim[t][1],dim[t][2]);
     fflush(stderr);
 
-    threads = 2;
+    threads = -1;
 #ifdef OPENMP
     if ( threads > 0 ){ omp_set_num_threads(threads); }
     else { omp_set_num_threads( omp_get_max_threads() ); }
-    printf("Using %d OpenMP threads with BLAS (if applicable)\n",omp_get_num_threads());
+    printf("Using %d OpenMP threads with BLAS (if applicable)\n",omp_get_max_threads());
 #else
     printf("Not using OpenMP threads with BLAS\n");
 #endif

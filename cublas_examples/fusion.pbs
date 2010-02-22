@@ -1,15 +1,17 @@
 #!/bin/bash
 #PBS -N GPU_GEMM_TEST
-#PBS -l nodes=1:ppn=1
+#PBS -l nodes=1:ppn=8
 #PBS -l walltime=0:25:00
 #PBS -q shared
 #PBS -j oe
 
-echo "Using serial BLAS"
-/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 1
-/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 2
+#echo "Using serial BLAS"
+#/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 1
+#/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_S.x 2
 export OMP_NUM_THREADS=8
 export KMP_NUM_THREADS=8
 echo "Using threaded BLAS"
-/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1
-/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2
+#/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1601 1800 1
+#/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1801 2000 1
+/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 2000 4000 100
+#/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2
