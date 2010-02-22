@@ -52,7 +52,10 @@
       MKL=YES
       OPENMP=YES
       MPI=YES
+      MPI_PREFIX=/soft/mvapich2/1.4-intel-11.1.059
+      MPI_VENDOR=MVAPICH
       GA=YES
+      GA_PREFIX=/homes/jhammond/ga-cvs-dev
       BIGTESTS=YES
    endif
 
@@ -133,13 +136,22 @@
    endif
 
    ifeq ($(MPI),YES)
-      DEFINES += -DMPI
+      DEFINES+=-DMPI
       ifeq ($(MPI_VENDOR),OMPI)
-         LIB += -L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
+         LIB+=-L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
       else
-         LIB += -L$(MPI_PREFIX)/lib -lmpich  -lopa -lrt
+         ifeq ($(MPI_VENDOR),MVAPICH)
+            LIB+=-L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
+         else
+            ifeq ($(MPI_VENDOR),HP)
+               INC+=-I$(MPI_PREFIX)/include/64
+               LIB+=-L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
+            else # MPICH
+               LIB+=-L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
+            endif
+         endif
       endif
-      INC += -I$(MPI_PREFIX)/include
+      INC+=-I$(MPI_PREFIX)/include
    endif
 
    ifeq ($(MKL),YES)
@@ -168,12 +180,17 @@
 #
 #############################################
 
+BINARY=test_driver.x gemm_test2.x
+ifeq ($(CUDA),YES)
+BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x
+endif
+
 OBJECTS=gagpu_gemm.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
 
 #all: refresh bin
 all: bin
 
-bin: test_driver.x mpicoll_gpu_sgemm.x armci_gpu_sgemm.x gemm_test2.x
+bin: $(BINARY)
 #
 # SERIAL/PARALLEL BLAS BINARIES
 #
