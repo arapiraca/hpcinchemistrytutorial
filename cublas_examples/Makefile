@@ -123,7 +123,7 @@
    endif
 
    ifeq ($(CUDA),YES)
-      CUBLAS_LIB=-L${CUDA_DIR}/lib${LIB_BITS} -lcublas
+      CUBLAS_LIB=-L${CUDA_DIR}/lib${LIB_BITS} -lcublas -lcuda
       DEFINES += -DCUDA
       INC += -I${CUDA_DIR}/include
       LIB += $(CUBLAS_LIB)
@@ -182,7 +182,7 @@
 
 BINARY=test_driver.x gemm_test2.x
 ifeq ($(CUDA),YES)
-BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x
+BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x cuda_transfer_benchmark.x
 endif
 
 OBJECTS=gagpu_gemm.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
@@ -207,6 +207,9 @@ armci_gpu_sgemm.x: armci_gpu_sgemm.o $(OBJECTS)
 mpicoll_gpu_sgemm.x: mpicoll_gpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) mpicoll_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o mpicoll_gpu_sgemm.x
 
+cuda_transfer_benchmark.x: cuda_transfer_benchmark.o $(OBJECTS)
+	$(LD) $(LDFLAGS) cuda_transfer_benchmark.o $(OBJECTS) $(LIB) $(PBLAS) -o cuda_transfer_benchmark.x
+
 gemm_test2.x: gemm_test2.o $(OBJECTS)
 	$(LD) $(LDFLAGS) gemm_test2.o $(OBJECTS) $(LIB) $(PBLAS) -o gemm_test2.x
 #
@@ -218,6 +221,9 @@ armci_gpu_sgemm.o: armci_gpu_sgemm.c
 
 mpicoll_gpu_sgemm.o: mpicoll_gpu_sgemm.c
 	$(CC) $(CFLAGS) $(INC) -c mpicoll_gpu_sgemm.c
+
+cuda_transfer_benchmark.o: cuda_transfer_benchmark.c
+	$(CC) $(CFLAGS) $(INC) -c cuda_transfer_benchmark.c
 
 dmp_gemm_driver.o: dmp_gemm_driver.c blas_gemm_test.h
 	$(CC) $(CFLAGS) $(INC) -c dmp_gemm_driver.c

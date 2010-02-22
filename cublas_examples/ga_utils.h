@@ -47,6 +47,7 @@ privately owned rights.
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <unistd.h>
 
 #ifdef GA
   #include "macdecls.h"

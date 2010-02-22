@@ -49,6 +49,7 @@ privately owned rights.
 #include <assert.h>
 
 #ifdef CUDA
+  #include "cuda.h"
   #include "cuda_runtime.h"
   #include "cublas.h"
 #endif

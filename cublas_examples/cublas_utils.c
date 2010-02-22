@@ -65,13 +65,7 @@ void start_cublas(int printMask)
     cublasStatus status;
 
     status = cublasInit();
-    if (status == CUBLAS_STATUS_SUCCESS) {
-        fprintf(stderr,"! cublasInit succeeded\n");
-    } else {
-        fprintf(stderr,"! failure at line %d of %s\n",__LINE__,__FILE__);
-        fprintf(stderr,"! cublasInit failed\n");
-    }
-    fflush(stderr);
+    assert(status==CUBLAS_STATUS_SUCCESS);
 
     if (printMask==0)
     {
@@ -121,13 +115,7 @@ void stop_cublas(void)
 
     cublasStatus status;
     status = cublasShutdown();
-    if (status == CUBLAS_STATUS_SUCCESS) {
-        fprintf(stderr,"! cublasShutdown succeeded\n");
-    } else {
-        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("! cublasShutdown failed\n");
-        fflush(stdout);
-    }
+    assert(status==CUBLAS_STATUS_SUCCESS);
 
 }
 
@@ -136,12 +124,7 @@ float* alloc_device_floats(int num)
     cublasStatus status;
     float* ptr;
     status = cublasAlloc(num, sizeof(float), (void**)&ptr);
-    if (status != CUBLAS_STATUS_SUCCESS) {
-        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
-        printf("! cannot allocate %d floats on device\n",num);
-        fflush(stdout);
-        return NULL;
-    }
+    assert(status==CUBLAS_STATUS_SUCCESS);
     return ptr;
 }
 
@@ -219,12 +202,14 @@ float* alloc_device_floats(int num)
 {
     printf("! CUDA not enabled\n");
     fflush(stdout);
+    return((float*)NULL);
 }
 
 double* alloc_device_doubles(int num)
 {
     printf("! CUDA not enabled\n");
     fflush(stdout);
+    return((double*)NULL);
 }
 
 void free_device_floats(float* ptr)
