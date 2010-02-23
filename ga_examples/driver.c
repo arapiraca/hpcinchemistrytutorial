@@ -54,6 +54,7 @@ int ga_dgemm_test(int dim1);
 int bigtest(int dim1);
 int diagonalize(int dim1);
 int gemm_test2(int dim1, int dim2, int dim3);
+int ga_sgemm_test(int dim1);
 
 int main(int argc, char **argv)
 {
@@ -61,9 +62,6 @@ int main(int argc, char **argv)
     int desired = MPI_THREAD_MULTIPLE;
     int provided;
     MPI_Init_thread(&argc, &argv, desired, &provided);
-
-    //nproc=GA_Nnodes();
-    //me=GA_Nodeid();
 
     int me,nproc;
 
@@ -75,7 +73,7 @@ int main(int argc, char **argv)
 #else
     GA_Initialize();
 #endif
-    MA_init(MT_DBL, 32*1024*1024, 2*1024*1024);
+    MA_init(MT_DBL, 128*1024*1024, 32*1024*1024);
 
 #ifdef HPM_PROFILING
     HPM_Init();
@@ -100,6 +98,7 @@ int main(int argc, char **argv)
         printf(" 9 = bigtest(dim1)\n");
         printf("10 = diagonalize(dim1)\n");
         printf("11 = gemm_test2(dim1,dim2,dim3)\n");
+        printf("12 = ga_sgemm_test(dim1)\n");
         return(1);
     }
 
@@ -123,6 +122,7 @@ int main(int argc, char **argv)
     else if (test==9)  status = bigtest(dim1);
     else if (test==10) status = diagonalize(dim1);
     else if (test==11) status = gemm_test2(dim1,dim2,dim3);
+    else if (test==12) status = ga_sgemm_test(dim1);
 
     if ((status!= 0) && (me==0)) printf("test failed\n");
 

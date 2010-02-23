@@ -1,5 +1,6 @@
 #DEBUG=YES
 #HPM_PROFILING=YES
+TARGET=LINUX64
 
 #############################################
 #
@@ -41,7 +42,7 @@ ifeq ($(TARGET),LINUX64)
    EXTRAS=-lm -lpthread
 
    LIB=$(GA_LIB) $(MPI_LIB) $(GSL_LIB) $(BLAS) $(EXTRAS)
-   INC=$(GA_INC) $(MPI_INC) $(GSL_INC)
+   INC=$(GA_INC) $(MPI_INC) $(GSL_INC) -DMKL
 
    OPT = -g -O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2 -no-prec-div -funroll-loops
 
@@ -143,7 +144,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o aligned_malloc.o getticks.o ga_sgemm_test.o
 
 all: driver.x
 
@@ -152,7 +153,10 @@ refresh: realclean all
 driver.x: $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver_$(TARGET).x
 
-$%.o: %.c
+getticks.o: getticks.c
+	gcc -c getticks.c
+
+$%.o: %.c driver.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
 
 clean:

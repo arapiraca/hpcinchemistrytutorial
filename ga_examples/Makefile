@@ -153,7 +153,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o aligned_malloc.o getticks.o
+OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o aligned_malloc.o getticks.o ga_sgemm_test.o
 
 all: driver.x
 
