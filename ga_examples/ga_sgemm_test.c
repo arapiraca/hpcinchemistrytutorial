@@ -108,7 +108,7 @@ int ga_sgemm_test(int rank)
     GA_Sync();
     finish = MPI_Wtime(); 
     double t_NN=finish-start;
-    if (me==0) printf("DATA nproc %d GA_SgemmTT %f GA_SgemmNN %f\n",nproc,t_TT,t_NN);
+    if (me==0) printf("DATA nproc %d rank %d GA_SgemmTT %f GA_SgemmNN %f\n",nproc,rank,t_TT,t_NN);
 
     GA_Destroy(g_c);
     GA_Destroy(g_b);
