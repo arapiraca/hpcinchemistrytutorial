@@ -84,7 +84,6 @@ int main(int argc, char **argv)
     float* dp_b;  // device pointer
     float* dp_d;  // device pointer
 
-
     if (me==0) printf("matmul2: rank %d matrix with block size %d\n",rank,blksz);
 
     dims[0] = rank;
@@ -152,13 +151,28 @@ int main(int argc, char **argv)
 
     alpha = 1.0;
     beta  = 0.0;
+
+    unsigned long long nflops = 0;
+    if      (alpha==0.0){  nflops += 0; }
+    else if (alpha==1.0){  nflops += rank*rank*rank; }
+    else                {  nflops += 2*rank*rank*rank; }
+
+    if      (beta==0.0){  nflops += 0; }
+    else if (beta==1.0){  nflops += rank*rank; }
+    else               {  nflops += 2*rank*rank; }
+
     GA_Sgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c);
     GA_Sync();
     start = gettime();
     GA_Sgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c);
     GA_Sync();
     finish = gettime();
-    if (me == 0) printf("GA_Sgemm took %f seconds\n",finish-start);
+    double t_ga =  finish-start;
+    double gflops = nflops/t_ga;
+    gflops /= 1024;
+    gflops /= 1024;
+    gflops /= 1024;
+    if (me == 0) printf("GA_Sgemm took %f seconds %f gflops \n",t_ga,gflops);
 
     GA_Zero(g_d1);
     ntask = nblock * nblock * nblock;
@@ -273,7 +287,12 @@ int main(int argc, char **argv)
     GA_Sync();
     t_end = gettime();
     t_total = t_end - t_start;
+    gflops = nflops/t_total;
+    gflops /= 1024;
+    gflops /= 1024;
+    gflops /= 1024;
     if (me==0){
+        printf("performance         = %12.6f gflops\n",gflops);
         printf("time for everything = %12.6f seconds\n",t_total);
         printf("time for GA_Get     = %12.6f seconds\n",t_get);
         printf("time for GA_Acc     = %12.6f seconds\n",t_acc);

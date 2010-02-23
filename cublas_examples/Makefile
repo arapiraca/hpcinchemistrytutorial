@@ -196,8 +196,7 @@
 #
 #############################################
 
-# BINARY=test_driver.x gemm_test2.x
-BINARY=gemm_test2.x
+BINARY=test_driver.x test_driver2.x gemm_test2.x
 ifeq ($(CUDA),YES)
 BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x ga_gpu_sgemm.x ga_gpu_dgemm.x cuda_transfer_benchmark.x
 endif
@@ -216,6 +215,10 @@ test_driver.x: test_driver.o $(OBJECTS)
 	$(LD) $(LDFLAGS) test_driver.o $(OBJECTS) $(LIB) $(SBLAS) -o test_driver_S.x
 	$(LD) $(LDFLAGS) test_driver.o $(OBJECTS) $(LIB) $(PBLAS) -o test_driver_P.x
 
+test_driver2.x: test_driver2.o $(OBJECTS)
+	$(LD) $(LDFLAGS) test_driver2.o $(OBJECTS) $(LIB) $(SBLAS) -o test_driver2_S.x
+	$(LD) $(LDFLAGS) test_driver2.o $(OBJECTS) $(LIB) $(PBLAS) -o test_driver2_P.x
+
 dmp_gemm_driver.x: dmp_gemm_driver.o $(OBJECTS)
 	$(LD) $(LDFLAGS) dmp_gemm_driver.o $(OBJECTS) $(LIB) $(PBLAS) -o dmp_gemm_driver.x
 
@@ -226,7 +229,7 @@ ga_gpu_dgemm.x: ga_gpu_dgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) ga_gpu_dgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o ga_gpu_dgemm.x
 
 ga_gpu_sgemm.x: ga_gpu_sgemm.o $(OBJECTS)
-	$(LD) $(LDFLAGS) ga_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o ga_gpu_sgemm.x
+	$(LD) $(LDFLAGS) ga_gpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o ga_gpu_sgemm.x
 
 mpicoll_gpu_sgemm.x: mpicoll_gpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) mpicoll_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o mpicoll_gpu_sgemm.x
@@ -257,6 +260,9 @@ cuda_transfer_benchmark.o: cuda_transfer_benchmark.c
 
 dmp_gemm_driver.o: dmp_gemm_driver.c blas_gemm_test.h
 	$(CC) $(CFLAGS) $(INC) -c dmp_gemm_driver.c
+
+test_driver2.o: test_driver2.c blas_gemm_test.h
+	$(CC) $(CFLAGS) $(INC) -c test_driver2.c
 
 test_driver.o: test_driver.c blas_gemm_test.h
 	$(CC) $(CFLAGS) $(INC) -c test_driver.c
