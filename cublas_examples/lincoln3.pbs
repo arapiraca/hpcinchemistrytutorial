@@ -6,4 +6,4 @@
 #PBS -q lincoln_debug
 #PBS -V
 
-/u/ac/jhammond/hpcinchemistrytutorial/cublas_examples/cuda_transfer_benchmark.x 17000000000
+/u/ac/jhammond/hpcinchemistrytutorial/cublas_examples/cuda_transfer_benchmark.x 1100000000
