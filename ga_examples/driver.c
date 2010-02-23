@@ -130,7 +130,7 @@ int main(int argc, char **argv)
     HPM_Print();
 #endif
 
-    if ((me==0) && (test != 0) && (test != 6) && (test != 11)) GA_Print_stats();
+//     if ((me==0) && (test != 0) && (test != 6) && (test != 11)) GA_Print_stats();
 
     GA_Terminate();
     MPI_Finalize();

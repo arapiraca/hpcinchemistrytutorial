@@ -46,7 +46,7 @@ ifeq ($(TARGET),LINUX64)
 #    BLAS_LIB=$(MKL)
 
    GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
-   BLAS_INC=-DBLAS_USES_LONG -DGOTO
+   BLAS_INC=-DGOTO ###-DBLAS_USES_LONG
    BLAS_LIB=$(GOTO)
 
 #    BLAS_INC=-DNETLIB
@@ -67,7 +67,7 @@ ifeq ($(TARGET),LINUX64)
 
    CC=$(MPI_PREFIX)/bin/mpicc
    COPT = $(OPT)
-   CFLAGS=-g $(COPT) -Wall -Werror $(INC)
+   CFLAGS=-g $(COPT) -Wall $(INC)
    CPP=$(CC) -E
    ifeq ($(DEBUG),YES)
       CPPFLAGS+=-DDEBUG
