@@ -6,7 +6,6 @@
 
 export MPIRUN=/soft/mvapich2/1.4-intel-11.1.059/bin/mpiexec
 
-export MA_USE_ARMCI_MEM=y
 $MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 1000
 $MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 10000
 $MPIRUN /homes/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 100000

@@ -11,7 +11,10 @@
 export OMP_NUM_THREADS=8
 export KMP_NUM_THREADS=8
 echo "Using threaded BLAS"
-#/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1601 1800 1
-#/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1801 2000 1
+/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1    1 1000 1
+/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1001 1200 1
+/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1201 1400 1
+/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1401 1600 1
+/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1801 2000 1
 /homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 2000 4000 100
 #/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2

@@ -10,10 +10,10 @@
    ifeq ($(MACHINE),KRAKEN)
       TARGET=LINUX64
       CC=cc
-      OPT = -O3
-      MPI = NO
-      GA = YES
-      GA_PREFIX = /nics/b/home/hammond/ga-cvs-dev
+      OPT=-O3
+      MPI=NO
+      GA=YES
+      GA_PREFIX=/nics/b/home/hammond/ga-cvs-dev
    endif
 
    ifeq ($(HOSTNAME),cu0login1)
@@ -34,12 +34,12 @@
    ifeq ($(MACHINE),CHINOOK)
       TARGET=LINUX64
       CC=pathcc
-      OPT = -O3
-      MPI = YES
-      MPI_PREFIX = /apps/mpi/hp/2.03.00.00-20081112
-      MPI_VENDOR = HP 
-      GA = YES
-      GA_PREFIX = /home/jhammond/ga-cvs-dev
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/apps/mpi/hp/2.03.00.00-20081112
+      MPI_VENDOR=HP 
+      GA=YES
+      GA_PREFIX=/home/jhammond/ga-cvs-dev
    endif
 
    ifeq ($(HOSTNAME),login1.intrepid.alcf.anl.gov)
@@ -93,12 +93,12 @@
    ifeq ($(MACHINE),BGP)
       TARGET=BGP
       CC=mpixlc_r
-      OPT = -O3
-      MPI = NO # that is, LIB and INC not needed
-      #MPI_PREFIX = 
-      #MPI_VENDOR = MPICH
-      GA = YES
-      GA_PREFIX = /gpfs/home/jhammond/ga-cvs-dev
+      OPT=-O3
+      MPI=NO # that is, LIB and INC not needed
+      #MPI_PREFIX=
+      #MPI_VENDOR=MPICH
+      GA=YES
+      GA_PREFIX=/gpfs/home/jhammond/ga-cvs-dev
    endif
 
    # Gadzooks
@@ -107,15 +107,15 @@
    endif
    ifeq ($(MACHINE),GADZOOKS)
       TARGET=LINUX64
-      CC = gcc
-      OPT = -O3
-      MPI = YES
-      MPI_PREFIX = /soft/apps/mpich2-1.2.1
-      #MPI_PREFIX = /home/jhammond/gadzooks
-      MPI_VENDOR = MPICH
-      GA = YES
-      GA_PREFIX = /home/jhammond/gadzooks/ga-cvs-dev
-      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc #-lmpl
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/soft/apps/mpich2-1.2.1
+      #MPI_PREFIX=/home/jhammond/gadzooks
+      MPI_VENDOR=MPICH
+      GA=YES
+      GA_PREFIX=/home/jhammond/gadzooks/ga-cvs-dev
+      EXTRA_LIBS=-L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc #-lmpl
    endif
 
    # Fusion
@@ -139,13 +139,13 @@
    endif
    ifeq ($(MACHINE),FUSION)
       TARGET=LINUX64
-      CC = icc
-      OPT = -O3
-      MPI = YES
-      MPI_PREFIX = /soft/mvapich2/1.4-intel-11.1.059
-      MPI_VENDOR = MVAPICH
-      GA = YES
-      GA_PREFIX = /homes/jhammond/ga-cvs-dev
+      CC=icc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/soft/mvapich2/1.4-intel-11.1.059
+      MPI_VENDOR=MVAPICH
+      GA=YES
+      GA_PREFIX=/homes/jhammond/ga-cvs-dev
    endif
 
    # Lincoln
@@ -163,26 +163,26 @@
    endif
    ifeq ($(MACHINE),LINCOLN)
       TARGET=LINUX64
-      CC = gcc
-      OPT = -O3
-      MPI = YES
-      MPI_PREFIX = /usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/
-      MPI_VENDOR = MVAPICH
-      EXTRA_LIBS = -L/usr/local/ofed-1.2.5.5-patch/lib64
-      GA = YES
-      GA_PREFIX = /u/ac/jhammond/ga-cvs-dev
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/
+      MPI_VENDOR=MVAPICH
+      EXTRA_LIBS=-L/usr/local/ofed-1.2.5.5-patch/lib64
+      GA=YES
+      GA_PREFIX=/u/ac/jhammond/ga-cvs-dev
    endif
 
    # Megatron
    ifeq ($(HOSTNAME),megatron)
       TARGET=LINUX64
-      CC = gcc
-      OPT = -O3
-      MPI = YES
-      MPI_PREFIX = /software/open-mpi/gnu-build
-      MPI_VENDOR = OMPI
-      GA = YES
-      GA_PREFIX = /software/ga/ga-4-2
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/software/open-mpi/gnu-build
+      MPI_VENDOR=OMPI
+      GA=YES
+      GA_PREFIX=/software/ga/ga-4-2
    endif
 
    DEFINES =
@@ -190,57 +190,57 @@
    LIB =
 
    ifeq ($(GA),YES)
-      DEFINES += -DGA
-      INC += -I$(GA_PREFIX)/include
-      LIB += -L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
+      DEFINES+=-DGA
+      INC+=-I$(GA_PREFIX)/include
+      LIB+=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
    endif
 
    ifeq ($(MPI),YES)
-      DEFINES += -DMPI
+      DEFINES+=-DMPI
       ifeq ($(MPI_VENDOR),OMPI)
-         LIB += -L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
+         LIB+=-L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
       else
          ifeq ($(MPI_VENDOR),MVAPICH)
-            LIB += -L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
+            LIB+=-L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
          else
             ifeq ($(MPI_VENDOR),HP)
-               INC += -I$(MPI_PREFIX)/include/64
-               LIB += -L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
+               INC+=-I$(MPI_PREFIX)/include/64
+               LIB+=-L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
             else # MPICH
-               LIB += -L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
+               LIB+=-L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
             endif
          endif
       endif
-      INC += -I$(MPI_PREFIX)/include
+      INC+=-I$(MPI_PREFIX)/include
    endif
 
    ifeq ($(TARGET),LINUX64)
       GCC=gcc
    endif
    ifeq ($(TARGET),BGP)
-      GCC = $(CC)
-      DEFINES += -DHAVE_DCMF_TIMEBASE
-      DEFINES += -DHAVE_BGP_PERSONALITY
-      INC += -I/bgsys/drivers/ppcfloor/arch/include
+      GCC=$(CC)
+      DEFINES+=-DHAVE_DCMF_TIMEBASE
+      DEFINES+=-DHAVE_BGP_PERSONALITY
+      INC+=-I/bgsys/drivers/ppcfloor/arch/include
    endif
 
-   LIB += -lm -lpthread $(EXTRA_LIBS)
+   LIB+=-lm -lpthread $(EXTRA_LIBS)
 
-   COPT = $(OPT)
-   CFLAGS = -g $(COPT)
+   COPT=$(OPT)
+   CFLAGS=-g $(COPT)
    ifeq ($(CC),mpixlc_r)
-      CFLAGS += -qlanglvl=extc99
+      CFLAGS+=-qlanglvl=extc99
    else
       ifeq ($(CC),cc)
-         CFLAGS += 
+         CFLAGS+=
       else
-         CFLAGS += -std=c99 
+         CFLAGS+=-std=c99 
       endif
    endif
-   CFLAGS += $(INC) $(DEFINES)
+   CFLAGS+=$(INC) $(DEFINES)
 
-   LD = $(CC)
-   LDFLAGS = -g $(OPT)
+   LD=$(CC)
+   LDFLAGS=-g $(OPT)
 
 #############################################
 #
@@ -251,7 +251,7 @@
 #all: refresh bin
 all: bin
 
-bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x
+bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x
 
 comm_bench1_$(TARGET).x: comm_bench1_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench1_$(TARGET).x
@@ -262,6 +262,9 @@ comm_bench2_$(TARGET).x: comm_bench2_$(TARGET).o getticks_$(TARGET).o
 comm_bench3_$(TARGET).x: comm_bench3_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench3_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench3_$(TARGET).x
 
+comm_bench4_$(TARGET).x: comm_bench4_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench4_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench4_$(TARGET).x
+
 comm_bench1_$(TARGET).o: comm_bench1.c comm_bench1.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c -o comm_bench1_$(TARGET).o
 
@@ -270,6 +273,9 @@ comm_bench2_$(TARGET).o: comm_bench2.c comm_bench2.h
 
 comm_bench3_$(TARGET).o: comm_bench3.c comm_bench3.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench3.c -o comm_bench3_$(TARGET).o
+
+comm_bench4_$(TARGET).o: comm_bench3.c comm_bench4.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench4.c -o comm_bench4_$(TARGET).o
 
 getticks_$(TARGET).o: getticks.c
 	$(GCC) -c getticks.c -o getticks_$(TARGET).o
