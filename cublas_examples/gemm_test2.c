@@ -52,8 +52,6 @@ privately owned rights.
     #include "gsl/gsl_cblas.h"
 #endif
 
-unsigned long long getticks(void);
-
 #ifdef BLAS_USES_LONG
     void sgemm_(char* , char* ,long* , long* , long* , float* , float* , long* , float* , long* , float* , float* , long* );
     #define BLAS_INT long
@@ -74,6 +72,8 @@ unsigned long long getticks(void);
 
 #define MEMORY_ALLOCATOR malloc
 
+#include "blas_utils.h"
+
 int main(int argc, char **argv)
 {
 
@@ -89,8 +89,8 @@ int main(int argc, char **argv)
         printf("dim3=%d\n",dim3);
     } else { return(1); }
 
-    unsigned long long start,finish;
-    unsigned long long t_loops,t_sgemm;
+    double start,finish;
+    double t_loops,t_sgemm;
 
     int i,j,k;
 
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 
     float* p_c=(float *) MEMORY_ALLOCATOR(rowc*colc*sizeof(float));
     for (i=0;i<(rowc*colc);i++) p_c[i]=0.0;
-    start = getticks();
+    start = gettime();
     for (i=0;i<dim1;i++ ){
         for (j=0;j<dim2;j++ ){
             p_c[i+j*rowc] *= beta;
@@ -120,18 +120,18 @@ int main(int argc, char **argv)
             }
         }
     }
-    finish = getticks();
+    finish = gettime();
     t_loops = finish - start;
-    printf("! time for %15s sgemm=%12llu ticks\n","triple-loops",t_loops);
+    printf("! time for %15s sgemm=%14.7f seconds\n","triple-loops",t_loops);
 
     float* p_d=(float *) MEMORY_ALLOCATOR(rowc*colc*sizeof(float));
     for (i=0;i<(rowc*colc);i++) p_d[i]=0.0;
-    start = getticks();
+    start = gettime();
     sgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
-    finish = getticks();
+    finish = gettime();
     t_sgemm = finish - start;
-    printf("! time for %15s sgemm=%12llu ticks\n",BLAS_NAME,t_sgemm);
-    printf("! %s is %6.2f times faster than loops\n",BLAS_NAME,((float)t_loops)/t_sgemm);
+    printf("! time for %15s sgemm=%14.7f seconds\n",BLAS_NAME,t_sgemm);
+    printf("! %15s is %6.2f times faster than loops\n",BLAS_NAME,t_loops/t_sgemm);
     float error3=0.0;
     for (i=0;i<rowc;i++ ){
         for (j=0;j<colc;j++ ){

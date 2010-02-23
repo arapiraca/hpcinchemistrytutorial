@@ -100,7 +100,7 @@ int main(int argc, char **argv)
         start = gettime();
         cuStatus = cudaMemcpy(/* dst */ d_ptr, /* src */ h_ptr, bufSize, cudaMemcpyHostToDevice);
         finish = gettime();
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         time1 = finish - start;
         bw1 = (double) bufSize;
@@ -108,12 +108,12 @@ int main(int argc, char **argv)
         bw1 /= (1024*1024);
 
         cuStatus = cudaMemset(d_ptr,2,bufSize);
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         start = gettime();
         cuStatus = cudaMemcpy(/* dst */ h_ptr, /* src */ d_ptr, bufSize, cudaMemcpyDeviceToHost);
         finish = gettime();
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         time2 = finish - start;
         bw2 = (double) bufSize;
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
                 bufSize>>10,  time1,         bw1,              time2,         bw2);
 
         cuStatus = cudaFree(d_ptr);
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         free(h_ptr);
     }
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
         start = gettime();
         cuStatus = cudaMemcpy(/* dst */ d_ptr, /* src */ h_ptr, bufSize, cudaMemcpyHostToDevice);
         finish = gettime();
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         time1 = finish - start;
         bw1 = (double) bufSize;
@@ -150,12 +150,12 @@ int main(int argc, char **argv)
         bw1 /= (1024*1024);
 
         cuStatus = cudaMemset(d_ptr,2,bufSize);
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         start = gettime();
         cuStatus = cudaMemcpy(/* dst */ h_ptr, /* src */ d_ptr, bufSize, cudaMemcpyDeviceToHost);
         finish = gettime();
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         time2 = finish - start;
         bw2 = (double) bufSize;
@@ -166,10 +166,10 @@ int main(int argc, char **argv)
 
 
         cuStatus = cudaFree(d_ptr);
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
 
         cuStatus = cudaFreeHost(h_ptr);
-        assert(status==CUDA_SUCCESS);
+        assert(cuStatus==CUDA_SUCCESS);
     }
 
 

@@ -119,7 +119,7 @@
       OPENMP=YES
    endif
 
-   DEFINES =
+   DEFINES = #-DDEBUG
    INC =
    LIB =
 
@@ -196,12 +196,14 @@
 #
 #############################################
 
-BINARY=test_driver.x gemm_test2.x
+# BINARY=test_driver.x gemm_test2.x
+BINARY=gemm_test2.x
 ifeq ($(CUDA),YES)
-BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x cuda_transfer_benchmark.x
+BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x ga_gpu_sgemm.x ga_gpu_dgemm.x cuda_transfer_benchmark.x
 endif
+# BINARY=ga_gpu_sgemm.x
 
-OBJECTS=gagpu_gemm.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
+OBJECTS=blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
 
 #all: refresh bin
 all: bin
@@ -220,20 +222,32 @@ dmp_gemm_driver.x: dmp_gemm_driver.o $(OBJECTS)
 armci_gpu_sgemm.x: armci_gpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) armci_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o armci_gpu_sgemm.x
 
+ga_gpu_dgemm.x: ga_gpu_dgemm.o $(OBJECTS)
+	$(LD) $(LDFLAGS) ga_gpu_dgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o ga_gpu_dgemm.x
+
+ga_gpu_sgemm.x: ga_gpu_sgemm.o $(OBJECTS)
+	$(LD) $(LDFLAGS) ga_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o ga_gpu_sgemm.x
+
 mpicoll_gpu_sgemm.x: mpicoll_gpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) mpicoll_gpu_sgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o mpicoll_gpu_sgemm.x
 
 cuda_transfer_benchmark.x: cuda_transfer_benchmark.o $(OBJECTS)
 	$(LD) $(LDFLAGS) cuda_transfer_benchmark.o $(OBJECTS) $(LIB) $(PBLAS) -o cuda_transfer_benchmark.x
 
-gemm_test2.x: gemm_test2.o $(OBJECTS)
-	$(LD) $(LDFLAGS) gemm_test2.o $(OBJECTS) $(LIB) $(PBLAS) -o gemm_test2.x
+gemm_test2.x: gemm_test2.o blas_utils.o
+	$(LD) $(LDFLAGS) gemm_test2.o blas_utils.o $(LIB) $(PBLAS) -o gemm_test2.x
 #
 #
 # OBJECTS
 #
 armci_gpu_sgemm.o: armci_gpu_sgemm.c
 	$(CC) $(CFLAGS) $(INC) -c armci_gpu_sgemm.c
+
+ga_gpu_dgemm.o: ga_gpu_dgemm.c
+	$(CC) $(CFLAGS) $(INC) -c ga_gpu_dgemm.c
+
+ga_gpu_sgemm.o: ga_gpu_sgemm.c
+	$(CC) $(CFLAGS) $(INC) -c ga_gpu_sgemm.c
 
 mpicoll_gpu_sgemm.o: mpicoll_gpu_sgemm.c
 	$(CC) $(CFLAGS) $(INC) -c mpicoll_gpu_sgemm.c
