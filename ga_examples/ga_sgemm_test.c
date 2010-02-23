@@ -61,8 +61,8 @@ int ga_sgemm_test(int rank)
     int dims[2];
     int chunk[2];
     int pg_world;   // world processor group
-    double alpha,beta;
-    double one  = 1.0;
+    float alpha,beta;
+    float one  = 1.0;
     double start,finish;
 
     nproc=GA_Nnodes();
