@@ -1,5 +1,14 @@
-#!/bin/sh
-MPI_HOME=/soft/apps/mpich2-1.2.1
-$MPI_HOME/bin/mpdboot -n 4 -f $COBALT_NODEFILE
-$MPI_HOME/bin/mpirun -np 4 armci_gpu_sgemm.x 4096 3 3 3
+#!/bin/bash
+
+export MPI_HOME=/soft/apps/mpich2-1.2.1
+export OMP_NUM_THREADS=4
+export KMP_NUM_THREADS=4
+
+$MPI_HOME/bin/mpdboot -n 2 -f $COBALT_NODEFILE
+$MPI_HOME/bin/mpirun -np 4 ga_gpu_sgemm.x 8192 8192
+$MPI_HOME/bin/mpirun -np 4 ga_gpu_sgemm.x 8192 4096
+$MPI_HOME/bin/mpirun -np 4 ga_gpu_sgemm.x 8192 2048
+$MPI_HOME/bin/mpirun -np 4 ga_gpu_sgemm.x 8192 1024
+$MPI_HOME/bin/mpirun -np 4 ga_gpu_sgemm.x 8192  512
+$MPI_HOME/bin/mpirun -np 4 ga_gpu_sgemm.x 8192  256
 kill -9

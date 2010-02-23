@@ -1,2 +1,2 @@
 #!/bin/bash
-qsub -n $1 -t 30 ./gadzooks.run
+qsub -n 2 -t 30 ./gadzooks.run

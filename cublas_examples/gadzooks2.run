@@ -1,2 +1,4 @@
 #!/bin/sh
-test_driver_P.x 1 1 1001 1500 1
+export OMP_NUM_THREADS=8
+export KMP_NUM_THREADS=8
+test_driver_P.x 1 1 2000 4000 10
