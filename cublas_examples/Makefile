@@ -115,7 +115,7 @@
       MPI_PREFIX=/software/open-mpi/gnu-build
       MPI_VENDOR=OMPI
       GA=YES
-      GA_PREFIX=/software/ga/ga-4-2
+      GA_PREFIX=/software/ga/ga-cvs-dev
       OPENMP=YES
    endif
 

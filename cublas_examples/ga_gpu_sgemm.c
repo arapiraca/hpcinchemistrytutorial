@@ -106,19 +106,20 @@ int main(int argc, char **argv)
     g_error  = GA_Duplicate(g_a,"error"); assert(g_error!=0);
     GA_Sync();
 
-    float scale = 1.0/RAND_MAX;
-    NGA_Distribution(g_a,me,lo_a,hi_a);
-    NGA_Access(g_a,lo_a,hi_a,&p_in,&ld_a[0]);
-    rng_a[0] = hi_a[0] - lo_a[0] + 1;
-    rng_a[1] = hi_a[1] - lo_a[1] + 1;
-    for(i=0; i<rng_a[0]; i++){
-        for(j=0; j<rng_a[1]; j++){
-            p_in[ ld_a[0] * i + j ] = (float) ( rand() * scale );
-//          p_in[ ld_a[0] * i + j ] = (float) ( 1 );
-        }
-    }
-    NGA_Release_update(g_b,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
-//     GA_Symmetrize(g_b); // Only for doubles
+//     float scale = 1.0/RAND_MAX;
+//     NGA_Distribution(g_a,me,lo_a,hi_a);
+//     NGA_Access(g_a,lo_a,hi_a,&p_in,&ld_a[0]);
+//     rng_a[0] = hi_a[0] - lo_a[0] + 1;
+//     rng_a[1] = hi_a[1] - lo_a[1] + 1;
+//     for(i=0; i<rng_a[0]; i++){
+//         for(j=0; j<rng_a[1]; j++){
+//             p_in[ ld_a[0] * i + j ] = (float) ( rand() * scale );
+// //          p_in[ ld_a[0] * i + j ] = (float) ( 1 );
+//         }
+//     }
+//     NGA_Release_update(g_b,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
+// //     GA_Symmetrize(g_b); // Only for doubles
+    GA_Randomize(g_a,&one);
     GA_Transpose(g_a,g_d1);
     alpha = 0.5;
     beta  = 0.5;
@@ -126,17 +127,18 @@ int main(int argc, char **argv)
     GA_Add(&alpha,g_a,&beta,g_d1,g_error);
     GA_Copy(g_error,g_a);
 
-    NGA_Distribution(g_b,me,lo_b,hi_b);
-    NGA_Access(g_b,lo_b,hi_b,&p_in,&ld_b[0]);
-    rng_b[0] = hi_b[0] - lo_b[0] + 1;
-    rng_b[1] = hi_b[1] - lo_b[1] + 1;
-    for(i=0; i<rng_b[0]; i++){
-        for(j=0; j<rng_b[1]; j++){
-                        p_in[ ld_a[0] * i + j ] = (float) ( rand() * scale );
-        }
-    }
-    NGA_Release_update(g_b,lo_b,hi_b); /* this function does nothing as of GA 4.2 */
-//     GA_Symmetrize(g_b); // Only for doubles
+//     NGA_Distribution(g_b,me,lo_b,hi_b);
+//     NGA_Access(g_b,lo_b,hi_b,&p_in,&ld_b[0]);
+//     rng_b[0] = hi_b[0] - lo_b[0] + 1;
+//     rng_b[1] = hi_b[1] - lo_b[1] + 1;
+//     for(i=0; i<rng_b[0]; i++){
+//         for(j=0; j<rng_b[1]; j++){
+//                         p_in[ ld_a[0] * i + j ] = (float) ( rand() * scale );
+//         }
+//     }
+//     NGA_Release_update(g_b,lo_b,hi_b); /* this function does nothing as of GA 4.2 */
+// //     GA_Symmetrize(g_b); // Only for doubles
+    GA_Randomize(g_b,&one);
     GA_Transpose(g_b,g_d1);
     alpha = 0.5;
     beta  = 0.5;
