@@ -265,6 +265,7 @@ int main(int argc, char **argv)
                     cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     start = gettime();
                     cublasSgemm('n','n',blksz,blksz,blksz,alpha,dp_b,blksz,dp_a,blksz,one,dp_d,blksz);
+                    cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     finish = gettime();
                     t_sgemm += finish-start;
                 } // kk
