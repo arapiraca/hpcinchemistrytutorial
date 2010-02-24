@@ -1,10 +1,63 @@
-#!/bin/bash
-#PBS -N GPU_GEMM_TEST
-#PBS -l nodes=1:ppn=8
-#PBS -l walltime=0:25:00
-#PBS -j oe
+#!/bin/sh
+#PBS -N driver
+#PBS -l nodes=8:ppn=8
+#PBS -l walltime=0:30:00
 
-export OMP_NUM_THREADS=8
-export KMP_NUM_THREADS=8
-echo "Using threaded BLAS"
-/homes/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1601 1800 1
+cd $PBS_O_WORKDIR
+
+export MPIRUN=/soft/mvapich2/1.4-intel-11.1.059/bin/mpiexec
+
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  200
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  300
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  400
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  500
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  600
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  700
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  800
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  900
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1100
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1200
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1300
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1400
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1600
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1700
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1800
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1900
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2100
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2200
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2300
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2400
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2600
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2700
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2800
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2900
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3100
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3200
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3300
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3400
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3600
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3700
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3800
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3900
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4100
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4200
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4300
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4400
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4600
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4700
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4800
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4900
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5100
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5200
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5300
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5400
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5600
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5700
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5800
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5900
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 6000

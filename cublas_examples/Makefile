@@ -213,7 +213,7 @@
 #
 #############################################
 
-BINARY=test_driver.x test_driver2.x gemm_test2.x
+BINARY=test_driver.x test_driver2.x gemm_test2.x ga_cpu_sgemm.x
 ifeq ($(CUDA),YES)
 BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x ga_gpu_sgemm.x ga_gpu_dgemm.x cuda_transfer_benchmark.x
 endif
