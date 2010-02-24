@@ -243,8 +243,10 @@ int main(int argc, char **argv)
                     finish = gettime();
                     t_get += finish-start;
 
+                    cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     start = gettime();
                     cuStatus = cudaMemcpy(dp_a, p_a, blksz*blksz*sizeof(float), cudaMemcpyHostToDevice); assert(cuStatus==CUDA_SUCCESS);
+                    cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     finish = gettime();
                     t_push += finish-start;
 
@@ -253,8 +255,10 @@ int main(int argc, char **argv)
                     finish = gettime();
                     t_get += finish-start;
 
+                    cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     start = gettime();
                     cuStatus = cudaMemcpy(dp_b, p_b, blksz*blksz*sizeof(float), cudaMemcpyHostToDevice); assert(cuStatus==CUDA_SUCCESS);
+                    cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     finish = gettime();
                     t_push += finish-start;
 
@@ -272,6 +276,7 @@ int main(int argc, char **argv)
                 cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                 start = gettime();
                 cuStatus = cudaMemcpy(p_d, dp_d, blksz*blksz*sizeof(float), cudaMemcpyDeviceToHost); assert(cuStatus==CUDA_SUCCESS);
+                cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                 finish = gettime();
                 t_pull += finish-start;
 
