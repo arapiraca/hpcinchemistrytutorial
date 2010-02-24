@@ -1,0 +1,44 @@
+#!/bin/bash
+
+export MPI_HOME=/soft/apps/mpich2-1.2.1
+
+export OMP_NUM_THREADS=8
+export KMP_NUM_THREADS=8
+
+$MPI_HOME/bin/mpdboot -n 4 -f $COBALT_NODEFILE
+
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 10240 5120
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 11264 5632
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 12288 6144
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 13312 6656
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 14336 7168
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 15360 7680
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 16384 8192
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 17408 8704
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 18432 9216
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 19456 9728
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 20480 10240
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 21504 10752
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 22528 11264
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 23552 11776
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 24576 12288
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 25600 12800
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 26624 13312
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 27648 13824
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 28672 14336
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 29696 14848
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 30720 15360
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 31744 15872
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 32768 16384
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 33792 16896
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 34816 17408
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 35840 17920
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 36864 18432
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 37888 18944
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 38912 19456
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 39936 19968
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 40960 20480
+
+
+
+kill -9 -1
