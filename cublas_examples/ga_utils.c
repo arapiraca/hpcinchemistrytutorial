@@ -148,8 +148,8 @@ void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_
     } else {
         GA_Initialize();
         fprintf(stderr,"! GA_Initialize succeeded\n");
-        const int ma_stack = 128*1024*1024;
-        const int ma_heap  =  32*1024*1024;
+        const int ma_stack =   8*1024*1024;
+        const int ma_heap  =   8*1024*1024;
         MA_init(MT_REAL, ma_stack, ma_heap);
     }
 #else
