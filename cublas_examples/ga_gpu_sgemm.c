@@ -120,12 +120,14 @@ int main(int argc, char **argv)
 //     NGA_Release_update(g_b,lo_a,hi_a); /* this function does nothing as of GA 4.2 */
 // //     GA_Symmetrize(g_b); // Only for doubles
     GA_Randomize(g_a,&one);
+#ifdef COMPARE
     GA_Transpose(g_a,g_d1);
     alpha = 0.5;
     beta  = 0.5;
     GA_Zero(g_error);
     GA_Add(&alpha,g_a,&beta,g_d1,g_error);
     GA_Copy(g_error,g_a);
+#endif
 
 //     NGA_Distribution(g_b,me,lo_b,hi_b);
 //     NGA_Access(g_b,lo_b,hi_b,&p_in,&ld_b[0]);
@@ -139,12 +141,14 @@ int main(int argc, char **argv)
 //     NGA_Release_update(g_b,lo_b,hi_b); /* this function does nothing as of GA 4.2 */
 // //     GA_Symmetrize(g_b); // Only for doubles
     GA_Randomize(g_b,&one);
+#ifdef COMPARE
     GA_Transpose(g_b,g_d1);
     alpha = 0.5;
     beta  = 0.5;
     GA_Zero(g_error);
     GA_Add(&alpha,g_b,&beta,g_d1,g_error);
     GA_Copy(g_error,g_b);
+#endif
 
     if (rank<40){
         GA_Print(g_a);
@@ -163,18 +167,8 @@ int main(int argc, char **argv)
     else if (beta==1.0){  nflops += rank*rank; }
     else               {  nflops += 2*rank*rank; }
 
-    GA_Sgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c);
-    GA_Sync();
-    start = gettime();
-    GA_Sgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c);
-    GA_Sync();
-    finish = gettime();
-    double t_ga =  finish-start;
-    double gflops = nflops/t_ga;
-    gflops /= 1024;
-    gflops /= 1024;
-    gflops /= 1024;
-    if (me == 0) printf("GA_Sgemm took %f seconds %f gflops \n",t_ga,gflops);
+    double t_ga;
+    double gflops;
 
     GA_Zero(g_d1);
     ntask = nblock * nblock * nblock;
@@ -322,6 +316,20 @@ int main(int argc, char **argv)
 //     free(p_b);
 //     free(p_a);
 
+#ifdef COMPARE
+    //GA_Sgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c);
+    GA_Sync();
+    start = gettime();
+    GA_Sgemm('N','N',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c);
+    GA_Sync();
+    finish = gettime();
+    t_ga =  finish-start;
+    gflops = nflops/t_ga;
+    gflops /= 1024;
+    gflops /= 1024;
+    gflops /= 1024;
+    if (me == 0) printf("GA_Sgemm took %f seconds %f gflops \n",t_ga,gflops);
+
     GA_Transpose(g_d1,g_d2);
     alpha = 1.0;
     beta = -1.0;
@@ -333,6 +341,7 @@ int main(int argc, char **argv)
 
     GA_Norm1(g_error,&error);
     if (me == 0) printf("error = %f\n",error);
+#endif
 
     GA_Destroy(g_error);
     GA_Destroy(g_d2);
