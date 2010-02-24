@@ -21,6 +21,23 @@
       OPENMP=YES
    endif
 
+   # Eureka
+   ifeq ($(HOSTNAME),login1.eureka.alcf.anl.gov)
+      TARGET=LINUX64
+      OPT=-O3 -xHost -static-intel
+      INTEL_DIR=/soft/apps/intel-cc-11.0.074
+      CUDA=YES
+      CUDA_DIR=/soft/apps/cuda-2.3/cuda
+      LIB_BITS=64
+      MKL=YES
+      MKL_DIR=/soft/apps/intel-cc-11.0.074/mkl
+      MPI=YES
+      MPI_PREFIX=/soft/apps/mpich2-1.2.1
+      GA=YES
+      GA_PREFIX=/home/jhammond/eureka/ga-cvs-dev/
+      OPENMP=YES
+   endif
+
    # Gadzooks
    ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
       TARGET=LINUX64

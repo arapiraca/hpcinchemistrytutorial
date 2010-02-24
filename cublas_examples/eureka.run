@@ -1,0 +1,13 @@
+#!/bin/bash
+
+export MPI_HOME=/soft/apps/mpich2-1.2.1
+export OMP_NUM_THREADS=8
+export KMP_NUM_THREADS=8
+
+$MPI_HOME/bin/mpd
+
+$MPI_HOME/bin/mpdboot -n 4 -f $COBALT_NODEFILE
+
+$MPI_HOME/bin/mpirun -np 4 ga_gpu_sgemm.x 1024  512
+
+kill -9 -1
