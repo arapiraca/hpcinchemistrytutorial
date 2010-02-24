@@ -268,11 +268,13 @@ int main(int argc, char **argv)
                     //sgemm_("n","n",&blksz,&blksz,&blksz,&alpha,p_b,&blksz,p_a,&blksz,&one,p_d,&blksz);
                     //finish = gettime();
                     //t_sgemm = finish-start;
+                    cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     start = gettime();
                     cublasSgemm('n','n',blksz,blksz,blksz,alpha,dp_b,blksz,dp_a,blksz,one,dp_d,blksz);
                     finish = gettime();
                     t_sgemm += finish-start;
                 } // kk
+                cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                 start = gettime();
                 cuStatus = cudaMemcpy(p_d, dp_d, blksz*blksz*sizeof(float), cudaMemcpyDeviceToHost); assert(cuStatus==CUDA_SUCCESS);
                 finish = gettime();
