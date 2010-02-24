@@ -245,6 +245,9 @@ armci_gpu_sgemm.x: armci_gpu_sgemm.o $(OBJECTS)
 ga_gpu_dgemm.x: ga_gpu_dgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) ga_gpu_dgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o ga_gpu_dgemm.x
 
+ga_cpu_sgemm.x: ga_cpu_sgemm.o $(OBJECTS)
+	$(LD) $(LDFLAGS) ga_cpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o ga_cpu_sgemm.x
+
 ga_gpu_sgemm.x: ga_gpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) ga_gpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o ga_gpu_sgemm.x
 
@@ -265,6 +268,9 @@ armci_gpu_sgemm.o: armci_gpu_sgemm.c
 
 ga_gpu_dgemm.o: ga_gpu_dgemm.c
 	$(CC) $(CFLAGS) $(INC) -c ga_gpu_dgemm.c
+
+ga_cpu_sgemm.o: ga_cpu_sgemm.c
+	$(CC) $(CFLAGS) $(INC) -c ga_cpu_sgemm.c
 
 ga_gpu_sgemm.o: ga_gpu_sgemm.c
 	$(CC) $(CFLAGS) $(INC) -c ga_gpu_sgemm.c
