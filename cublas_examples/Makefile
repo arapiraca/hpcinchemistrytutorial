@@ -136,7 +136,7 @@
       OPENMP=YES
    endif
 
-   DEFINES = #-DDEBUG
+   DEFINES = -DCOMPARE #-DDEBUG
    INC =
    LIB =
 

@@ -205,6 +205,13 @@ int main(int argc, char **argv)
     double t_pull = 0.0;
     double t_sgemm = 0.0;
 
+    cudaStream_t a_stream, b_stream, d_stream;
+
+    cuStatus = cudaStreamCreate(&a_stream); assert(cuStatus==CUDA_SUCCESS);
+    cuStatus = cudaStreamCreate(&b_stream); assert(cuStatus==CUDA_SUCCESS);
+    cuStatus = cudaStreamCreate(&d_stream); assert(cuStatus==CUDA_SUCCESS);
+    ga_nbhdl_t ga_nbh_a, ga_nbh_b, ga_nbh_d;
+
     t = 0;
     GA_Sync();
     t_start = gettime();
@@ -212,10 +219,14 @@ int main(int argc, char **argv)
         for (jj = 0 ; jj < nblock; jj++){
             if (me==(t%nproc)){
                 //for (k=0;k<(blksz*blksz);k++) p_d[k]=0.0;
+#ifdef HEAVY_SYNC
                 start = gettime();
                 cuStatus = cudaMemset(dp_d,0,blksz*blksz*sizeof(float)); assert(cuStatus==CUDA_SUCCESS);
                 finish = gettime();
                 t_zero += finish-start;
+#else
+                cuStatus = cudaMemset(dp_d,0,blksz*blksz*sizeof(float)); assert(cuStatus==CUDA_SUCCESS);
+#endif
                 for (kk = 0 ; kk < nblock; kk++){
 #ifdef DEBUG
                     printf("proc %d doing work tuple (%d,%d,%d)\n",me,ii,jj,kk); fflush(stdout);
@@ -238,6 +249,11 @@ int main(int argc, char **argv)
                     hi_d[1] = blksz * (jj + 1) - 1;
                     ld_d[0] = blksz;
 
+                    //start = gettime();
+                    //sgemm_("n","n",&blksz,&blksz,&blksz,&alpha,p_b,&blksz,p_a,&blksz,&one,p_d,&blksz);
+                    //finish = gettime();
+                    //t_sgemm = finish-start;
+#ifdef HEAVY_SYNC
                     start = gettime();
                     NGA_Get(g_a,lo_a,hi_a,p_a,ld_a);
                     finish = gettime();
@@ -262,28 +278,46 @@ int main(int argc, char **argv)
                     finish = gettime();
                     t_push += finish-start;
 
-                    //start = gettime();
-                    //sgemm_("n","n",&blksz,&blksz,&blksz,&alpha,p_b,&blksz,p_a,&blksz,&one,p_d,&blksz);
-                    //finish = gettime();
-                    //t_sgemm = finish-start;
                     cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     start = gettime();
                     cublasSgemm('n','n',blksz,blksz,blksz,alpha,dp_b,blksz,dp_a,blksz,one,dp_d,blksz);
                     cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                     finish = gettime();
                     t_sgemm += finish-start;
+#else
+                    NGA_NbGet(g_a,lo_a,hi_a,p_a,ld_a,&ga_nbh_a);
+                    NGA_NbGet(g_b,lo_b,hi_b,p_b,ld_b,&ga_nbh_b);
+
+                    cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS); // finish cublasSgemm before transferring again
+
+                    NGA_NbWait(&ga_nbh_a); // finish NGA_NbGet before transferring from host to device
+                    cuStatus = cudaMemcpyAsync(dp_a, p_a, blksz*blksz*sizeof(float), cudaMemcpyHostToDevice, a_stream); assert(cuStatus==CUDA_SUCCESS);
+
+                    NGA_NbWait(&ga_nbh_b); // finish NGA_NbGet before transferring from host to device
+                    cuStatus = cudaMemcpyAsync(dp_b, p_b, blksz*blksz*sizeof(float), cudaMemcpyHostToDevice, b_stream); assert(cuStatus==CUDA_SUCCESS);
+
+                    cuStatus = cudaStreamSynchronize(a_stream); assert(cuStatus==CUDA_SUCCESS);
+                    cuStatus = cudaStreamSynchronize(b_stream); assert(cuStatus==CUDA_SUCCESS);
+                    cublasSgemm('n','n',blksz,blksz,blksz,alpha,dp_b,blksz,dp_a,blksz,one,dp_d,blksz);
+#endif
                 } // kk
-                cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
+                cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS); // must finish all cublasSgemm before proceeding
+#ifdef HEAVY_SYNC
                 start = gettime();
                 cuStatus = cudaMemcpy(p_d, dp_d, blksz*blksz*sizeof(float), cudaMemcpyDeviceToHost); assert(cuStatus==CUDA_SUCCESS);
                 cuStatus = cudaThreadSynchronize(); assert(cuStatus==CUDA_SUCCESS);
                 finish = gettime();
                 t_pull += finish-start;
-
                 start = gettime();
                 NGA_Acc(g_d1,lo_d,hi_d,p_d,ld_d,&one);
                 finish = gettime();
                 t_acc += finish-start;
+#else
+                NGA_NbWait(&ga_nbh_d); // finish NGA_NbAcc before over-writing p_d again
+                cuStatus = cudaMemcpyAsync(p_d, dp_d, blksz*blksz*sizeof(float), cudaMemcpyDeviceToHost, d_stream); assert(cuStatus==CUDA_SUCCESS);
+                cuStatus = cudaStreamSynchronize(d_stream); assert(cuStatus==CUDA_SUCCESS);
+                NGA_NbAcc(g_d1,lo_d,hi_d,p_d,ld_d,&one,&ga_nbh_d);
+#endif
             } // myturn
             t += 1;
         } // jj
@@ -298,13 +332,19 @@ int main(int argc, char **argv)
     if (me==0){
         printf("performance         = %12.6f gflops\n",gflops);
         printf("time for everything = %12.6f seconds\n",t_total);
+#ifdef HEAVY_SYNC
         printf("time for GA_Get     = %12.6f seconds\n",t_get);
         printf("time for GA_Acc     = %12.6f seconds\n",t_acc);
         printf("time for Push       = %12.6f seconds\n",t_push);
         printf("time for Pull       = %12.6f seconds\n",t_pull);
         printf("time for Sgemm      = %12.6f seconds\n",t_sgemm);
         printf("time for Memset     = %12.6f seconds\n",t_zero);
+#endif
     }
+
+    cuStatus = cudaStreamDestroy(d_stream); assert(cuStatus==CUDA_SUCCESS);
+    cuStatus = cudaStreamDestroy(b_stream); assert(cuStatus==CUDA_SUCCESS);
+    cuStatus = cudaStreamDestroy(a_stream); assert(cuStatus==CUDA_SUCCESS);
 
 //     status = ARMCI_Free_local(p_d); assert(status==0);
 //     status = ARMCI_Free_local(p_b); assert(status==0);
