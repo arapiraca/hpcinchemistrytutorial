@@ -4,16 +4,39 @@
 #
 #############################################
 
+   # Mist
+   ifeq ($(HOSTNAME),mist.cs.uoregon.edu)
+     MACHINE=MIST
+   endif
+   ifeq ($(MACHINE),MIST)
+      TARGET=LINUX64
+      CC=icc
+      #CC=tau_cc.sh
+      OPT=-O3 -g -std=c99 -xHost
+      INTEL_DIR=/usr/local/packages/intel/Compiler/11.1/046
+      CUDA=YES
+      CUDA_DIR=/opt/cuda/
+      LIB_BITS=
+      MKL=YES
+      MKL_DIR=/usr/local/packages/intel/Compiler/11.1/046/mkl
+      MPI=YES
+      MPI_VENDOR=OMPI
+      MPI_PREFIX=/usr/local/packages/openmpi-1.3.3/intel-11.1.046-tm
+      GA=YES
+      GA_PREFIX=/mnt/netapp/home1/jhammond/ga-cvs-dev
+   endif
+
    # Breadboard
    ifeq ($(HOSTNAME),bblogin)
       TARGET=LINUX64
-      OPT=-O3
+      CC=icc
+      OPT=-O3 -g -std=c99 -xHost
       INTEL_DIR=/soft/intel/11.0.081
       CUDA=YES
       CUDA_DIR=/usr/local/cuda/
       LIB_BITS=
       MKL=YES
-      MKL_DIR= /soft/intel/11.0.081/mkl
+      MKL_DIR=/soft/intel/11.0.081/mkl
       MPI=YES
       MPI_PREFIX=/soft/apps/mpich2-1.2.1
       GA=YES
@@ -24,7 +47,8 @@
    # Eureka
    ifeq ($(HOSTNAME),login1.eureka.alcf.anl.gov)
       TARGET=LINUX64
-      OPT=-O3 -xHost -static-intel
+      CC=icc
+      OPT=-O3 -g -std=c99 -xHost -static-intel
       INTEL_DIR=/soft/apps/intel-cc-11.0.074
       CUDA=YES
       CUDA_DIR=/soft/apps/cuda-2.3/cuda
@@ -41,7 +65,8 @@
    # Gadzooks
    ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
       TARGET=LINUX64
-      OPT=-O3 -xHost -static-intel
+      CC=icc
+      OPT=-O3 -g -std=c99 -xHost -static-intel
       INTEL_DIR=/soft/apps/intel-cc-11.0.074
       CUDA=YES
       CUDA_DIR=/soft/apps/cuda-2.3/cuda
@@ -76,7 +101,8 @@
    endif
    ifeq ($(FUSION),YES)
       TARGET=LINUX64
-      OPT=-O3 -xSSE2,SSE3,SSSE3,SSE4.1,SSE4.2
+      CC=icc
+      OPT=-O3 -g -std=c99 -xHost
       INTEL_DIR=
       CUDA=NO
       MKL=YES
@@ -104,11 +130,12 @@
    endif
    ifeq ($(LINCOLN),YES)
       TARGET=LINUX64
-      OPT=-O3 -xT
+      CC=icc
+      OPT=-O3 -g -std=c99 -xHost -xT
       INTEL_DIR=
       CUDA=YES
       CUDA_DIR=/usr/local/cuda-2.2/cuda
-      LIB_BITS =
+      LIB_BITS=
       MKL=YES
       MKL_DIR=/usr/local/intel/mkl/10.2.2
       MPI=YES
@@ -121,7 +148,8 @@
    # Megatron
    ifeq ($(HOSTNAME),megatron)
       TARGET=LINUX64
-      OPT=-O3 -xSSE2,SSE3,SSSE3,SSE4.1
+      CC=icc
+      OPT=-O3 -g -std=c99 -xHost -xSSE2,SSE3,SSSE3,SSE4.1
       INTEL_DIR=/opt/intel/Compiler/11.1/059
       CUDA=YES
       CUDA_DIR=/opt/cuda
@@ -136,9 +164,10 @@
       OPENMP=YES
    endif
 
-   DEFINES = -DCOMPARE #-DDEBUG
-   INC =
-   LIB =
+   DEFINES=-DCOMPARE #-DDEBUG
+   INC=
+   LIB=
+   LDFLAGS=
 
    ifeq ($(BIGTESTS),YES)
       DEFINES+=-DBIGTESTS
@@ -151,10 +180,11 @@
    endif
 
    ifeq ($(CUDA),YES)
-      CUBLAS_LIB=-L${CUDA_DIR}/lib${LIB_BITS} -lcublas -lcuda
+      CUBLAS_LIB=-L$(CUDA_DIR)/lib$(LIB_BITS) -lcublas -lcudart
       DEFINES+=-DCUDA
-      INC+=-I${CUDA_DIR}/include
+      INC+=-I$(CUDA_DIR)/include
       LIB+=$(CUBLAS_LIB)
+      LDFLAGS+=-Wl,-rpath $(CUDA_DIR)/lib$(LIB_BITS)
    endif
 
    ifeq ($(GA),YES)
@@ -170,12 +200,14 @@
       else
          ifeq ($(MPI_VENDOR),MVAPICH)
             LIB+=-L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
+            LDFLAGS+=-Wl,-rpath  $(MPI_PREFIX)/lib
          else
             ifeq ($(MPI_VENDOR),HP)
                INC+=-I$(MPI_PREFIX)/include/64
                LIB+=-L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
             else # MPICH
                LIB+=-L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
+               LDFLAGS+=-Wl,-rpath  $(MPI_PREFIX)/lib
             endif
          endif
       endif
@@ -184,9 +216,10 @@
 
    ifeq ($(MKL),YES)
       DEFINES+=-DMKL
-      INC+=-I${MKL_DIR}/include
-      PBLAS+=-L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml
-      SBLAS+=-L${MKL_DIR}/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml
+      INC+=-I$(MKL_DIR)/include
+      PBLAS+=-L$(MKL_DIR)/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml -lpthread
+      SBLAS+=-L$(MKL_DIR)/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml -lpthread
+      LDFLAGS+=-Wl,-rpath  $(MKL_DIR)/lib/em64t
    else
       PBLAS_LIB=-lblas -lpthread
       SBLAS_LIB=-lblas -lpthread
@@ -196,16 +229,9 @@
 
    LIB+=-lm -lpthread
 
-   FC=ifort
-   FOPT=$(OPT)
-   FFLAGS=-g $(COPT) $(INC) $(DEFINES)
-
-   CC=icc
-   COPT=$(OPT)
-   CFLAGS=-g -std=c99 $(COPT) $(INC) $(DEFINES)
-
+   CFLAGS=$(OPT) $(INC) $(DEFINES)
    LD=$(CC)
-   LDFLAGS=-g -std=c99 $(OPT)
+   LDFLAGS+=$(OPT) -Wl,--export-dynamic
 
 #############################################
 #
@@ -331,6 +357,8 @@ refresh: realclean bin
 clean:
 	rm -f *.o
 
-realclean: clean
-	rm -f *.x *.a
+tauclean:
+	rm -f *.pdb profile.* *.inst.*
 
+realclean: clean tauclean
+	rm -f *.x
