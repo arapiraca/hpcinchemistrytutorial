@@ -1,0 +1,20 @@
+#!/bin/sh
+#PBS -N comm_bench1
+#PBS -l nodes=8:ppn=1
+#PBS -l walltime=0:29:00
+#PBS -j oe
+#PBS -V
+
+np=`wc -l < $PBS_NODEFILE`
+nn=`sort -u $PBS_NODEFILE | wc -l`
+echo Number of nodes is $nn
+echo Number of processors is $np
+
+cd $PBS_O_WORKDIR
+
+export MPIRUN="time /opt/openmpi/bin/mpirun -np $np -hostfile $PBS_NODEFILE"
+$MPIRUN /mnt/netapp/home1/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 1000
+$MPIRUN /mnt/netapp/home1/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 10000
+$MPIRUN /mnt/netapp/home1/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 100000
+$MPIRUN /mnt/netapp/home1/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 1000000
+$MPIRUN /mnt/netapp/home1/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench1_LINUX64.x 10000000

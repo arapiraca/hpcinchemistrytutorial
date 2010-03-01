@@ -4,6 +4,20 @@
 #
 #############################################
 
+   ifeq ($(HOSTNAME),mist.cs.uoregon.edu)
+     MACHINE=MIST
+   endif
+   ifeq ($(MACHINE),MIST)
+      TARGET=LINUX64
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/opt/openmpi
+      MPI_VENDOR=OMPI
+      GA=YES
+      GA_PREFIX=/mnt/netapp/home1/jhammond/ga-cvs-dev
+   endif
+
    ifeq ($(HOSTNAME),krakenpf11)
      MACHINE=KRAKEN
    endif
