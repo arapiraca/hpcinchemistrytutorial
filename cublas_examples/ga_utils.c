@@ -156,7 +156,9 @@ void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_
 
 #endif
 
+#if defined(CUDA)
     start_cublas(*me);
+#endif
 
     print_hostname(*me);
 
@@ -170,7 +172,9 @@ void stop_parallel()
     if (me==0) GA_Print_stats();
 #endif
 
+#if defined(CUDA)
     stop_cublas();
+#endif
 
 #ifdef GA
     GA_Terminate();

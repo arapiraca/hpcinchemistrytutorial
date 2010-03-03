@@ -36,8 +36,8 @@ ifeq ($(TARGET),LINUX64)
    GSL_INC=-I$(GSL_DIR)/include
    GSL_LIB=-L$(GSL_DIR)/lib -lgslcblas -lgsl
 
-   #BLAS=$(GOTO)
-   BLAS=$(MKL_LIB)
+   BLAS=$(GOTO)
+   #BLAS=$(MKL_LIB)
 
    EXTRAS=-lm -lpthread
 

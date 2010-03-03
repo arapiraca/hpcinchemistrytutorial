@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N driver
+#PBS -N ga_cpu_sgemm
 #PBS -l nodes=8:ppn=8
 #PBS -l walltime=0:30:00
 
@@ -7,57 +7,44 @@ cd $PBS_O_WORKDIR
 
 export MPIRUN=/soft/mvapich2/1.4-intel-11.1.059/bin/mpiexec
 
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  200
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  300
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  400
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  500
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  600
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  700
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  800
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12  900
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1100
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1200
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1300
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1400
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1600
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1700
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1800
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 1900
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2100
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2200
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2300
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2400
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2600
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2700
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2800
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 2900
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3100
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3200
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3300
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3400
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3600
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3700
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3800
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 3900
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4100
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4200
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4300
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4400
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4600
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4700
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4800
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 4900
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5000
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5100
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5200
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5300
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5400
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5600
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5700
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5800
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 5900
-$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/driver_LINUX64.x 12 6000
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   1024    512
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   2048    1024
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   3072    1536
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   4096    2048
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   5120    2560
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   6144    3072
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   7168    3584
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   8192    4096
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   9216    4608
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   10240   5120
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   11264   5632
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   12288   6144
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   13312   6656
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   14336   7168
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   15360   7680
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   16384   8192
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   17408   8704
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   18432   9216
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   19456   9728
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   20480   10240
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   21504   10752
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   22528   11264
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   23552   11776
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   24576   12288
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   25600   12800
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   26624   13312
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   27648   13824
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   28672   14336
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   29696   14848
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   30720   15360
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   31744   15872
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   32768   16384
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   33792   16896
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   34816   17408
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   35840   17920
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   36864   18432
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   37888   18944
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   38912   19456
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   39936   19968
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/cublas_examples/ga_cpu_sgemm.x   40960   20480
+
