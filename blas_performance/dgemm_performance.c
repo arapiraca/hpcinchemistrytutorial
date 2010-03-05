@@ -84,26 +84,11 @@ inline double gettime(void)
 
 int main(int argc, char **argv)
 {
-
-    if (argc!=4) printf("./dgemm_performance.x <dim1> <dim2> <dim3>\n");
-
+    if (argc!=4) fprintf(stderr,"./dgemm_performance.x <dim1> <dim2> <dim3>\n");
     int dim1 = ( argc>1 ? atoi(argv[1]) : 50 );
     int dim2 = ( argc>2 ? atoi(argv[2]) : 50 );
     int dim3 = ( argc>3 ? atoi(argv[3]) : 50 );
-
-    if ((dim1>0) && (dim2>0) && (dim3>0)){
-        printf("dim1=%d\n",dim1);
-        printf("dim2=%d\n",dim2);
-        printf("dim3=%d\n",dim3);
-    } else { return(1); }
-
-    double start,finish;
-    double t_loops,t_dgemm;
-
-    int i,j,k;
-
-    double alpha = 1.0;
-    double beta  = 0.0;
+    if ((dim1<1) || (dim2<1) || (dim3<1)) return(1);
 
     BLAS_INT rowc = dim1;
     BLAS_INT rowa = dim1;
@@ -112,28 +97,38 @@ int main(int argc, char **argv)
     BLAS_INT colb = dim2;
     BLAS_INT colc = dim2;
 
-    long nflops;
-    nflops = 2*dim1*dim2*dim3;
+    int i,j,k;
 
-    double* p_a =(double *) malloc(rowa*cola*sizeof(double));
-    for (i=0;i<(rowa*cola);i++) p_a[i]=(double)rand()/RAND_MAX;
-    double* p_b =(double *) malloc(rowb*colb*sizeof(double));
-    for (i=0;i<(rowb*colb);i++) p_b[i]=(double)rand()/RAND_MAX;
-    double* p_c=(double *) malloc(rowc*colc*sizeof(double));
-    double* p_d=(double *) malloc(rowc*colc*sizeof(double));
+    double* p_a = (double *) malloc(rowa*cola*sizeof(double));
+    double* p_b = (double *) malloc(rowb*colb*sizeof(double));
+    double* p_c = (double *) malloc(rowc*colc*sizeof(double));
+    double* p_d = (double *) malloc(rowc*colc*sizeof(double));
+    for (i=0;i<(rowa*cola);i++) p_a[i] = (double)rand()/RAND_MAX;
+    for (i=0;i<(rowb*colb);i++) p_b[i] = (double)rand()/RAND_MAX;
+
+    if ((dim1==1) && (dim2==1) && (dim3==1))
+        fprintf(stdout,"%20s %4s %4s %4s %14s %14s\n","BLAS_NAME","dim1","dim2","dim3","seconds","Gflop/s");
+
+    double start,finish;
+    double t_loops,t_dgemm;
+
+    long nflops = 2*dim1*dim2*dim3;
+
+    double alpha = 1.0;
+    double beta  = 1.0;
 
     if ((dim1<400) && (dim2<400) && (dim3<400)){
         for (i=0;i<(rowc*colc);i++) p_c[i]=0.0;
         start = gettime();
-        for (i=0;i<dim1;i++ )
-            for (j=0;j<dim2;j++ )
+        for (i=0;i<dim1;i++){
+            for (j=0;j<dim2;j++){
                 p_c[i+j*rowc] *= beta;
-                for (k=0;k<dim3;k++ ){
-                    p_c[i+j*rowc]+=alpha*p_a[i+k*rowa]*p_b[k+j*rowb];
-                }
+                for (k=0;k<dim3;k++ ) p_c[i+j*rowc]+=alpha*p_a[i+k*rowa]*p_b[k+j*rowb];
+            }
+        }
         finish = gettime();
         t_loops = finish - start;
-        printf("! time for %20s dgemm=%14.7f seconds\n","triple-loops",t_loops);
+        fprintf(stdout,"%20s %4d %4d %4d %14.7f %14.7f\n","triple-loops",dim1,dim2,dim3,t_loops,((double)nflops/(1000*1000*1000))/t_loops);
     }
 
     for (i=0;i<(rowc*colc);i++) p_d[i]=0.0;
@@ -141,20 +136,18 @@ int main(int argc, char **argv)
     dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
     finish = gettime();
     t_dgemm = finish - start;
-    printf("! time for %20s dgemm=%14.7f seconds\n",BLAS_NAME,t_dgemm);
-    printf("! perf. of %20s dgemm=%14.7f Gflop/s\n",BLAS_NAME,((double)nflops/(1000*1000*1000))/t_dgemm);
-
+    fprintf(stdout,"%20s %4d %4d %4d %14.7f %14.7f\n",BLAS_NAME,dim1,dim2,dim3,t_dgemm,((double)nflops/(1000*1000*1000))/t_dgemm);
 
     if ((dim1<400) && (dim2<400) && (dim3<400)){
-        printf("! %20s is %6.2f times faster than loops\n",BLAS_NAME,t_loops/t_dgemm);
         double error=0.0;
         for (i=0;i<rowc;i++ ){
             for (j=0;j<colc;j++ ){
                 error+=abs(p_c[i+j*rowc]-p_d[i+j*rowc]);
-                assert(abs(p_c[i+j*rowc]-p_d[i+j*rowc])<1e-12);
+                if (abs(p_c[i+j*rowc]-p_d[i+j*rowc])>1e-14) printf("error in output(%3d,%3d): %f vs %f\n",i,j,p_c[i+j*rowc],p_d[i+j*rowc]);
+                //assert(abs(p_c[i+j*rowc]-p_d[i+j*rowc])<1e-12);
              }
         }
-        printf("! dgemm error=%20.14f\n",error);
+        fprintf(stderr,"dgemm error=%20.14f\n",error);
     }
 
     free(p_d);
