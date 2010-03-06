@@ -57,8 +57,10 @@ __inline__ unsigned long long getticks(void)
 
 #else
 
-#include <time.h>
-unsigned long long getticks(void) { return (unsigned long long) clock(); }
+#error NO CYCLE-ACCURATE COUNTER AVAILABLE
+
+//#include <time.h>
+//unsigned long long getticks(void) { return (unsigned long long) clock(); }
 
 #endif // targets
 
