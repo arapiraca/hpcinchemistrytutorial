@@ -653,17 +653,17 @@ int main(int argc, char **argv)
     printf("t07arg = %llu\n",t07arg);
     printf("t08arg = %llu\n",t08arg);
     printf("t09arg = %llu\n",t09arg);
-    printf("t09arg = %llu\n",t10arg);
-    printf("t01arg = %llu\n",t11arg);
-    printf("t02arg = %llu\n",t12arg);
-    printf("t03arg = %llu\n",t13arg);
-    printf("t04arg = %llu\n",t14arg);
-    printf("t05arg = %llu\n",t15arg);
-    printf("t06arg = %llu\n",t16arg);
-    printf("t07arg = %llu\n",t17arg);
-    printf("t08arg = %llu\n",t18arg);
-    printf("t09arg = %llu\n",t19arg);
-    printf("t09arg = %llu\n",t20arg);
+    printf("t10arg = %llu\n",t10arg);
+    printf("t11arg = %llu\n",t11arg);
+    printf("t12arg = %llu\n",t12arg);
+    printf("t13arg = %llu\n",t13arg);
+    printf("t14arg = %llu\n",t14arg);
+    printf("t15arg = %llu\n",t15arg);
+    printf("t16arg = %llu\n",t16arg);
+    printf("t17arg = %llu\n",t17arg);
+    printf("t18arg = %llu\n",t18arg);
+    printf("t19arg = %llu\n",t19arg);
+    printf("t20arg = %llu\n",t20arg);
 
     /********************************************/
 
