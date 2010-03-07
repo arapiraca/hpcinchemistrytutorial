@@ -400,7 +400,28 @@ int main(int argc, char **argv)
 
     /********************************************/
 
-    unsigned long long int t0, t1;
+    unsigned long long int t0=0;
+    unsigned long long int t1=0;
+    unsigned long long int t01arg=0;
+    unsigned long long int t02arg=0;
+    unsigned long long int t03arg=0;
+    unsigned long long int t04arg=0;
+    unsigned long long int t05arg=0;
+    unsigned long long int t06arg=0;
+    unsigned long long int t07arg=0;
+    unsigned long long int t08arg=0;
+    unsigned long long int t09arg=0;
+    unsigned long long int t10arg=0;
+    unsigned long long int t11arg=0;
+    unsigned long long int t12arg=0;
+    unsigned long long int t13arg=0;
+    unsigned long long int t14arg=0;
+    unsigned long long int t15arg=0;
+    unsigned long long int t16arg=0;
+    unsigned long long int t17arg=0;
+    unsigned long long int t18arg=0;
+    unsigned long long int t19arg=0;
+    unsigned long long int t20arg=0;
 
     int arg01=0;
     int arg02=0;
@@ -432,35 +453,37 @@ int main(int argc, char **argv)
     for (i=0;i<n;i++) in[i]  = 0.9;
     for (i=0;i<n;i++) out[i] = 1.1;
 
-    for (i=0;i<100;i++)
+    size_t ntrials = 1000;
+
+    for (i=0;i<ntrials;i++)
     {
         flush_cache(n,alpha,in,out);
 
         t0=getticks();
         test_01arg(&arg01);
         t1=getticks();
-        printf("test_01arg = %llu\n",t1-t0);
+        t01arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
         t0=getticks();
         test_02arg(&arg01, &arg02);
         t1=getticks();
-        printf("test_02arg = %llu\n",t1-t0);
+        t02arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
         t0=getticks();
         test_03arg(&arg01, &arg02, &arg03);
         t1=getticks();
-        printf("test_03arg = %llu\n",t1-t0);
+        t03arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
         t0=getticks();
         test_04arg(&arg01, &arg02, &arg03, &arg04);
         t1=getticks();
-        printf("test_04arg = %llu\n",t1-t0);
+        t04arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -468,7 +491,7 @@ int main(int argc, char **argv)
         test_05arg(&arg01, &arg02, &arg03, &arg04,
                &arg05);
         t1=getticks();
-        printf("test_05arg = %llu\n",t1-t0);
+        t05arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -476,7 +499,7 @@ int main(int argc, char **argv)
         test_06arg(&arg01, &arg02, &arg03, &arg04,
                &arg05, &arg06);
         t1=getticks();
-        printf("test_06arg = %llu\n",t1-t0);
+        t06arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -484,7 +507,7 @@ int main(int argc, char **argv)
         test_07arg(&arg01, &arg02, &arg03, &arg04,
                &arg05, &arg06, &arg07);
         t1=getticks();
-        printf("test_07arg = %llu\n",t1-t0);
+        t07arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -492,7 +515,7 @@ int main(int argc, char **argv)
         test_08arg(&arg01, &arg02, &arg03, &arg04,
                &arg05, &arg06, &arg07, &arg08);
         t1=getticks();
-        printf("test_08arg = %llu\n",t1-t0);
+        t08arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -501,7 +524,7 @@ int main(int argc, char **argv)
                &arg05, &arg06, &arg07, &arg08,
                &arg09);
         t1=getticks();
-        printf("test_09arg = %llu\n",t1-t0);
+        t09arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -510,7 +533,7 @@ int main(int argc, char **argv)
                &arg05, &arg06, &arg07, &arg08,
                &arg09, &arg10);
         t1=getticks();
-        printf("test_10arg = %llu\n",t1-t0);
+        t10arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -520,7 +543,7 @@ int main(int argc, char **argv)
                &arg05, &arg06, &arg07, &arg08,
                &arg09, &arg10, &arg11);
         t1=getticks();
-        printf("test_11arg = %llu\n",t1-t0);
+        t11arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -530,7 +553,7 @@ int main(int argc, char **argv)
                &arg05, &arg06, &arg07, &arg08,
                &arg09, &arg10, &arg11, &arg12);
         t1=getticks();
-        printf("test_12arg = %llu\n",t1-t0);
+        t12arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -541,7 +564,7 @@ int main(int argc, char **argv)
                &arg09, &arg10, &arg11, &arg12,
                &arg13);
         t1=getticks();
-        printf("test_13arg = %llu\n",t1-t0);
+        t13arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -551,7 +574,7 @@ int main(int argc, char **argv)
                &arg09, &arg10, &arg11, &arg12,
                &arg13, &arg14);
         t1=getticks();
-        printf("test_14arg = %llu\n",t1-t0);
+        t14arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -561,7 +584,7 @@ int main(int argc, char **argv)
                &arg09, &arg10, &arg11, &arg12,
                &arg13, &arg14, &arg15);
         t1=getticks();
-        printf("test_15arg = %llu\n",t1-t0);
+        t15arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -571,7 +594,7 @@ int main(int argc, char **argv)
                &arg09, &arg10, &arg11, &arg12,
                &arg13, &arg14, &arg15, &arg16);
         t1=getticks();
-        printf("test_16arg = %llu\n",t1-t0);
+        t16arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -582,7 +605,7 @@ int main(int argc, char **argv)
                &arg13, &arg14, &arg15, &arg16,
                &arg17);
         t1=getticks();
-        printf("test_17arg = %llu\n",t1-t0);
+        t17arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -593,7 +616,7 @@ int main(int argc, char **argv)
                &arg13, &arg14, &arg15, &arg16,
                &arg17, &arg18);
         t1=getticks();
-        printf("test_18arg = %llu\n",t1-t0);
+        t18arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -604,7 +627,7 @@ int main(int argc, char **argv)
                &arg13, &arg14, &arg15, &arg16,
                &arg17, &arg18, &arg19);
         t1=getticks();
-        printf("test_19arg = %llu\n",t1-t0);
+        t19arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
 
@@ -615,10 +638,32 @@ int main(int argc, char **argv)
                &arg13, &arg14, &arg15, &arg16,
                &arg17, &arg18, &arg19, &arg20);
         t1=getticks();
-        printf("test_20arg = %llu\n",t1-t0);
+        t20arg += (t1-t0);
 
         flush_cache(n,alpha,in,out);
     }
+
+    printf("timing for %lu trials\n",ntrials);
+    printf("t01arg = %llu\n",t01arg);
+    printf("t02arg = %llu\n",t02arg);
+    printf("t03arg = %llu\n",t03arg);
+    printf("t04arg = %llu\n",t04arg);
+    printf("t05arg = %llu\n",t05arg);
+    printf("t06arg = %llu\n",t06arg);
+    printf("t07arg = %llu\n",t07arg);
+    printf("t08arg = %llu\n",t08arg);
+    printf("t09arg = %llu\n",t09arg);
+    printf("t09arg = %llu\n",t10arg);
+    printf("t01arg = %llu\n",t11arg);
+    printf("t02arg = %llu\n",t12arg);
+    printf("t03arg = %llu\n",t13arg);
+    printf("t04arg = %llu\n",t14arg);
+    printf("t05arg = %llu\n",t15arg);
+    printf("t06arg = %llu\n",t16arg);
+    printf("t07arg = %llu\n",t17arg);
+    printf("t08arg = %llu\n",t18arg);
+    printf("t09arg = %llu\n",t19arg);
+    printf("t09arg = %llu\n",t20arg);
 
     /********************************************/
 
