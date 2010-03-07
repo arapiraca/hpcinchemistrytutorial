@@ -54,6 +54,7 @@ unsigned long long getticks(void);
 void flush_cache(size_t n, float alpha, float* in, float* out)
 {
     int i;
+    for (i=(n-1);i>=0;i--) in[i] = rand();
     for (i=0;i<n;i++) out[i] = alpha*in[i];
 }
 
@@ -84,7 +85,7 @@ void test_04arg(int* arg01, int* arg02, int* arg03, int* arg04)
 }
 
 void test_05arg(int* arg01, int* arg02, int* arg03, int* arg04,
-        int* arg05)
+                int* arg05)
 {
    (*arg01)++;
    (*arg02)++;
@@ -94,7 +95,7 @@ void test_05arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_06arg(int* arg01, int* arg02, int* arg03, int* arg04,
-        int* arg05, int* arg06)
+                int* arg05, int* arg06)
 {
    (*arg01)++;
    (*arg02)++;
@@ -105,7 +106,7 @@ void test_06arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_07arg(int* arg01, int* arg02, int* arg03, int* arg04,
-        int* arg05, int* arg06, int* arg07)
+                int* arg05, int* arg06, int* arg07)
 {
    (*arg01)++;
    (*arg02)++;
@@ -117,7 +118,7 @@ void test_07arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_08arg(int* arg01, int* arg02, int* arg03, int* arg04,
-        int* arg05, int* arg06, int* arg07, int* arg08)
+                int* arg05, int* arg06, int* arg07, int* arg08)
 {
    (*arg01)++;
    (*arg02)++;
@@ -130,8 +131,8 @@ void test_08arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_09arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09)
 {
    (*arg01)++;
    (*arg02)++;
@@ -145,8 +146,8 @@ void test_09arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_10arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10)
 {
    (*arg01)++;
    (*arg02)++;
@@ -161,8 +162,8 @@ void test_10arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_11arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11)
 {
    (*arg01)++;
    (*arg02)++;
@@ -178,8 +179,8 @@ void test_11arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_12arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12)
 {
    (*arg01)++;
    (*arg02)++;
@@ -196,9 +197,9 @@ void test_12arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_13arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13)
 {
    (*arg01)++;
    (*arg02)++;
@@ -216,9 +217,9 @@ void test_13arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_14arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13, int* arg14)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13, int* arg14)
 {
    (*arg01)++;
    (*arg02)++;
@@ -237,9 +238,9 @@ void test_14arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_15arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13, int* arg14, int* arg15)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13, int* arg14, int* arg15)
 {
    (*arg01)++;
    (*arg02)++;
@@ -259,9 +260,9 @@ void test_15arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_16arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13, int* arg14, int* arg15, int* arg16)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13, int* arg14, int* arg15, int* arg16)
 {
    (*arg01)++;
    (*arg02)++;
@@ -282,10 +283,10 @@ void test_16arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_17arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13, int* arg14, int* arg15, int* arg16,
-        int* arg17)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13, int* arg14, int* arg15, int* arg16,
+                int* arg17)
 {
    (*arg01)++;
    (*arg02)++;
@@ -307,10 +308,10 @@ void test_17arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_18arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13, int* arg14, int* arg15, int* arg16,
-        int* arg17, int* arg18)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13, int* arg14, int* arg15, int* arg16,
+                int* arg17, int* arg18)
 {
    (*arg01)++;
    (*arg02)++;
@@ -333,10 +334,10 @@ void test_18arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_19arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13, int* arg14, int* arg15, int* arg16,
-        int* arg17, int* arg18, int* arg19)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13, int* arg14, int* arg15, int* arg16,
+                int* arg17, int* arg18, int* arg19)
 {
    (*arg01)++;
    (*arg02)++;
@@ -360,10 +361,10 @@ void test_19arg(int* arg01, int* arg02, int* arg03, int* arg04,
 }
 
 void test_20arg(int* arg01, int* arg02, int* arg03, int* arg04, 
-        int* arg05, int* arg06, int* arg07, int* arg08, 
-        int* arg09, int* arg10, int* arg11, int* arg12,
-        int* arg13, int* arg14, int* arg15, int* arg16,
-        int* arg17, int* arg18, int* arg19, int* arg20)
+                int* arg05, int* arg06, int* arg07, int* arg08, 
+                int* arg09, int* arg10, int* arg11, int* arg12,
+                int* arg13, int* arg14, int* arg15, int* arg16,
+                int* arg17, int* arg18, int* arg19, int* arg20)
 {
    (*arg01)++;
    (*arg02)++;
@@ -537,7 +538,6 @@ int main(int argc, char **argv)
 
         flush_cache(n,alpha,in,out);
 
-        t0=getticks();
         t0=getticks();
         test_11arg(&arg01, &arg02, &arg03, &arg04,
                    &arg05, &arg06, &arg07, &arg08,
