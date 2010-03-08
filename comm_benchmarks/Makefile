@@ -108,11 +108,26 @@
       TARGET=BGP
       CC=mpixlc_r
       OPT=-O3
-      MPI=NO # that is, LIB and INC not needed
-      #MPI_PREFIX=
-      #MPI_VENDOR=MPICH
+      MPI=BGP
       GA=YES
-      GA_PREFIX=/gpfs/home/jhammond/ga-cvs-dev
+      #GA_PREFIX=/gpfs/home/jhammond/ga-cvs-dev
+      GA_PREFIX=/gpfs/home/jhammond/ga-dev-ibm
+   endif
+
+   # Eureka
+   ifeq ($(HOSTNAME),login1.eureka.alcf.anl.gov)
+      MACHINE=EUREKA
+   endif
+   ifeq ($(MACHINE),EUREKA)
+      TARGET=LINUX64
+      CC = gcc
+      OPT = -O3
+      MPI = YES
+      MPI_PREFIX = /soft/apps/mpich2-1.2.1
+      MPI_VENDOR = MPICH
+      GA = YES
+      GA_PREFIX = /home/jhammond/eureka/ga-cvs-dev
+      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc #-lmpl
    endif
 
    # Gadzooks
@@ -226,6 +241,10 @@
          endif
       endif
       INC+=-I$(MPI_PREFIX)/include
+   else
+      ifeq ($(MPI),BGP)
+         DEFINES+=-DMPI
+      endif
    endif
 
    ifeq ($(TARGET),LINUX64)
