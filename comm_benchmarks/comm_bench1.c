@@ -39,7 +39,7 @@ privately owned rights.
 
  ***************************************************************************/
 
-#include "comm_bench1.h"
+#include "comm_bench.h"
 
 int main(int argc, char **argv)
 {
