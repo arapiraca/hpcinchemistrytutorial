@@ -144,9 +144,9 @@ int main(int argc, char **argv)
     count = 0;
     for (xJump=0;xJump<xSize;xJump++){
         torusTarget[0] = (torusMe[0]+xJump)%xSize;
-        for (yJump=0;yJump<ySize;yJump++){
+        for (yJump=0;yJump<=xJump;yJump++){
             torusTarget[1] = (torusMe[1]+yJump)%ySize;
-            for (zJump=0;zJump<zSize;zJump++){
+            for (zJump=0;zJump<=yJump;zJump++){
                 count++;
                 MPI_Barrier(MPI_COMM_WORLD);
                 fflush(stdout);

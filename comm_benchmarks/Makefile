@@ -298,14 +298,10 @@ comm_bench3_$(TARGET).x: comm_bench3_$(TARGET).o getticks_$(TARGET).o
 comm_bench4_$(TARGET).x: comm_bench4_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench4_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench4_$(TARGET).x
 
-<<<<<<< .mine
-comm_bench1_$(TARGET).o: comm_bench1.c comm_bench.h
-=======
 mpi3_arg_test_$(TARGET).x: mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o $(LIB) -o mpi3_arg_test_$(TARGET).x
 
-comm_bench1_$(TARGET).o: comm_bench1.c comm_bench1.h
->>>>>>> .r366
+comm_bench1_$(TARGET).o: comm_bench1.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c -o comm_bench1_$(TARGET).o
 
 comm_bench2_$(TARGET).o: comm_bench2.c comm_bench.h
