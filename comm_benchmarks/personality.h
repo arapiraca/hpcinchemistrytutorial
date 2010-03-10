@@ -42,9 +42,13 @@ privately owned rights.
 #ifndef PERSONALITY_H
 #define PERSONALITY_H
 
-#include <unistd.h>
-#include <common/bgp_personality.h>
-#include <common/bgp_personality_inlines.h>
-#include <spi/kernel_interface.h>
+#if defined(BGP)
+    #include <unistd.h>
+    #include <common/bgp_personality.h>
+    #include <common/bgp_personality_inlines.h>
+    #include <spi/kernel_interface.h>
+#elif defined(CRAYXT)
+    #include <pmi.h>
+#endif
 
 #endif // PERSONALITY_H

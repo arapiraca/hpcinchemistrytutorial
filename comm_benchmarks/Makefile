@@ -18,6 +18,18 @@
       GA_PREFIX=/mnt/netapp/home1/jhammond/ga-cvs-dev
    endif
 
+   ifeq ($(HOSTNAME),jaguar14)
+     MACHINE=JAGUAR
+   endif
+   ifeq ($(MACHINE),JAGUAR)
+      TARGET=LINUX64
+      CC=cc
+      OPT=-O3
+      MPI=NO
+      GA=YES
+      GA_PREFIX=/sw/xt5/globalarrays/4.2/cnl2.1_pgi8.0.3_portals/ga-4-2
+   endif
+
    ifeq ($(HOSTNAME),krakenpf11)
      MACHINE=KRAKEN
    endif
@@ -250,11 +262,18 @@
    ifeq ($(TARGET),LINUX64)
       GCC=gcc
    endif
-   ifeq ($(TARGET),BGP)
+
+   ifeq ($(MACHINE),BGP)
       GCC=$(CC)
+      DEFINES+=-DBGP
       DEFINES+=-DHAVE_DCMF_TIMEBASE
       DEFINES+=-DHAVE_BGP_PERSONALITY
       INC+=-I/bgsys/drivers/ppcfloor/arch/include
+   endif
+
+   ifeq ($(MACHINE),JAGUAR)
+      DEFINES+=-DCRAYXT
+      INC+=
    endif
 
    LIB+=-lm -lpthread $(EXTRA_LIBS)
@@ -314,7 +333,7 @@ comm_bench4_$(TARGET).o: comm_bench3.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench4.c -o comm_bench4_$(TARGET).o
 
 comm_util_$(TARGET).o: comm_util.c comm_util.h
-	$(CC) $(CFLAGS) $(INC) -c comm_util.c -o co
+	$(CC) $(CFLAGS) $(INC) -c comm_util.c -o comm_util_$(TARGET).o
 
 mpi3_arg_test_$(TARGET).o: mpi3_arg_test.c 
 	$(CC) $(CFLAGS) $(INC) -c mpi3_arg_test.c -o mpi3_arg_test_$(TARGET).o

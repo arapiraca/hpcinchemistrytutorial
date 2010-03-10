@@ -55,8 +55,6 @@ privately owned rights.
 
 unsigned long long getticks(void);
 
-#ifdef HAVE_BGP_PERSONALITY
 #include "personality.h"
-#endif // HAVE_BGP_PERSONALITY
 
 #endif // COMM_BENCH_H
