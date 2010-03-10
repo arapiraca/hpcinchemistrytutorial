@@ -273,7 +273,10 @@
 
    ifeq ($(MACHINE),JAGUAR)
       DEFINES+=-DCRAYXT
-      INC+=
+      INC+=-I/opt/mpt/default/xt/pmi/include/
+      INC+=-I/opt/xt-pe/default/include
+      LIB+=-L/opt/xt-pe/default/lib -lportals
+      LIB+=-L/opt/xt-pe/default/lib/snos64 -lrca
    endif
 
    LIB+=-lm -lpthread $(EXTRA_LIBS)
@@ -303,13 +306,23 @@
 #all: refresh bin
 all: bin comm_util_$(TARGET).o
 
-bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x mpi3_arg_test_$(TARGET).x
+bin: extra_bin comm_bench1_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x mpi3_arg_test_$(TARGET).x
+
+ifeq ($(MACHINE),BGP)
+   extra_bin: comm_bench2_bgp_$(TARGET).x
+endif
+ifeq ($(MACHINE),JAGUAR)
+   extra_bin: comm_bench2_xt5_$(TARGET).x
+endif
 
 comm_bench1_$(TARGET).x: comm_bench1_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench1_$(TARGET).x
 
-comm_bench2_$(TARGET).x: comm_bench2_$(TARGET).o getticks_$(TARGET).o
-	$(LD) $(LDFLAGS) comm_bench2_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench2_$(TARGET).x
+comm_bench2_bgp_$(TARGET).x: comm_bench2_bgp_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench2_bgp_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench2_bgp_$(TARGET).x
+
+comm_bench2_xt5_$(TARGET).x: comm_bench2_xt5_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench2_xt5_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench2_xt5_$(TARGET).x
 
 comm_bench3_$(TARGET).x: comm_bench3_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench3_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench3_$(TARGET).x
@@ -323,8 +336,11 @@ mpi3_arg_test_$(TARGET).x: mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o
 comm_bench1_$(TARGET).o: comm_bench1.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c -o comm_bench1_$(TARGET).o
 
-comm_bench2_$(TARGET).o: comm_bench2.c comm_bench.h
-	$(CC) $(CFLAGS) $(INC) -c comm_bench2.c -o comm_bench2_$(TARGET).o
+comm_bench2_bgp_$(TARGET).o: comm_bench2_bgp.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench2_bgp.c -o comm_bench2_bgp_$(TARGET).o
+
+comm_bench2_xt5_$(TARGET).o: comm_bench2_xt5.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench2_xt5.c -o comm_bench2_xt5_$(TARGET).o
 
 comm_bench3_$(TARGET).o: comm_bench3.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench3.c -o comm_bench3_$(TARGET).o

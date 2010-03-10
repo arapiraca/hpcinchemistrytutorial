@@ -39,19 +39,28 @@ privately owned rights.
 
  ***************************************************************************/
 
-#ifndef PERSONALITY_H
-#define PERSONALITY_H
+#include "comm_bench.h"
 
-#if defined(BGP)
-    #include <unistd.h>
-    #include <common/bgp_personality.h>
-    #include <common/bgp_personality_inlines.h>
-    #include <spi/kernel_interface.h>
-#elif defined(CRAYXT)
-/* /opt/mpt/default/xt/pmi/include/pmi.h on Jaguar */
-    #include <pmi.h>
-/* /opt/xt-pe/default/include/rca_lib.h on Jaguar */
-    #include <rca_lib.h>
-#endif
+int main(int argc, char **argv)
+{
+    int me;
+    int nproc;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD,&me);
+    MPI_Comm_size(MPI_COMM_WORLD,&nproc);
 
-#endif // PERSONALITY_H
+    int nodeid = -1;
+    PMI_Portals_get_nid(me, &nodeid);
+    printf("%d: PMI_Portals_get_nid returns %d\n",me,nodeid);
+
+    rca_mesh_coord_t xyz;
+    rca_get_meshcoord((uint16_t)nodeid, &xyz);
+    unsigned short xTorus = xyz.mesh_x;
+    unsigned short yTorus = xyz.mesh_y;
+    unsigned short zTorus = xyz.mesh_z;
+    printf("%d: rca_get_meshcoord returns (%u,%u,%u)\n",me,xTorus,yTorus,zTorus);
+
+    MPI_Finalize();
+    return(0);
+}
+

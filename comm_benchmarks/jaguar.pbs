@@ -1,0 +1,10 @@
+#!/bin/csh -f
+#PBS -A CHM022
+#PBS -N comm_bench2_xt5
+#PBS -j oe
+#PBS -q debug
+#PBS -l walltime=0:10:00,size=24
+
+#setenv CRAY_PORTALS_USE_BLOCKING_POLL 1
+cp /ccs/home/jhammond/hpcinchemistrytutorial/comm_benchmarks/comm_bench2_xt5_LINUX64.x .
+aprun -n $PBS_NNODES ./comm_bench2_xt5_LINUX64.x
