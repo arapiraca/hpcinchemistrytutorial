@@ -51,14 +51,18 @@ int main(int argc, char **argv)
 
     int nodeid = -1;
     PMI_Portals_get_nid(me, &nodeid);
-    printf("%d: PMI_Portals_get_nid returns %d\n",me,nodeid);
+    printf("%5d: PMI_Portals_get_nid returns %6d\n",me,nodeid);
+    fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
 
     rca_mesh_coord_t xyz;
     rca_get_meshcoord((uint16_t)nodeid, &xyz);
     unsigned short xTorus = xyz.mesh_x;
     unsigned short yTorus = xyz.mesh_y;
     unsigned short zTorus = xyz.mesh_z;
-    printf("%d: rca_get_meshcoord returns (%u,%u,%u)\n",me,xTorus,yTorus,zTorus);
+    printf("%5d: rca_get_meshcoord returns (%2u,%2u,%2u)\n",me,xTorus,yTorus,zTorus);
+    fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Finalize();
     return(0);
