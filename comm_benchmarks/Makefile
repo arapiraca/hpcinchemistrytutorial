@@ -306,7 +306,7 @@
 #all: refresh bin
 all: bin comm_util_$(TARGET).o
 
-bin: extra_bin comm_bench1_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x mpi3_arg_test_$(TARGET).x
+bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x comm_bench5_$(TARGET).x comm_bench6_$(TARGET).x mpi3_arg_test_$(TARGET).x
 
 ifeq ($(MACHINE),BGP)
    extra_bin: comm_bench2_bgp_$(TARGET).x
@@ -330,6 +330,12 @@ comm_bench3_$(TARGET).x: comm_bench3_$(TARGET).o getticks_$(TARGET).o
 comm_bench4_$(TARGET).x: comm_bench4_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench4_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench4_$(TARGET).x
 
+comm_bench5_$(TARGET).x: comm_bench5_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench5_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench5_$(TARGET).x
+
+comm_bench6_$(TARGET).x: comm_bench6_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) comm_bench6_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench6_$(TARGET).x
+
 mpi3_arg_test_$(TARGET).x: mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o $(LIB) -o mpi3_arg_test_$(TARGET).x
 
@@ -345,8 +351,14 @@ comm_bench2_xt5_$(TARGET).o: comm_bench2_xt5.c comm_bench.h
 comm_bench3_$(TARGET).o: comm_bench3.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench3.c -o comm_bench3_$(TARGET).o
 
-comm_bench4_$(TARGET).o: comm_bench3.c comm_bench.h
+comm_bench4_$(TARGET).o: comm_bench4.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench4.c -o comm_bench4_$(TARGET).o
+
+comm_bench5_$(TARGET).o: comm_bench5.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench5.c -o comm_bench5_$(TARGET).o
+
+comm_bench6_$(TARGET).o: comm_bench6.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c comm_bench6.c -o comm_bench6_$(TARGET).o
 
 comm_util_$(TARGET).o: comm_util.c comm_util.h
 	$(CC) $(CFLAGS) $(INC) -c comm_util.c -o comm_util_$(TARGET).o
