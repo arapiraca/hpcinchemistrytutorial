@@ -4,6 +4,18 @@
 #
 #############################################
 
+   ifeq ($(HOSTNAME),krakenpf11)
+     MACHINE=KRAKEN
+   endif
+   ifeq ($(MACHINE),KRAKEN)
+      TARGET=LINUX64
+      CC=cc
+      OPT=-O3
+      MPI=NO
+      GA=YES
+      GA_PREFIX=/nics/b/home/hammond/ga-cvs-dev
+   endif
+
    # Mist
    ifeq ($(HOSTNAME),mist.cs.uoregon.edu)
      MACHINE=MIST
