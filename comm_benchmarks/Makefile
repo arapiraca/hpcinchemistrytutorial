@@ -308,7 +308,7 @@
 #all: refresh bin
 all: bin comm_util_$(TARGET).o
 
-bin: torture1_$(TARGET).x comm_bench1_$(TARGET).x comm_bench2_bgp_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x comm_bench5_$(TARGET).x comm_bench6_$(TARGET).x mpi3_arg_test_$(TARGET).x
+bin: torture1_$(TARGET).x torture2_$(TARGET).x comm_bench1_$(TARGET).x comm_bench2_bgp_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x comm_bench5_$(TARGET).x comm_bench6_$(TARGET).x mpi3_arg_test_$(TARGET).x
 
 ifeq ($(MACHINE),BGP)
    extra_bin: comm_bench2_bgp_$(TARGET).x
@@ -319,6 +319,9 @@ endif
 
 torture1_$(TARGET).x: torture1_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) torture1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o torture1_$(TARGET).x
+
+torture2_$(TARGET).x: torture2_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) torture2_$(TARGET).o getticks_$(TARGET).o $(LIB) -o torture2_$(TARGET).x
 
 comm_bench1_$(TARGET).x: comm_bench1_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench1_$(TARGET).x
@@ -346,6 +349,9 @@ mpi3_arg_test_$(TARGET).x: mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o
 
 torture1_$(TARGET).o: torture1.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c torture1.c -o torture1_$(TARGET).o
+
+torture2_$(TARGET).o: torture2.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c torture2.c -o torture2_$(TARGET).o
 
 comm_bench1_$(TARGET).o: comm_bench1.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c -o comm_bench1_$(TARGET).o
