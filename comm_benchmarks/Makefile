@@ -282,6 +282,7 @@
 
    LIB+=-lm -lpthread $(EXTRA_LIBS)
 
+   OPT=-O3
    COPT=$(OPT)
    CFLAGS=-g $(COPT)
    ifeq ($(CC),mpixlc_r)

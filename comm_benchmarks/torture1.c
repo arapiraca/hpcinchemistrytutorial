@@ -127,7 +127,7 @@ int main(int argc, char **argv)
     t0 = MPI_Wtime();
     for (j=0;j<nproc;j++){
         target = (me+j) % nproc;
-        if (debug=1) { printf("%d: ARMCI_Acc fired to %d\n",me,target); fflush(stdout); }
+        if (debug==1) { printf("%d: ARMCI_Acc fired to %d\n",me,target); fflush(stdout); }
         //status = ARMCI_Acc(ARMCI_ACC_DBL,&scale,b1, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
         status = ARMCI_AccS(ARMCI_ACC_DBL, &scale, 
                  /* src */  b1, NULL,
