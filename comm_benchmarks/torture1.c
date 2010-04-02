@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 
     int a;
     if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
-    int bufSize = ( argc>1 ? atoi(argv[1]) : 1000000 );
+    int bufSize = ( argc>1 ? atoi(argv[1]) : 64 );
     int debug   = ( argc>2 ? atoi(argv[2]) : 0 );
     if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
 
@@ -110,37 +110,55 @@ int main(int argc, char **argv)
     status = ARMCI_Put(b1, addrVec1[me], bufSize*sizeof(double), me); assert(status==0);
     status = ARMCI_Put(b2, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
     ARMCI_Barrier();
+    //for (i=0;i<bufSize;i++) printf("%d: BEFORE addrVec1[%d][%d] = %f\n",me,me,i,addrVec1[me][i]); fflush(stdout);
+    for (i=0;i<bufSize;i++) printf("%d: BEFORE addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]); fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
+    printf("=====\n");
+    fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
 
     int j,target;
     double scale = 1.0;
     double correct = -1.0;
     for (i=0;i<nproc;i++) correct += 1.0*i;
+    if (debug==1 && me==0) { printf("%d: AFTER correct = %f\n",me,correct); fflush(stdout); }
 
     int stride_levels = 0;
-    int count = bufSize*sizeof(double);
-    //int src_stride_ar[stride_levels];
-    //int dst_stride_ar[stride_levels];
-    //src_stride_ar[0]=sizeof(double);
-    //dst_stride_ar[0]=sizeof(double);
+    int count[1];
+    int src_stride_ar[1];
+    int dst_stride_ar[1];
+    count[0] = bufSize*sizeof(double);
+    src_stride_ar[0]=sizeof(double);
+    dst_stride_ar[0]=sizeof(double);
 
     MPI_Barrier(MPI_COMM_WORLD);
     t0 = MPI_Wtime();
     for (j=0;j<nproc;j++){
         target = (me+j) % nproc;
         if (debug==1) { printf("%d: ARMCI_Acc fired to %d\n",me,target); fflush(stdout); }
-        //status = ARMCI_Acc(ARMCI_ACC_DBL,&scale,b1, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
+        //status = ARMCI_Acc(ARMCI_ACC_DBL, &scale, b1, addrVec2[me], bufSize*sizeof(double), target); assert(status==0);
         status = ARMCI_AccS(ARMCI_ACC_DBL, &scale, 
-                 /* src */  b1, NULL,
-                 /* dst */  addrVec2[me], NULL,
-                            &count, stride_levels, me); 
+                 /* src */  b1, src_stride_ar,
+                 /* dst */  addrVec2[target], dst_stride_ar,
+                            count, stride_levels, target); 
                             assert(status==0);
     }
     t1 = MPI_Wtime();
     ARMCI_AllFence();
     t2 = MPI_Wtime();
-    for (i=0;i<bufSize;i++) assert( addrVec2[me][i]==correct );
-    printf("%d: ARMCI_Acc = %f s ARMCI_AllFence = %f s\n",me,t1-t0,t2-t1);
+    MPI_Barrier(MPI_COMM_WORLD);
+    t3 = MPI_Wtime();
+    //for (i=0;i<bufSize;i++) assert( addrVec2[me][i]==correct );
+    printf("%d: ARMCI_Acc = %f s ARMCI_AllFence = %f s MPI_Barrier = %f s\n",me,t1-t0,t2-t1,t3-t2);
     fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    printf("=====\n");
+    fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    for (i=0;i<bufSize;i++) printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]); fflush(stdout);
+    MPI_Barrier(MPI_COMM_WORLD);
 
     status = ARMCI_Free_local(b2); assert(status==0);
     status = ARMCI_Free_local(b1); assert(status==0);
