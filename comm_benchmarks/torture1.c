@@ -40,6 +40,8 @@ privately owned rights.
  ***************************************************************************/
 
 #include "comm_bench.h"
+ 
+#define LINE_STAMP fprintf(stdout, "%d:  line %d of %s  \n" , me,__LINE__ , __FILE__ );
 
 int main(int argc, char **argv)
 {
@@ -81,8 +83,9 @@ int main(int argc, char **argv)
         }
     }
 
-    if (me==0) printf("%d: ARMCI_Init\n",me);
+    if (me==0) printf("%d: before ARMCI_Init\n",me);
     ARMCI_Init();
+    if (me==0) printf("%d: after  ARMCI_Init\n",me);
     int status;
     double t0,t1,t2,t3;
     double tt0,tt1,tt2,tt3;
