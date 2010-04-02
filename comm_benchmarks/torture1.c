@@ -160,7 +160,7 @@ int main(int argc, char **argv)
     //for (i=0;i<bufSize;i++) printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]); fflush(stdout);
     if (debug==0) for (i=0;i<1;i++)       printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]);
     if (debug==1) for (i=0;i<bufSize;i++) printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]);
-    fflush(stdout); }
+    fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
 
     status = ARMCI_Free_local(b2); assert(status==0);
