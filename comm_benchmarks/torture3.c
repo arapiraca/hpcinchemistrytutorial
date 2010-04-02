@@ -117,11 +117,6 @@ int main(int argc, char **argv)
     MPI_Barrier(MPI_COMM_WORLD);
 
     int j,target;
-    double scale = 1.0;
-    //double correct = -1.0;
-    //for (i=0;i<nproc;i++) correct += 1.0*i;
-    //if (debug==1 && me==0) { printf("%d: AFTER correct = %f\n",me,correct); fflush(stdout); }
-
     MPI_Barrier(MPI_COMM_WORLD);
     t0 = MPI_Wtime();
     for (j=0;j<nproc;j++){
