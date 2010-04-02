@@ -123,7 +123,8 @@
       MPI=BGP
       GA=YES
       #GA_PREFIX=/gpfs/home/jhammond/ga-cvs-dev
-      GA_PREFIX=/gpfs/home/jhammond/ga-dev-ibm
+      #GA_PREFIX=/gpfs/home/jhammond/ga-dev-ibm
+      GA_PREFIX=/gpfs/home/projects/nwchem/ga-4-3
    endif
 
    # Eureka
@@ -306,7 +307,7 @@
 #all: refresh bin
 all: bin comm_util_$(TARGET).o
 
-bin: comm_bench1_$(TARGET).x comm_bench2_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x comm_bench5_$(TARGET).x comm_bench6_$(TARGET).x mpi3_arg_test_$(TARGET).x
+bin: torture1_$(TARGET).x comm_bench1_$(TARGET).x comm_bench2_bgp_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x comm_bench5_$(TARGET).x comm_bench6_$(TARGET).x mpi3_arg_test_$(TARGET).x
 
 ifeq ($(MACHINE),BGP)
    extra_bin: comm_bench2_bgp_$(TARGET).x

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# usage ./bgp.submit <binary> <nodes> <debug>
+
+qsub -n ${2} -t 60 -q prod-devel --mode smp --env MPIRUN_VERBOSE=2:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${1} ${3}

@@ -54,6 +54,8 @@ int main(int argc, char **argv)
 
     //printf("%d: Hello world!\n",me);
 
+    int debug = ( argc>1 ? atoi(argv[1]) : 0 );
+
     if ( me == 0 )
     {
         switch (provided)
@@ -114,11 +116,25 @@ int main(int argc, char **argv)
     double scale = 1.0;
     double correct = -1.0;
     for (i=0;i<nproc;i++) correct += 1.0*i;
+
+    int stride_levels = 0;
+    int count = bufSize*sizeof(double);
+    //int src_stride_ar[stride_levels];
+    //int dst_stride_ar[stride_levels];
+    //src_stride_ar[0]=sizeof(double);
+    //dst_stride_ar[0]=sizeof(double);
+
     MPI_Barrier(MPI_COMM_WORLD);
     t0 = MPI_Wtime();
     for (j=0;j<nproc;j++){
         target = (me+j) % nproc;
-        status = ARMCI_Acc(ARMCI_ACC_DBL,&scale,b1, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
+        if (debug=1) { printf("%d: ARMCI_Acc fired to %d\n",me,target); fflush(stdout); }
+        //status = ARMCI_Acc(ARMCI_ACC_DBL,&scale,b1, addrVec2[me], bufSize*sizeof(double), me); assert(status==0);
+        status = ARMCI_AccS(ARMCI_ACC_DBL, &scale, 
+                 /* src */  b1, NULL,
+                 /* dst */  addrVec2[me], NULL,
+                            &count, stride_levels, me); 
+                            assert(status==0);
     }
     t1 = MPI_Wtime();
     ARMCI_AllFence();
