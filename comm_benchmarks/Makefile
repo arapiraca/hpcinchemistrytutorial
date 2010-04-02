@@ -388,5 +388,7 @@ realclean: clean
 	rm -f *_$(TARGET).x
 
 wipe:
-	rm core.*
+ifeq ($(MACHINE),BGP)
+	rm core.[01234567890]*
+endif
 
