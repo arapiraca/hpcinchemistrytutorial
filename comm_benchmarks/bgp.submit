@@ -2,4 +2,15 @@
 
 # usage ./bgp.submit <binary> <nodes> <size> <debug>
 
-qsub -n ${2} -t 60 -q prod-devel --mode smp --env MPIRUN_VERBOSE=2:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${1} ${3} ${4}
+binary=${1%%.x}
+echo ${binary}
+nodes=${2}
+size=${3}
+debug=${4}
+mode=smp
+interrupt=0
+directory=${binary}_${nodes}_${mode}_i${interrupt}_`date +%d%b%Y_%Hh%Mm`
+mkdir ${directory}
+cp ${binary}.x ${directory}
+cd ${directory}
+qsub -n ${nodes} -t 60 -q prod-devel --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${binary}.x ${size} ${debug}
