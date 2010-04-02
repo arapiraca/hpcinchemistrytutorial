@@ -151,7 +151,7 @@ int main(int argc, char **argv)
     MPI_Barrier(MPI_COMM_WORLD);
     t3 = MPI_Wtime();
     //for (i=0;i<bufSize;i++) assert( addrVec2[me][i]==correct );
-    printf("%d: ARMCI_Acc = %f s ARMCI_AllFence = %f s MPI_Barrier = %f s\n",me,t1-t0,t2-t1,t3-t2);
+    printf("%d: TIME ARMCI_Acc = %f s ARMCI_AllFence = %f s MPI_Barrier = %f s\n",me,t1-t0,t2-t1,t3-t2);
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
 
