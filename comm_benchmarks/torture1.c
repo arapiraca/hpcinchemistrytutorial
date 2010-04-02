@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
     int bufSize = ( argc>1 ? atoi(argv[1]) : 64 );
     int debug   = ( argc>2 ? atoi(argv[2]) : 0 );
-    if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
+    if (me==0) printf("%d: TIME bufSize = %d doubles\n",me,bufSize);
 
     /* register remote pointers */
     double** addrVec1 = (double **) malloc( nproc * sizeof(void *) );
