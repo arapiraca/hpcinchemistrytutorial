@@ -1,0 +1,10 @@
+#!/bin/bash
+#PBS -N torture1
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=0:30:00
+#PBS -j oe
+#PBS -q shared
+
+export MPIRUN=/soft/mvapich2/1.4-intel-11.1.059/bin/mpiexec
+
+$MPIRUN /homes/jhammond/hpcinchemistrytutorial/torturemarks/torture1_LINUX64.x 1000 1
