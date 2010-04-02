@@ -54,8 +54,6 @@ int main(int argc, char **argv)
 
     //printf("%d: Hello world!\n",me);
 
-    int debug = ( argc>1 ? atoi(argv[1]) : 0 );
-
     if ( me == 0 )
     {
         switch (provided)
@@ -92,6 +90,7 @@ int main(int argc, char **argv)
     int a;
     if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
     int bufSize = ( argc>1 ? atoi(argv[1]) : 1000000 );
+    int debug   = ( argc>2 ? atoi(argv[2]) : 0 );
     if (me==0) printf("%d: bufSize = %d doubles\n",me,bufSize);
 
     /* register remote pointers */

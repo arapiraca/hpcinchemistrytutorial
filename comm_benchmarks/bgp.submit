@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# usage ./bgp.submit <binary> <nodes> <debug>
+# usage ./bgp.submit <binary> <nodes> <size> <debug>
 
-qsub -n ${2} -t 60 -q prod-devel --mode smp --env MPIRUN_VERBOSE=2:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${1} ${3}
+qsub -n ${2} -t 60 -q prod-devel --mode smp --env MPIRUN_VERBOSE=2:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${1} ${3} ${4}
