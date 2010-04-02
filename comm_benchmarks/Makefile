@@ -387,3 +387,6 @@ clean:
 realclean: clean
 	rm -f *_$(TARGET).x
 
+wipe:
+	rm core.*
+
