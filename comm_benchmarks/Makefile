@@ -315,6 +315,9 @@ ifeq ($(MACHINE),JAGUAR)
    extra_bin: comm_bench2_xt5_$(TARGET).x
 endif
 
+torture1_$(TARGET).x: torture1_$(TARGET).o getticks_$(TARGET).o
+	$(LD) $(LDFLAGS) torture1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o torture1_$(TARGET).x
+
 comm_bench1_$(TARGET).x: comm_bench1_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) comm_bench1_$(TARGET).o getticks_$(TARGET).o $(LIB) -o comm_bench1_$(TARGET).x
 
@@ -338,6 +341,9 @@ comm_bench6_$(TARGET).x: comm_bench6_$(TARGET).o getticks_$(TARGET).o
 
 mpi3_arg_test_$(TARGET).x: mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o
 	$(LD) $(LDFLAGS) mpi3_arg_test_$(TARGET).o getticks_$(TARGET).o $(LIB) -o mpi3_arg_test_$(TARGET).x
+
+torture1_$(TARGET).o: torture1.c comm_bench.h
+	$(CC) $(CFLAGS) $(INC) -c torture1.c -o torture1_$(TARGET).o
 
 comm_bench1_$(TARGET).o: comm_bench1.c comm_bench.h
 	$(CC) $(CFLAGS) $(INC) -c comm_bench1.c -o comm_bench1_$(TARGET).o
