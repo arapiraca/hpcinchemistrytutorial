@@ -57,29 +57,29 @@ MPCL_Result MPCL_Init(int *argc, char ***argv, int *nproc, int *me)
         switch (provided)
         {
             case MPI_THREAD_MULTIPLE:
-                printf("%d: provided = MPI_THREAD_MULTIPLE\n",me);
+                printf("%d: provided = MPI_THREAD_MULTIPLE\n",*me);
                 break;
 
             case MPI_THREAD_SERIALIZED:
-                printf("%d: provided = MPI_THREAD_SERIALIZED\n",me);
+                printf("%d: provided = MPI_THREAD_SERIALIZED\n",*me);
                 break;
 
             case MPI_THREAD_FUNNELED:
-                printf("%d: provided = MPI_THREAD_FUNNELED\n",me);
+                printf("%d: provided = MPI_THREAD_FUNNELED\n",*me);
                 break;
 
             case MPI_THREAD_SINGLE:
-                printf("%d: provided = MPI_THREAD_SINGLE\n",me);
+                printf("%d: provided = MPI_THREAD_SINGLE\n",*me);
                 break;
 
             default:
-                printf("%d: MPI_Init_thread returned an invalid value of <provided>.\n",me);
+                printf("%d: MPI_Init_thread returned an invalid value of <provided>.\n",*me);
                 return(MPCL_FAILURE);
 
         }
     }
 
-    if (me==0) printf("%d: ARMCI_Init\n",me);
+    if (me==0) printf("%d: ARMCI_Init\n",*me);
     ARMCI_Init();
 
     return MPCL_SUCCESS;
