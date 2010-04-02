@@ -113,9 +113,9 @@ int main(int argc, char **argv)
     //for (i=0;i<bufSize;i++) printf("%d: BEFORE addrVec1[%d][%d] = %f\n",me,me,i,addrVec1[me][i]); fflush(stdout);
     for (i=0;i<bufSize;i++) printf("%d: BEFORE addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]); fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
-    printf("=====\n");
-    fflush(stdout);
-    MPI_Barrier(MPI_COMM_WORLD);
+    //printf("=====\n");
+    //fflush(stdout);
+    //MPI_Barrier(MPI_COMM_WORLD);
 
     int j,target;
     double scale = 1.0;
@@ -153,11 +153,14 @@ int main(int argc, char **argv)
     fflush(stdout);
     MPI_Barrier(MPI_COMM_WORLD);
 
-    printf("=====\n");
-    fflush(stdout);
-    MPI_Barrier(MPI_COMM_WORLD);
+    //printf("=====\n");
+    //fflush(stdout);
+    //MPI_Barrier(MPI_COMM_WORLD);
 
-    for (i=0;i<bufSize;i++) printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]); fflush(stdout);
+    //for (i=0;i<bufSize;i++) printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]); fflush(stdout);
+    if (debug==0) for (i=0;i<1;i++)       printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]);
+    if (debug==1) for (i=0;i<bufSize;i++) printf("%d: AFTER  addrVec2[%d][%d] = %f\n",me,me,i,addrVec2[me][i]);
+    fflush(stdout); }
     MPI_Barrier(MPI_COMM_WORLD);
 
     status = ARMCI_Free_local(b2); assert(status==0);
