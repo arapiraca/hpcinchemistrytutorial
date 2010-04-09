@@ -118,8 +118,8 @@
    endif
    ifeq ($(MACHINE),BGP)
       TARGET=BGP
-      CC=mpixlc_r
-      OPT=-O3
+      CC=mpicc
+      OPT=-O2
       MPI=BGP
       GA=YES
       #GA_PREFIX=/gpfs/home/jhammond/ga-cvs-dev
@@ -306,15 +306,22 @@
 #############################################
 
 #all: refresh bin
-all: bin comm_util_$(TARGET).o
+all: bin extra_bin comm_util_$(TARGET).o
 
-bin: torture1_$(TARGET).x torture2_$(TARGET).x torture3_$(TARGET).x comm_bench1_$(TARGET).x comm_bench2_bgp_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x comm_bench5_$(TARGET).x comm_bench6_$(TARGET).x mpi3_arg_test_$(TARGET).x
+bin: torture1_$(TARGET).x torture2_$(TARGET).x torture3_$(TARGET).x comm_bench1_$(TARGET).x comm_bench3_$(TARGET).x comm_bench4_$(TARGET).x mpi3_arg_test_$(TARGET).x
 
 ifeq ($(MACHINE),BGP)
-   extra_bin: comm_bench2_bgp_$(TARGET).x
-endif
-ifeq ($(MACHINE),JAGUAR)
-   extra_bin: comm_bench2_xt5_$(TARGET).x
+   ifeq ($(CC),mpixlc_r)
+      extra_bin: comm_bench2_bgp_$(TARGET).x comm_bench5_$(TARGET).x comm_bench6_$(TARGET).x
+   else
+      extra_bin:
+   endif
+else
+   ifeq ($(MACHINE),JAGUAR)
+      extra_bin: comm_bench2_xt5_$(TARGET).x
+   else
+      extra_bin:
+   endif
 endif
 
 torture1_$(TARGET).x: torture1_$(TARGET).o getticks_$(TARGET).o
