@@ -43,10 +43,12 @@ privately owned rights.
 #define PERSONALITY_H
 
 #if defined(BGP)
-    #include <unistd.h>
-    #include <common/bgp_personality.h>
-    #include <common/bgp_personality_inlines.h>
-    #include <spi/kernel_interface.h>
+    #if defined(XLC)
+        #include <unistd.h>
+        #include <common/bgp_personality.h>
+        #include <common/bgp_personality_inlines.h>
+        #include <spi/kernel_interface.h>
+    #endif
 #elif defined(CRAYXT)
 /* /opt/mpt/default/xt/pmi/include/pmi.h on Jaguar */
     #include <pmi.h>

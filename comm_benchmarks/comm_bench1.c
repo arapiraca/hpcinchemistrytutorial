@@ -121,6 +121,9 @@ int main(int argc, char **argv)
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
+    if (me==0){ printf("before ARMCI_Start_progress_thread\n"); fflush(stdout); }
+    ARMCI_Start_progress_thread();
+    if (me==0){ printf("after ARMCI_Start_progress_thread\n"); fflush(stdout); }
     for (j=0;j<nproc;j++){
         fflush(stdout);
         target = (me+j) % nproc;
@@ -142,6 +145,9 @@ int main(int argc, char **argv)
         fflush(stdout);
     }
     MPI_Barrier(MPI_COMM_WORLD);
+    if (me==0){ printf("before ARMCI_Stop_progress_thread\n"); fflush(stdout); }
+    ARMCI_Start_progress_thread();
+    if (me==0){ printf("after ARMCI_Stop_progress_thread\n"); fflush(stdout); }
 
     status = ARMCI_Free_local(b2); assert(status==0);
     status = ARMCI_Free_local(b1); assert(status==0);
