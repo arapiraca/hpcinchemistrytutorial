@@ -125,6 +125,7 @@
       #GA_PREFIX=/gpfs/home/jhammond/ga-cvs-dev
       #GA_PREFIX=/gpfs/home/jhammond/ga-dev-ibm
       GA_PREFIX=/gpfs/home/projects/nwchem/ga-4-3
+      ARMCI_PREFIX=/gpfs/home/projects/nwchem/ga-4-3/armci
    endif
 
    # Eureka
@@ -231,10 +232,15 @@
    INC =
    LIB =
 
+   ifeq ($(ARMCI_PREFIX),)
+      ARMCI_PREFIX=$(GA_PREFIX)
+   endif
+
    ifeq ($(GA),YES)
       DEFINES+=-DGA
       INC+=-I$(GA_PREFIX)/include
-      LIB+=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
+      LIB+=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -ltcgmsg-mpi
+      LIB+=-L$(ARMCI_PREFIX)/lib/$(TARGET) -larmci
    endif
 
    ifeq ($(MPI),YES)
