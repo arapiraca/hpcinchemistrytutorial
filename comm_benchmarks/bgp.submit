@@ -13,4 +13,4 @@ directory=${binary}_${nodes}_${mode}_i${interrupt}_`date +%d%b%Y_%Hh%Mm`
 mkdir ${directory}
 cp ${binary}.x ${directory}
 cd ${directory}
-qsub -n ${nodes} -t 60 --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_VERBOSE=0:DCMF_STATISTICS=0:DCMF_RMA_PENDING=10000:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${binary}.x ${size} ${debug}
+qsub -n ${nodes} -t 10 --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_VERBOSE=0:DCMF_STATISTICS=0:DCMF_THREADED_TREE=0:DCMF_RMA_PENDING=10000:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${binary}.x ${size} ${debug}

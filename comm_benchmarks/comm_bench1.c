@@ -43,7 +43,7 @@ privately owned rights.
 
 int main(int argc, char **argv)
 {
-    int desired = MPI_THREAD_SINGLE;
+    int desired = MPI_THREAD_MULTIPLE;
     int provided;
     MPI_Init_thread(&argc, &argv, desired, &provided);
 
@@ -81,8 +81,9 @@ int main(int argc, char **argv)
         }
     }
 
-    if (me==0) printf("%d: ARMCI_Init\n",me);
+    if (me==0) printf("%d: before ARMCI_Init\n",me); fflush(stdout);
     ARMCI_Init();
+    if (me==0) printf("%d: after  ARMCI_Init\n",me); fflush(stdout);
     int status;
     double t0,t1,t2,t3;
     double tt0,tt1,tt2,tt3;
