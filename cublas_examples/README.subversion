@@ -1,0 +1,27 @@
+to add files for the first time:
+
+> svn add filename.ext
+
+
+
+
+to commit files after 'svn add' or modifications to existing files:
+
+> svn ci
+
+all changes and additions, or,
+
+> svn filename.ext
+
+for a subset of changes (good idea if you don't know which changes you have made recently)
+
+
+
+
+to get changes made to the repo:
+
+> svn up
+
+
+
+
