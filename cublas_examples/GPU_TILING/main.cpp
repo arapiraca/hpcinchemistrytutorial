@@ -41,30 +41,36 @@ privately owned rights.
 
 #include"gputiles.hpp"
 int main(int argc,char*argv[]){
-  if (argc<3){
-     printf("\n  ERROR:  ENTER DIMENSIONS, M AND N.\n\n");
+  if (argc<4){
+     printf("\n  ERROR:  ENTER NPROCS AND DIMENSIONS, M AND N.\n\n");
+     exit(0);
+  }
+  if (WARP==-1){
+     printf("\n  ERROR:  PLEASE DEFINE WARP SIZE.\n\n");
      exit(0);
   }
   int i,j;
   long tilesizeM,tilesizeN,ntilesM,ntilesN,M,N,nprocs;
   long tilesizeM64,tilesizeN64,tilesizeMN,tilesizeMN64;
 
-  // MATRIX DIMENSIONS:
-  M = atoi(argv[1]);
-  N = atoi(argv[2]);
 
-  // TOTAL NUMBER OF PROCS
-  nprocs   = 64;
+  // MATRIX DIMENSIONS:
+  nprocs = atoi(argv[1]);
+  M      = atoi(argv[2]);
+  N      = atoi(argv[3]);
+
+  //printf("\n  NPROCS = %10li\n",nprocs);
+  //printf("       M = %10li\n",M);
+  //printf("       N = %10li\n\n",N);
 
   // DETERMINE TILESIZE
-  //GPUTileSize(nprocs,M,N,tilesizeM,tilesizeN,ntilesM,ntilesN);
   GPUTileSize64(nprocs,M,N,tilesizeM,tilesizeN,ntilesM,ntilesN);
 
   // PAD MATRIX WITH ZEROS:
-  double*A,*B;
-  A = (double*)malloc(sizeof(double)*M*N);
-  for (i=0; i<M*N; i++) A[i] = double(i);
-  B = DGPUPaddedMatrix(A,M,N,ntilesM*tilesizeM,ntilesN*tilesizeN);
+  real*A,*B;
+  A = (real*)malloc(sizeof(real)*M*N);
+  for (i=0; i<M*N; i++) A[i] = real(i);
+  B = GPUPaddedMatrix(A,M,N,tilesizeM,tilesizeN,ntilesM,ntilesN);
 
   printf("\n");
   printf("  tilesizeM          %15li\n",tilesizeM);

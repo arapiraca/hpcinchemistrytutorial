@@ -40,7 +40,7 @@ privately owned rights.
 =============================================================================*/
 
 
-/*====================================================
+/*=============================================================================
 
   gputiles.cpp 
 
@@ -67,17 +67,14 @@ privately owned rights.
     RETURNS THIS DIMENSION AS WELL AS THE
     NUMBER OF TILES IN M AND N.
 
-  SGPUPaddedMatrix():
-    RETURNS A SINGLE PRECISION MATRIX THAT 
-    CONTAINS THE ORIGINAL MATRIX A THE EXTRA
-    DIMENSIONS ARE PADDED WITH ZEROS.
+  GPUPaddedMatrix():
+    RETURNS A TILED MATRIX THAT CONTAINS THE
+    ORIGINAL MATRIX AND THE EXTRA ELEMENTS
+    ARE PADDED WITH ZEROS.  THE PRECISION OF
+    THE MATRIX IS CONTROLLED BY -DSINGLE OR
+    -DDOUBLE AS A FLAG IN THE MAKEFILE
 
-  DGPUPaddedMatrix():
-    RETURNS A DOUBLE PRECISION MATRIX THAT 
-    CONTAINS THE ORIGINAL MATRIX A THE EXTRA
-    DIMENSIONS ARE PADDED WITH ZEROS.
-
-====================================================*/
+=============================================================================*/
 
 #include"gputiles.hpp"
 void GPUTileSize(long nprocs,long M,long N,long&tilesizeM,long&tilesizeN,long&ntilesM,long&ntilesN){
@@ -92,14 +89,14 @@ void GPUTileSize(long nprocs,long M,long N,long&tilesizeM,long&tilesizeN,long&nt
 
 
   // TILE SIZE:
-  float dum = sqrt(nelem_per_proc);
+  real dum = sqrt(nelem_per_proc);
   if ((long)dum - dum < 0.) tilesize = (long)dum+1;
   else                      tilesize = (long)dum;
 
   // NUMBER OF TILES IN EACH DIMENSION:
-  if (M/tilesize - (float)M/tilesize < 0.) ntilesM = M/tilesize + 1;
+  if (M/tilesize - (real)M/tilesize < 0.) ntilesM = M/tilesize + 1;
   else                                     ntilesM = M/tilesize;
-  if (N/tilesize - (float)N/tilesize < 0.) ntilesN = N/tilesize + 1;
+  if (N/tilesize - (real)N/tilesize < 0.) ntilesN = N/tilesize + 1;
   else                                     ntilesN = N/tilesize;
   
   tilesizeM = tilesize;
@@ -115,66 +112,71 @@ void GPUTileSize64(long nprocs,long M,long N,long&tilesizeM,long&tilesizeN,long&
   else               nelem_per_proc = (dim+nprocs-dim%nprocs)/nprocs;
 
   // TILE SIZE:
-  float dum = sqrt(nelem_per_proc);
+  real dum = sqrt(nelem_per_proc);
   if ((long)dum - dum < 0.) tilesize = (long)dum+1;
   else                      tilesize = (long)dum;
 
-  // TILE SIZE, DIVISIBLE BY 64
-  if (tilesize%64!=0){
-     tilesize = (tilesize+64-tilesize%64);
+  // TILE SIZE, DIVISIBLE BY 64 (OR OPTIMAL WARP SIZE)
+  if (tilesize%WARP!=0){
+     tilesize = (tilesize+WARP-tilesize%WARP);
   }
 
   // NUMBER OF TILES IN EACH DIMENSION:
-  if (M/tilesize - (float)M/tilesize < 0.) ntilesM = M/tilesize + 1;
+  if (M/tilesize - (real)M/tilesize < 0.)  ntilesM = M/tilesize + 1;
   else                                     ntilesM = M/tilesize;
-  if (N/tilesize - (float)N/tilesize < 0.) ntilesN = N/tilesize + 1;
+  if (N/tilesize - (real)N/tilesize < 0.)  ntilesN = N/tilesize + 1;
   else                                     ntilesN = N/tilesize;
   
   tilesizeM = tilesize;
   tilesizeN = tilesize;
 }
 
-double*DGPUPaddedMatrix(double*A,long M,long N,long M64,long N64){
-  int i,j;
-  double*B;
-  B = (double*)malloc(M64*N64*sizeof(double));
-  for (i=0; i<M; i++){
-      for (j=0; j<N; j++){
-          B[i*N64+j] = A[i*N+j];
-      }
-      for (j=N; j<N64; j++){
-          B[i*N64+j] = 0.;
+real*GPUPaddedMatrix(real*A,long dimM,long dimN,long tilesizeM,long tilesizeN,long ntilesM,long ntilesN){
+  long n,m,ne,me,nt,mt,m_is_padded,n_is_padded,pad_shift,tilenumber,pos,pad_pos;
+  long padN = ntilesN*tilesizeN;
+  long padM = ntilesM*tilesizeM;
+
+  real*B;
+  B = (real*)malloc(padM*padN*sizeof(real));
+
+  //m (down) x n (across)
+
+  for (mt=0; mt<ntilesM; mt++){
+
+      for (nt=0; nt<ntilesN; nt++){
+
+          // TILE NUMBER AND SHIFT FOR POSITION IN PADDED MATRIX:
+          tilenumber = mt * ntilesN + nt;
+          pad_shift  = tilenumber * tilesizeN * tilesizeM;
+
+          for (me=0; me<tilesizeM;me++){
+              m_is_padded = 0;
+
+
+              // M POSITION IN ORIGINAL MATRIX:
+              m = tilesizeM*mt + me;
+              if (m>=dimM) m_is_padded = 1;
+
+              for (ne=0; ne<tilesizeN;ne++){
+                  n_is_padded = 0;
+
+                  // N POSITION IN ORIGINAL MATRIX:
+                  n = tilesizeN*nt + ne;
+                  if (n>=dimN) n_is_padded = 1;
+
+                  // POSITION IN ORIGINAL MATRIX:
+                  pos = m*dimN + n;
+
+                  // POSITION IN PADDED MATRIX:
+                  pad_pos = pad_shift + me * tilesizeN + ne;
+
+                  if (m_is_padded || n_is_padded) B[pad_pos] = 0.;
+                  else                            B[pad_pos] = A[pos];
+
+              }
+          }
       }
   }
-  for (i=M; i<M64; i++){
-      for (j=0; j<N; j++){
-          B[i*N64+j] = 0.;
-      }
-      for (j=N; j<N64; j++){
-          B[i*N64+j] = 0.;
-      }
-  }
-  return B;
-}
-float*SGPUPaddedMatrix(float*A,long M,long N,long M64,long N64){
-  int i,j;
-  float*B;
-  B = (float*)malloc(M64*N64*sizeof(float));
-  for (i=0; i<M; i++){
-      for (j=0; j<N; j++){
-          B[i*N64+j] = A[i*N+j];
-      }
-      for (j=N; j<N64; j++){
-          B[i*N64+j] = 0.;
-      }
-  }
-  for (i=M; i<M64; i++){
-      for (j=0; j<N; j++){
-          B[i*N64+j] = 0.;
-      }
-      for (j=N; j<N64; j++){
-          B[i*N64+j] = 0.;
-      }
-  }
+
   return B;
 }
