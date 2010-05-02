@@ -78,6 +78,7 @@ void copy_global(int g_in, int g_out);
 void free_global(int g_a);
 void randomize_global(int g_in);
 void global_to_local(int g_in, void* l_out);
+void local_to_global(void* l_in, int g_out);
 
 #endif
 

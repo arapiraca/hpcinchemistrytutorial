@@ -276,6 +276,7 @@ void randomize_global(int g_in)
 void global_to_local(int g_in, void* l_out)
 {
 #ifdef GA
+    printf("global_to_local\n");
     int i;
     int type;
     int ndim = GA_Ndim(g_in);
@@ -311,6 +312,7 @@ void global_to_local(int g_in, void* l_out)
 void local_to_global(void* l_in, int g_out)
 {
 #ifdef GA
+    printf("local_to_global\n");
     int i;
     int type;
     int ndim = GA_Ndim(g_out);
