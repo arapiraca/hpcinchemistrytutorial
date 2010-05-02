@@ -47,12 +47,13 @@ int main(int argc, char **argv)
 {
     int me, nproc;
     int armci_not_ga = 0;
-    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga);
+    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga,1);
 
     int status;
 
     if (me==0 && argc!=3) printf("./ga_cpu_sgemm.x <rank> <blksz>\n");
-    if (me==0) for (int a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
+    int a;
+    if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
 
     int rank  = ( argc>1 ? atoi(argv[1]) : 64 );
     int blksz = ( argc>2 ? atoi(argv[2]) :  4 );
@@ -298,6 +299,6 @@ int main(int argc, char **argv)
     GA_Destroy(g_a);
 
     parallel_sync();
-    stop_parallel();
+    stop_parallel(1);
     return(0);
 }

@@ -60,16 +60,6 @@ int posix_memalign(void **memptr, size_t alignment, size_t size);
   #include <time.h>
 #endif
 
-unsigned long long getticks(void);
-inline double gettime(void)
-{
-#ifdef OPENMP
-    return omp_get_wtime();
-#else
-    return (double) time(NULL);
-#endif
-}
-
 int main(int argc, char **argv)
 {
     printf("Testing CUDA transfer bandwidth...\n");
@@ -88,7 +78,8 @@ int main(int argc, char **argv)
     size_t alignment = getpagesize();
 
     printf("...posix_memalign...\n");
-    for (size_t i=10; pow(2,i)<=maxSize; i++){
+    size_t i;
+    for (i=10; pow(2,i)<=maxSize; i++){
         bufSize=pow(2,i);
 
         status = posix_memalign((void**)&h_ptr, alignment, bufSize);
@@ -129,7 +120,7 @@ int main(int argc, char **argv)
     }
 
     printf("...cudaMallocHost...\n");
-    for (size_t i=10; pow(2,i)<=maxSize; i++){
+    for (i=10; pow(2,i)<=maxSize; i++){
         bufSize=pow(2,i);
 
         cuStatus = cudaMallocHost((void**)&h_ptr, bufSize);

@@ -80,14 +80,14 @@ void run_blas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float beta,
 
     /* warm-up */
 //     sgemm("n", "n", &N, &N, &N, &myalpha, a, &N, b, &N, &mybeta, c, &N);
-    sgemm("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
+    sgemm_("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
 
     tt_blas = 0;
     for ( i = 0 ; i < count ; i++ )
     {
         /* run the timing */
         tt_start = gettime();
-        sgemm("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
+        sgemm_("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
         tt_end = gettime();
         tt_blas += ( tt_end - tt_start );
     }
@@ -145,14 +145,14 @@ void run_blas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double bet
     fflush(stderr);
 
     /* warm-up */
-    dgemm("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
+    dgemm_("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
 
     tt_blas = 0;
     for ( i = 0 ; i < count ; i++ )
     {
         /* run the timing */
         tt_start = gettime();
-        dgemm("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
+        dgemm_("n","n",&rowa,&colb,&cola,&myalpha,a,&rowa,b,&rowb,&beta,c,&rowc);
         tt_end = gettime();
         tt_blas += ( tt_end - tt_start );
     }

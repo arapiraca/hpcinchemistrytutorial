@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 {
     int me, nproc;
     int armci_not_ga = 1;
-    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga);
+    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga,1);
 
     int status;
 
@@ -55,7 +55,8 @@ int main(int argc, char **argv)
         printf("./armci_gpu_sgemm.x <dim1> <dim2> <dim3> <tilesize>\n");
         return(1);
     }
-    if (me==0) for (int a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
+    int a;
+    if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
 
     int dim1     = ( argc>1 ? atoi(argv[1]) : 1024 );
     int dim2     = ( argc>2 ? atoi(argv[2]) : 1024 );
@@ -98,7 +99,8 @@ int main(int argc, char **argv)
     int** winGL = (int **) malloc( nproc * sizeof(void *) );
     ARMCI_Malloc( (void **) winGL, GLsize * sizeof(int) );
     parallel_sync();
-    for(int i=0;i<GLsize;i++) winGL[me][i] = (int) 0;
+    int i;
+    for(i=0;i<GLsize;i++) winGL[me][i] = (int) 0;
 
     /* used in all loop code and timings of everything */
     int i1,i2,i3;
@@ -279,7 +281,7 @@ int main(int argc, char **argv)
     }
 
     parallel_sync();
-    stop_parallel();
+    stop_parallel(1);
 
     return(0);
 }

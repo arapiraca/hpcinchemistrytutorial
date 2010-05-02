@@ -60,21 +60,24 @@ privately owned rights.
   #include "mpi.h"
 #endif
 
+int cuda_active;
+
 void print_hostname(int printMask);
 
 int parallel_nproc(void);
 int parallel_me(void);
 void parallel_sync(void);
 
-void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_ga);
-void stop_parallel();
+void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_ga, int use_cuda);
+void stop_parallel(int stats);
 
 int alloc_global_2d(int precision, int rows, int cols, int printMask);
 void zero_global(int g_a);
+int clone_global(int g_in);
 void copy_global(int g_in, int g_out);
 void free_global(int g_a);
-
 void randomize_global(int g_in);
+void global_to_local(int g_in, void* l_out);
 
 #endif
 

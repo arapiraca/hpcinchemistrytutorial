@@ -160,23 +160,25 @@
    # Megatron
    ifeq ($(HOSTNAME),megatron)
       TARGET=LINUX64
-      CC=icc
-      OPT=-O3 -g -std=c99 -xHost -xSSE2,SSE3,SSSE3,SSE4.1
-      INTEL_DIR=/opt/intel/Compiler/11.1/059
+      CC=gcc
+      OPT=-g -O3 -Wall
+      OMP_VENDOR=GNU
+      #OMP_DIR=/opt/intel/Compiler/11.1/059
+      OMP_DIR=/usr/lib64/gcc/x86_64-suse-linux/4.3
       CUDA=YES
       CUDA_DIR=/opt/cuda
       LIB_BITS=64
-      MKL=YES
-      MKL_DIR=/opt/intel/Compiler/11.1/059/mkl
+      MKL=NO
+      #MKL_DIR=/opt/intel/Compiler/11.1/059/mkl
       MPI=YES
-      MPI_PREFIX=/software/open-mpi/gnu-build
-      MPI_VENDOR=OMPI
+      MPI_PREFIX=/software/mpich/mpich2-1.3a1-gnu-build
+      MPI_VENDOR=MPICH
       GA=YES
-      GA_PREFIX=/software/ga/ga-cvs-dev
+      GA_PREFIX=/software/ga/ga-4-3
       OPENMP=YES
    endif
 
-   DEFINES=-DCOMPARE #-DDEBUG
+   DEFINES=
    INC=
    LIB=
    LDFLAGS=
@@ -186,9 +188,14 @@
    endif 
 
    ifeq ($(OPENMP),YES)
+      ifeq ($(OMP_VENDOR),INTEL)
+         LIB+=-openmp
+      endif
+      ifeq ($(OMP_VENDOR),GNU)
+         LIB+=-L$(OMP_DIR) -lgomp
+      endif
       DEFINES+=-DOPENMP
-      INC+=-I$(INTEL_DIR)/include
-      LIB+=-openmp
+      INC+=-I$(OMP_DIR)/include
    endif
 
    ifeq ($(CUDA),YES)
@@ -206,23 +213,22 @@
    endif
 
    ifeq ($(MPI),YES)
-      DEFINES+=-DMPI
       ifeq ($(MPI_VENDOR),OMPI)
          LIB+=-L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
-      else
-         ifeq ($(MPI_VENDOR),MVAPICH)
-            LIB+=-L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
-            LDFLAGS+=-Wl,-rpath  $(MPI_PREFIX)/lib
-         else
-            ifeq ($(MPI_VENDOR),HP)
-               INC+=-I$(MPI_PREFIX)/include/64
-               LIB+=-L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
-            else # MPICH
-               LIB+=-L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
-               LDFLAGS+=-Wl,-rpath  $(MPI_PREFIX)/lib
-            endif
-         endif
       endif
+      ifeq ($(MPI_VENDOR),MVAPICH)
+         LIB+=-L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
+         LDFLAGS+=-Wl,-rpath  $(MPI_PREFIX)/lib
+      endif
+      ifeq ($(MPI_VENDOR),HP)
+            INC+=-I$(MPI_PREFIX)/include/64
+            LIB+=-L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
+      endif
+      ifeq ($(MPI_VENDOR),MPICH)
+            LIB+=-L$(MPI_PREFIX)/lib -lmpich -lmpl -lopa -lrt
+            LDFLAGS+=-Wl,-rpath  $(MPI_PREFIX)/lib
+      endif
+      DEFINES+=-DMPI
       INC+=-I$(MPI_PREFIX)/include
    endif
 
@@ -233,10 +239,9 @@
       SBLAS+=-L$(MKL_DIR)/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml -lpthread
       LDFLAGS+=-Wl,-rpath  $(MKL_DIR)/lib/em64t
    else
-      PBLAS_LIB=-lblas -lpthread
-      SBLAS_LIB=-lblas -lpthread
-      PLIB+=$(PBLAS_LIB)
-      SLIB+=$(SBLAS_LIB)
+      DEFINES+=-DNETLIB
+      PBLAS+=-L/usr/lib64 -llapack -lblas -lpthread
+      SBLAS+=-L/usr/lib64 -llapack -lblas -lpthread
    endif
 
    LIB+=-lm -lpthread
@@ -251,7 +256,7 @@
 #
 #############################################
 
-BINARY=test_driver.x test_driver2.x gemm_test2.x ga_cpu_sgemm.x
+BINARY=test_driver.x test_driver2.x gemm_test2.x ga_cpu_sgemm.x new_ga_cpu_sgemm.x
 ifeq ($(CUDA),YES)
 BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x ga_gpu_sgemm.x ga_gpu_dgemm.x cuda_transfer_benchmark.x
 endif
@@ -282,6 +287,9 @@ armci_gpu_sgemm.x: armci_gpu_sgemm.o $(OBJECTS)
 
 ga_gpu_dgemm.x: ga_gpu_dgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) ga_gpu_dgemm.o $(OBJECTS) $(LIB) $(PBLAS) -o ga_gpu_dgemm.x
+
+new_ga_cpu_sgemm.x: new_ga_cpu_sgemm.o $(OBJECTS)
+	$(LD) $(LDFLAGS) new_ga_cpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o new_ga_cpu_sgemm.x
 
 ga_cpu_sgemm.x: ga_cpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) ga_cpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o ga_cpu_sgemm.x

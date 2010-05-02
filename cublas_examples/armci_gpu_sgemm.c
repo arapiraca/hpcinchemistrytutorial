@@ -47,12 +47,13 @@ int main(int argc, char **argv)
 {
     int me, nproc;
     int armci_not_ga = 1;
-    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga);
+    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga,1);
 
     int status;
 
     if (me==0 && argc!=4) printf("./armci_gpu_sgemm.x <tilesize> <numtile1> <numtile2> <numtile3>\n");
-    if (me==0) for (int a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
+    int a;
+    if (me==0) for (a=0;a<argc;a++) printf("argv[%1d] = %s\n",a,argv[a]);
 
     int tilesize = ( argc>1 ? atoi(argv[1]) : 64 );
     int numtile1 = ( argc>2 ? atoi(argv[2]) :  4 );
@@ -89,7 +90,8 @@ int main(int argc, char **argv)
     int** winGL = (int **) malloc( nproc * sizeof(void *) );
     ARMCI_Malloc( (void **) winGL, GLsize * sizeof(int) );
     parallel_sync();
-    for(int i=0;i<GLsize;i++) winGL[me][i] = (int) 0;
+    int i;
+    for(i=0;i<GLsize;i++) winGL[me][i] = (int) 0;
 
     float* bufA = alloc_host_floats(sizeA);
     float* bufB = alloc_host_floats(sizeB);
@@ -204,7 +206,7 @@ int main(int argc, char **argv)
 //     status = ARMCI_Free(winA[me]); assert(status==0);
 
     parallel_sync();
-    stop_parallel();
+    stop_parallel(1);
 
     return(0);
 }

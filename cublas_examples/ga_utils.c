@@ -42,12 +42,6 @@ privately owned rights.
 #include "ga_utils.h"
 #include "cublas_utils.h"
 
-/* internal functions */
-#ifdef GA
-void randomize_global_2d_float(int g_in);
-void randomize_global_2d_double(int g_in);
-#endif
-
 /* declared for use only in the following function */
 int gethostname(char *name, size_t len);
 
@@ -94,7 +88,6 @@ int parallel_me(void)
 
 void parallel_sync(void)
 {
-    int me;
 #ifdef GA
     GA_Sync();
 #else
@@ -105,7 +98,7 @@ void parallel_sync(void)
 
 }
 
-void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_ga)
+void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_ga, int use_cuda)
 {
 #if defined(MPI)
     int desired = MPI_THREAD_MULTIPLE;
@@ -157,23 +150,23 @@ void start_parallel(int* argc, char*** argv, int* me, int* nproc, int armci_not_
 #endif
 
 #if defined(CUDA)
-    start_cublas(*me);
+    if (use_cuda!=0) { start_cublas(*me); cuda_active=1; }
 #endif
 
     print_hostname(*me);
 
 }
 
-void stop_parallel()
+void stop_parallel(int stats)
 {
     int me = parallel_me();
 
 #ifdef GA
-    if (me==0) GA_Print_stats();
+    if (me==0 && stats!=0) GA_Print_stats();
 #endif
 
 #if defined(CUDA)
-    stop_cublas();
+    if (cuda_active==1) stop_cublas();
 #endif
 
 #ifdef GA
@@ -218,10 +211,9 @@ int alloc_global_2d(int precision, int rows, int cols, int printMask)
 
     GA_Set_array_name(g_in,"null");
 
-    pg_world = GA_Pgroup_get_world();
-    GA_Set_pgroup(g_in,pg_world);
+    GA_Set_pgroup(g_in,GA_Pgroup_get_world());
 
-    if (precision==1) ga_type=MT_REAL;
+    if (precision==1)      ga_type=MT_REAL;
     else if (precision==2) ga_type=MT_DBL;
 
     GA_Set_data(g_in,ndim,dims,ga_type);
@@ -235,6 +227,19 @@ int alloc_global_2d(int precision, int rows, int cols, int printMask)
     fflush(stdout);
 #endif
     return g_in;
+}
+
+int clone_global(int g_in)
+{
+    int g_out;
+#ifdef GA
+    g_out = GA_Duplicate(g_in,"null");
+    assert(g_out!=0);
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
+#endif
+    return g_out;
 }
 
 void copy_global(int g_in, int g_out)
@@ -259,92 +264,81 @@ void free_global(int g_in)
 
 void randomize_global(int g_in)
 {
+    double one = 1.0;
 #ifdef GA
-    int ga_type;
-    int ndim;
-    const int maxdim=8;
-    int dims[maxdim];
-
-    NGA_Inquire(g_in, &ga_type, &ndim, dims);
-
-    if (ndim==2 && ga_type==MT_REAL) randomize_global_2d_float(g_in);
-    if (ndim==2 && ga_type==MT_DBL)  randomize_global_2d_double(g_in);
+    GA_Randomize(g_in,&one);
 #else
     printf("! GA not enabled\n");
     fflush(stdout);
 #endif
 }
 
+void global_to_local(int g_in, void* l_out)
+{
 #ifdef GA
-void randomize_global_2d_float(int g_in)
-{
-    int me = parallel_me();
+    int i;
+    int type;
+    int ndim = GA_Ndim(g_in);
+    int* dims = malloc(ndim*sizeof(int));
+    NGA_Inquire(g_in, &type, &ndim, dims);
+    for (i=0;i<ndim;i++) printf("dims[%1d] = %d\n",i,dims[i]);
 
-    const int ndim = 2;
+    int* lo = malloc(ndim*sizeof(int));
+    for (i=0;i<ndim;i++) lo[i]=0;
+    for (i=0;i<ndim;i++) printf("lo[%1d] = %d\n",i,lo[i]);
 
-    int lo[ndim];
-    int hi[ndim];
-    int rng[ndim];
-    int ld[ndim-1];
+    int* hi = malloc(ndim*sizeof(int));
+    for (i=0;i<ndim;i++) hi[i]=dims[i]-1;
+    for (i=0;i<ndim;i++) printf("hi[%1d] = %d\n",i,hi[i]);
 
-    float* p_in;
+    int* ld = malloc((ndim-1)*sizeof(int));
+    for (i=0;i<(ndim-1);i++) ld[i]=dims[i];
+    for (i=0;i<(ndim-1);i++) printf("ld[%1d] = %d\n",i,ld[i]);
 
-    NGA_Distribution(g_in,me,lo,hi);
-    NGA_Access(g_in,lo,hi,&p_in,&ld[0]);
+    NGA_Get(g_in, lo, hi, l_out, ld);
 
-    rng[0] = hi[0] - lo[0] + 1;
-    rng[1] = hi[1] - lo[1] + 1;
+    free(dims);
+    free(lo);
+    free(hi);
+    free(ld);
 
-    int i,j;
-
-    for(i=0; i<rng[0]; i++){
-        for(j=0; j<rng[1]; j++){
-            p_in[ ld[0] * i + j ] = (float) rand() * 0.000000001;
-        }
-    }
-    NGA_Release_update(g_in,lo,hi); /* this function does nothing as of GA 4.2 */
-
-}
-
-void randomize_global_2d_double(int g_in)
-{
-    int me = parallel_me();
-
-    const int ndim = 2;
-
-    int lo[ndim];
-    int hi[ndim];
-    int rng[ndim];
-    int ld[ndim-1];
-
-    double* p_in;
-
-    NGA_Distribution(g_in,me,lo,hi);
-    NGA_Access(g_in,lo,hi,&p_in,&ld[0]);
-
-    rng[0] = hi[0] - lo[0] + 1;
-    rng[1] = hi[1] - lo[1] + 1;
-
-    int i,j;
-
-    for(i=0; i<rng[0]; i++){
-        for(j=0; j<rng[1]; j++){
-            p_in[ ld[0] * i + j ] = (double) rand() * 0.000000001;
-        }
-    }
-    NGA_Release_update(g_in,lo,hi); /* this function does nothing as of GA 4.2 */
-
-}
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
 #endif
+}
 
+void local_to_global(void* l_in, int g_out)
+{
+#ifdef GA
+    int i;
+    int type;
+    int ndim = GA_Ndim(g_out);
+    int* dims = malloc(ndim*sizeof(int));
+    NGA_Inquire(g_out, &type, &ndim, dims);
+    for (i=0;i<ndim;i++) printf("dims[%1d] = %d\n",i,dims[i]);
 
-// int multiply_globals(int precision, int rows, int cols, )
-// {
-//     int g_a, g_b, g_c;
-// #ifdef GA
-//     GA_Dgemm('T','T',dims[0],dims[0],dims[0],alpha,g_a,g_b,beta,g_c1);
-// #else
-//     printf("! GA not enabled\n");
-//     fflush(stdout);
-// #endif
-// }
+    int* lo = malloc(ndim*sizeof(int));
+    for (i=0;i<ndim;i++) lo[i]=0;
+    for (i=0;i<ndim;i++) printf("lo[%1d] = %d\n",i,lo[i]);
+
+    int* hi = malloc(ndim*sizeof(int));
+    for (i=0;i<ndim;i++) hi[i]=dims[i]-1;
+    for (i=0;i<ndim;i++) printf("hi[%1d] = %d\n",i,hi[i]);
+
+    int* ld = malloc((ndim-1)*sizeof(int));
+    for (i=0;i<(ndim-1);i++) ld[i]=dims[i];
+    for (i=0;i<(ndim-1);i++) printf("ld[%1d] = %d\n",i,ld[i]);
+
+    NGA_Put(g_out, lo, hi, l_in, ld);
+
+    free(dims);
+    free(lo);
+    free(hi);
+    free(ld);
+
+#else
+    printf("! GA not enabled\n");
+    fflush(stdout);
+#endif
+}

@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 {
     int me, nproc;
     int armci_not_ga = 1;
-    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga);
+    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga,1);
 
     int threads;
     int ntests = 100000;
@@ -217,6 +217,6 @@ int main(int argc, char **argv)
     fflush(stderr);
 
     parallel_sync();
-    stop_parallel();
+    stop_parallel(1);
     return 0;
 }
