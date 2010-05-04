@@ -8,7 +8,7 @@ PRECISION=DOUBLE
 
 WARP=32
 
-CFLAGS    = -O2  -D$(PRECISION) -DWARP=$(WARP)
+CFLAGS    = -O2  -D$(PRECISION) -DWARP=$(WARP) -Wall
 EXEC      = gputiles.x 
 CXX       = g++
 

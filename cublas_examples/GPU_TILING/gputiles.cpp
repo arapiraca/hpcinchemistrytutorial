@@ -47,7 +47,7 @@ privately owned rights.
   BY EUGENE DEPRINCE
 
   ROUTINES TO TILE MxN MATRIX INTO MULTIPLES OF
-  64 FOR GPU COMPUTING.  
+  WARPSIZE FOR GPU COMPUTING.  
 
   MxN ELEMENTS SPLIT OVER NPROCS.  SQRT OF THAT
   IS THE APPROXIMATE TILE DIMENSION.  NOTE THAT
@@ -56,23 +56,47 @@ privately owned rights.
 
   FUNCIONS:
 
-  GPUTileSize():
+  GPUTileSize() * DEAD CODE *:
     COMPUTES TILE DIMENSION FOR MxN MATRIX.
     RETURNS THIS DIMENSION AS WELL AS THE
     NUMBER OF TILES IN M AND N.
 
   GPUTileSize64():
     COMPUTES TILE SIZE FOR MxN MATRIX SUCH THAT
-    THE DIMENSION OF THE TILE IS DIVISIBLE BY 64.
+    THE DIMENSION OF THE TILE IS DIVISIBLE BY WARPSIZE.
     RETURNS THIS DIMENSION AS WELL AS THE
     NUMBER OF TILES IN M AND N.
 
-  GPUPaddedMatrix():
+  GPUPaddedMatrix() * DEAD CODE *:
     RETURNS A TILED MATRIX THAT CONTAINS THE
     ORIGINAL MATRIX AND THE EXTRA ELEMENTS
     ARE PADDED WITH ZEROS.  THE PRECISION OF
     THE MATRIX IS CONTROLLED BY -DSINGLE OR
     -DDOUBLE AS A FLAG IN THE MAKEFILE
+
+  GPUPaddedTiles():
+    RETURNS A TILED MATRIX THAT CONTAINS THE
+    ORIGINAL MATRIX AND THE EXTRA ELEMENTS
+    ARE PADDED WITH ZEROS.  THE PRECISION OF
+    THE MATRIX IS CONTROLLED BY -DSINGLE OR
+    -DDOUBLE AS A FLAG IN THE MAKEFILE.  THE 
+    TILED MATRIX IS AN ARRAY OF POINTERS THAT
+    POINT TO EACH TILE (type real**)
+
+  XGEMM():
+    MATRIX-MATRIX MULTIPLICATION FOR SINGLE OR DOUBLE 
+    PRECISION.  CAN BE REPLACED WITH LAPACK DGEMM OR SGEMM
+
+  TiledXGEMM():
+    TILED MATRIX-MATRIX MULTIPLICATION FOR SINGLE OR DOUBLE PRECISION.
+    CALLS XGEMM FOR EACH TILE OF TARGET MATRIX.
+
+  CheckAnswer():
+    CHECK TO MAKE SURE XGEMM AND TiledXGEMM GIVE THE SAME
+    RESULTS.  DIFFERENT TOLERANCES MAY BE USED FOR SINGLE OR 
+    DOUBLE PRECISION.  IN PRACTICE, FOR VERY LARGE MATRICES,
+    TiledXGEMM AND THE FULL XGEMM WILL GIVE QUITE DIFFERENT 
+    RESULTS FOR WHEN USING SINGLE PRECISION.
 
 =============================================================================*/
 
@@ -179,4 +203,168 @@ real*GPUPaddedMatrix(real*A,long dimM,long dimN,long tilesizeM,long tilesizeN,lo
   }
 
   return B;
+}
+real**GPUPaddedTiles(real*A,long dimM,long dimN,long tilesizeM,long tilesizeN,long ntilesM,long ntilesN){
+  long n,m,ne,me,nt,mt,m_is_padded,n_is_padded,pad_shift,tilenumber,pos,pad_pos;
+  //long padN = ntilesN*tilesizeN;
+  //long padM = ntilesM*tilesizeM;
+
+  real**B;
+  //B = (real**)malloc(padM*padN*sizeof(real));
+  B = (real**)malloc(ntilesN*ntilesM*sizeof(real*));
+  for (n=0; n<ntilesN*ntilesM; n++){
+      B[n] = (real*)malloc(tilesizeM*tilesizeN*sizeof(real));
+  }
+
+  //m (down) x n (across)
+
+  for (mt=0; mt<ntilesM; mt++){
+
+      for (nt=0; nt<ntilesN; nt++){
+
+          // TILE NUMBER AND SHIFT FOR POSITION IN PADDED MATRIX:
+          tilenumber = mt * ntilesN + nt;
+          pad_shift  = tilenumber * tilesizeN * tilesizeM;
+
+          for (me=0; me<tilesizeM;me++){
+              m_is_padded = 0;
+
+
+              // M POSITION IN ORIGINAL MATRIX:
+              m = tilesizeM*mt + me;
+              if (m>=dimM) m_is_padded = 1;
+
+              for (ne=0; ne<tilesizeN;ne++){
+                  n_is_padded = 0;
+
+                  // N POSITION IN ORIGINAL MATRIX:
+                  n = tilesizeN*nt + ne;
+                  if (n>=dimN) n_is_padded = 1;
+
+                  // POSITION IN ORIGINAL MATRIX:
+                  pos = m*dimN + n;
+
+                  // POSITION IN PADDED MATRIX:
+                  pad_pos = me * tilesizeN + ne;
+
+                  if (m_is_padded || n_is_padded) B[tilenumber][pad_pos] = 0.;
+                  else                            B[tilenumber][pad_pos] = A[pos];
+              }
+          }
+      }
+  }
+
+  return B;
+}
+
+
+void TiledXGEMM(real**A,real**B,real**C,
+  long dimMa,long dimNa,long tilesizeMa,long tilesizeNa,long ntilesMa,long ntilesNa,
+  long dimMb,long dimNb,long tilesizeMb,long tilesizeNb,long ntilesMb,long ntilesNb){
+
+  if (ntilesNa!=ntilesMb){
+     printf("\n  ERROR: INNER TILE DIMENSIONS DIFFER.\n\n");
+     exit(0);
+  }
+  int k,tm,tn,tc;
+  long ntilesCommon = ntilesNa;
+  real*temp;
+  temp = (real*)malloc(tilesizeMa*tilesizeNb*sizeof(real));
+  for (k=0; k<tilesizeMa*tilesizeNb; k++){
+      temp[k] = 0.;
+  }
+  // LOOP OVER TILES OF TARGET MATRIX, C:
+  for (tm=0; tm<ntilesMa; tm++){
+      for (tn=0; tn<ntilesNb; tn++){
+
+          for (tc=0; tc<ntilesCommon; tc++){
+
+              XGEMM(A[tm*ntilesCommon+tc],B[tc*ntilesNb+tn],temp,
+                   tilesizeMa,tilesizeNa,tilesizeMb,tilesizeNb);
+
+              for (k=0; k<tilesizeMa*tilesizeNb; k++){
+                  C[tm*ntilesNb+tn][k] += temp[k];
+                  temp[k] = 0.;
+              }
+
+          }
+          
+      }
+  }
+  free(temp);
+
+}
+
+void XGEMM(real*A,real*B,real*C,long Ma,long Na,long Mb,long Nb){
+  if (Na!=Mb){
+     printf("\n  ERROR: INNER DIMENSIONS DIFFER.\n\n");
+     exit(0);
+  }
+  int m,n,k;
+  real sum;
+  for (m=0; m<Ma; m++){
+      for (n=0; n<Nb; n++){
+          sum = 0.;
+          for (k=0; k<Na; k++){
+              sum += A[m*Na+k] * B[k*Nb+n];
+          }
+          C[m*Nb+n] = sum;
+      }
+  }
+}
+
+
+
+void CheckAnswer(real*Cin,real**C,long dimM,long dimN,long tilesizeM,long tilesizeN,long ntilesM,long ntilesN,real tol){
+  long n,m,ne,me,nt,mt,m_is_padded,n_is_padded,pad_shift,tilenumber,pos,pad_pos;
+  real diff;
+
+  //m (down) x n (across)
+
+  for (mt=0; mt<ntilesM; mt++){
+
+      for (nt=0; nt<ntilesN; nt++){
+
+          // TILE NUMBER AND SHIFT FOR POSITION IN PADDED MATRIX:
+          tilenumber = mt * ntilesN + nt;
+          pad_shift  = tilenumber * tilesizeN * tilesizeM;
+
+          for (me=0; me<tilesizeM;me++){
+              m_is_padded = 0;
+
+
+              // M POSITION IN ORIGINAL MATRIX:
+              m = tilesizeM*mt + me;
+              if (m>=dimM) m_is_padded = 1;
+
+              for (ne=0; ne<tilesizeN;ne++){
+                  n_is_padded = 0;
+
+                  // N POSITION IN ORIGINAL MATRIX:
+                  n = tilesizeN*nt + ne;
+                  if (n>=dimN) n_is_padded = 1;
+
+                  // POSITION IN ORIGINAL MATRIX:
+                  pos = m*dimN + n;
+
+                  // POSITION IN PADDED MATRIX:
+                  pad_pos = me * tilesizeN + ne;
+
+                  if (m_is_padded || n_is_padded) {
+                     if (C[tilenumber][pad_pos]!=0.){
+                        printf("\n  ERROR: NONZERO PADDED ELEMENTS: %f\n\n",C[tilenumber][pad_pos]);
+                        //exit(0);
+                     }
+                  }
+                  else{
+                      diff = fabs(C[tilenumber][pad_pos] - Cin[pos]);
+                      if (diff>tol){
+                        printf("\n  ERROR: ABS(Cpad-C) = %f\n\n",diff);
+                        exit(0);
+                      }
+                  }
+              }
+          }
+      }
+  }
 }
