@@ -20,5 +20,7 @@ realclean: clean
 
 submit: $(EXE)
 	qsub --mode smp -n 1 -t 10 --env OMP_NUM_THREADS=4 $(EXE)
+	qsub --mode smp -n 1 -t 10 --env OMP_NUM_THREADS=2 $(EXE)
+	qsub --mode smp -n 1 -t 10 --env OMP_NUM_THREADS=1 $(EXE)
 
 

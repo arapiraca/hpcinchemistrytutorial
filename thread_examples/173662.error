@@ -1,0 +1,42 @@
+<May 26 13:43:50.726715> FE_MPI (Info) : initialize() - using jobname '' provided by scheduler interface
+<May 26 13:43:50.727379> FE_MPI (Info) : Invoking mpirun backend
+<May 26 13:43:50.740044> FE_MPI (Info) : connectToServer() - Handshake successful
+<May 26 13:43:50.897773> BRIDGE (Info) : rm_set_serial() - The machine serial number (alias) is BGP
+<May 26 13:43:50.937886> FE_MPI (Info) : Preparing partition
+<May 26 13:43:50.980487> BE_MPI (Info) : Examining specified partition
+<May 26 13:43:52.486250> BE_MPI (Info) : Checking partition ANL-R00-M1-N06-64 initial state ...
+<May 26 13:43:52.486323> BE_MPI (Info) : Partition ANL-R00-M1-N06-64 initial state = FREE ('F')
+<May 26 13:43:52.486349> BE_MPI (Info) : Checking partition owner...
+<May 26 13:43:52.500846> BE_MPI (Info) : Setting new owner
+<May 26 13:43:52.560249> BE_MPI (Info) : Initiating boot of the partition
+<May 26 13:43:52.670825> BE_MPI (Info) : Waiting for partition ANL-R00-M1-N06-64 to boot...
+<May 26 13:45:37.906827> BE_MPI (Info) : Partition is ready
+<May 26 13:45:37.906946> BE_MPI (Info) : Done preparing partition
+<May 26 13:45:37.948615> FE_MPI (Info) : Adding job
+<May 26 13:45:37.949376> BE_MPI (Info) : Adding job to database...
+<May 26 13:45:38.088609> FE_MPI (Info) : Job added with the following id: 314709
+<May 26 13:45:38.088983> FE_MPI (Info) : Starting job 314709
+<May 26 13:45:38.187335> FE_MPI (Info) : Waiting for job to terminate
+<May 26 13:45:40.476773> BE_MPI (Info) : IO - Threads initialized
+<May 26 13:45:40.510633> BE_MPI (Info) : I/O input runner thread terminated
+forcing OpenMP to use only 2 threads
+omp_get_max_threads() = 2
+creating 2 threads
+hello from pthread 0!
+hello from OpenMP thread 0 of 2 (max=2) on pthread 0
+hello from OpenMP thread 1 of 2 (max=2) on pthread 0
+hello from pthread 1!
+hello from OpenMP thread 0 of 2 (max=2) on pthread 1
+hello from OpenMP thread 1 of 2 (max=2) on pthread 1
+joined 2 threads
+<May 26 13:45:45.531014> BE_MPI (Info) : I/O output runner thread terminated
+<May 26 13:45:45.588296> BE_MPI (Info) : Job 314709 switched to state TERMINATED ('T')
+<May 26 13:45:45.588339> BE_MPI (Info) : Job successfully terminated - TERMINATED ('T')
+<May 26 13:45:45.667381> FE_MPI (Info) : Job terminated normally
+<May 26 13:45:45.667462> FE_MPI (Info) : exit status = (0)
+<May 26 13:45:45.667691> BE_MPI (Info) : Starting cleanup sequence
+<May 26 13:45:45.667732> BE_MPI (Info) : cleanupDatabase() - job already terminated / hasn't been added
+<May 26 13:45:45.718224> BE_MPI (Info) : Destroying partition ANL-R00-M1-N06-64
+<May 26 13:46:20.895759> BE_MPI (Info) : Partition ANL-R00-M1-N06-64 switched to state FREE ('F')
+<May 26 13:46:21.246446> FE_MPI (Info) : ==   FE completed   ==
+<May 26 13:46:21.246508> FE_MPI (Info) : == Exit status:   0 ==
