@@ -256,7 +256,7 @@
 #
 #############################################
 
-BINARY=test_driver.x test_driver2.x gemm_test2.x ga_cpu_sgemm.x new_ga_cpu_sgemm.x
+BINARY=test_driver.x test_driver2.x gemm_test2.x ga_cpu_sgemm.x new_ga_cpu_sgemm.x new_armci_cpu_sgemm.x
 ifeq ($(CUDA),YES)
 BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x ga_gpu_sgemm.x ga_gpu_dgemm.x cuda_transfer_benchmark.x
 endif
@@ -290,6 +290,9 @@ ga_gpu_dgemm.x: ga_gpu_dgemm.o $(OBJECTS)
 
 new_ga_cpu_sgemm.x: new_ga_cpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) new_ga_cpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o new_ga_cpu_sgemm.x
+
+new_armci_cpu_sgemm.x: new_armci_cpu_sgemm.o $(OBJECTS)
+	$(LD) $(LDFLAGS) new_armci_cpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o new_armci_cpu_sgemm.x
 
 ga_cpu_sgemm.x: ga_cpu_sgemm.o $(OBJECTS)
 	$(LD) $(LDFLAGS) ga_cpu_sgemm.o $(OBJECTS) $(LIB) $(SBLAS) -o ga_cpu_sgemm.x
