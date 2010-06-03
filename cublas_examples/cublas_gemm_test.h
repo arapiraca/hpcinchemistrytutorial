@@ -60,3 +60,5 @@ void run_cublas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double b
 #endif
 
 #endif
+
+

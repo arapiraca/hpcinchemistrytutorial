@@ -157,6 +157,30 @@
       OPENMP=YES
    endif
 
+   # Lincoln
+   ifeq ($(HOSTNAME),cvrsvc05)
+      MACHINE=DIRAC
+   endif
+   ifeq ($(MACHINE),DIRAC)
+      TARGET=LINUX64
+      CC=gcc
+      OPT=-g -O3
+      CUDA=YES
+      #CUDA_DIR=/usr/common/usg/nvidia-driver-util/3.1b
+      #CUDA_DIR=/usr/common/usg/nvidia-driver-util/3.0
+      #LIB_BITS=64
+      CUDA_DIR=/usr/common/usg/pgi/10.5/linux86-64/2010/cuda/3.0
+      LIB_BITS=
+      MKL=YES
+      MKL_DIR=/usr/common/usg/mkl/10.2.2.025
+      MPI=YES
+      MPI_PREFIX=/usr/common/usg/openmpi/1.4.2/pgi
+      MPI_VENDOR=OMPI
+      GA=YES
+      GA_PREFIX=/global/homes/j/jhammond/GA/ga-4-3
+      OPENMP=YES
+   endif
+
    # Megatron
    ifeq ($(HOSTNAME),megatron)
       TARGET=LINUX64
@@ -201,7 +225,8 @@
    ifeq ($(CUDA),YES)
       CUBLAS_LIB=-L$(CUDA_DIR)/lib$(LIB_BITS) -lcublas -lcudart
       DEFINES+=-DCUDA
-      INC+=-I$(CUDA_DIR)/include
+      INC+=-I$(CUDA_DIR)/include 
+      INC+=-I$(CUDA_DIR)/include/cuda
       LIB+=$(CUBLAS_LIB)
       LDFLAGS+=-Wl,-rpath $(CUDA_DIR)/lib$(LIB_BITS)
    endif
@@ -235,9 +260,13 @@
    ifeq ($(MKL),YES)
       DEFINES+=-DMKL
       INC+=-I$(MKL_DIR)/include
-      PBLAS+=-L$(MKL_DIR)/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lsvml -lpthread
-      SBLAS+=-L$(MKL_DIR)/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lsvml -lpthread
+      PBLAS+=-L$(MKL_DIR)/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lpthread
+      SBLAS+=-L$(MKL_DIR)/lib/em64t -lguide -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread
       LDFLAGS+=-Wl,-rpath  $(MKL_DIR)/lib/em64t
+      ifeq ($(CC),icc)
+         PBLAS+=-lsvml
+         SBLAS+=-lsvml
+      endif
    else
       DEFINES+=-DNETLIB
       PBLAS+=-L/usr/lib64 -llapack -lblas -lpthread

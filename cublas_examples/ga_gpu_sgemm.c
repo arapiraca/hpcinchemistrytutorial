@@ -159,15 +159,6 @@ int main(int argc, char **argv)
     alpha = 1.0;
     beta  = 0.0;
 
-    unsigned long long nflops = 0;
-    if      (alpha==0.0){  nflops += 0; }
-    else if (alpha==1.0){  nflops += rank*rank*rank; }
-    else                {  nflops += 2*rank*rank*rank; }
-
-    if      (beta==0.0){  nflops += 0; }
-    else if (beta==1.0){  nflops += rank*rank; }
-    else               {  nflops += 2*rank*rank; }
-
     double t_ga;
     double gflops;
 
@@ -326,10 +317,7 @@ int main(int argc, char **argv)
     GA_Sync();
     t_end = gettime();
     t_total = t_end - t_start;
-    gflops = nflops/t_total;
-    gflops /= 1024;
-    gflops /= 1024;
-    gflops /= 1024;
+    gflops = 1.0e-9 * 2*rank*rank*rank / t_total;
     if (me==0){
         printf("performance         = %12.6f gflops\n",gflops);
         printf("time for everything = %12.6f seconds\n",t_total);

@@ -293,3 +293,5 @@ void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time_excl
 }
 
 #endif
+
+
