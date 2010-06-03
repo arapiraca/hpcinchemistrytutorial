@@ -178,7 +178,7 @@
       MPI_VENDOR=OMPI
       GA=YES
       GA_PREFIX=/global/homes/j/jhammond/GA/ga-4-3
-      OPENMP=YES
+      OPENMP=NO
    endif
 
    # Megatron
