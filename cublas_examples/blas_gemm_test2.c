@@ -55,22 +55,12 @@ void run_blas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float beta,
     BLAS_INT colb = dim2;
     BLAS_INT colc = dim2;
 
-    long long nflops;
     double tt_start, tt_end, tt_blas;
 
     float* a;
     float* b;
     float* c;
-
-    nflops = 0;
-    if      (alpha==0.0){  nflops += 0; }
-    else if (alpha==1.0){  nflops += dim1*dim2*dim3; }
-    else                {  nflops += 2*dim1*dim2*dim3; }
-
-    if      (beta==0.0){  nflops += 0; }
-    else if (beta==1.0){  nflops += dim1*dim2; }
-    else               {  nflops += 2*dim1*dim2; }
-
+    
     a = alloc_host_floats(dim1*dim3);
     b = alloc_host_floats(dim3*dim2);
     c = alloc_host_floats(dim1*dim2);
@@ -95,7 +85,7 @@ void run_blas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float beta,
     tt_blas /= (double) count;
 
     *time = tt_blas;
-    *Gflops = 1e-9 * nflops / tt_blas;
+    *Gflops = 1e-9 * (2*dim1*dim2*dim3) / tt_blas;
 
     fprintf(stderr,"# sgemm took %f seconds\n",*time);
     fprintf(stderr,"# sgemm Gflops %f\n",*Gflops);
@@ -128,15 +118,6 @@ void run_blas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double bet
     double* b;
     double* c;
 
-    nflops = 0;
-    if      (alpha==0.0){  nflops += 0; }
-    else if (alpha==1.0){  nflops += dim1*dim2*dim3; }
-    else                {  nflops += 2*dim1*dim2*dim3; }
-
-    if      (beta==0.0){  nflops += 0; }
-    else if (beta==1.0){  nflops += dim1*dim2; }
-    else               {  nflops += 2*dim1*dim2; }
-
     a = alloc_host_doubles(dim1*dim3);
     b = alloc_host_doubles(dim3*dim2);
     c = alloc_host_doubles(dim1*dim2);
@@ -160,7 +141,7 @@ void run_blas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double bet
     tt_blas /= (double) count;
 
     *time = tt_blas;
-    *Gflops = 1e-9 * nflops / tt_blas;
+    *Gflops = 1e-9 * (2*dim1*dim2*dim3) / tt_blas;
 
     fprintf(stderr,"# dgemm took %f seconds\n",*time);
     fprintf(stderr,"# dgemm Gflops %f\n",*Gflops);

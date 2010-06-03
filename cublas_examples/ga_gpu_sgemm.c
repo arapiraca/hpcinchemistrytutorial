@@ -359,10 +359,7 @@ int main(int argc, char **argv)
     GA_Sync();
     finish = gettime();
     t_ga =  finish-start;
-    gflops = nflops/t_ga;
-    gflops /= 1024;
-    gflops /= 1024;
-    gflops /= 1024;
+    gflops = 1e-9 * (2*rank*rank*rank) / t_ga;
     if (me == 0) printf("GA_Sgemm took %f seconds %f gflops \n",t_ga,gflops);
 
     GA_Transpose(g_d1,g_d2);

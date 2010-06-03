@@ -55,7 +55,6 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
     float myalpha = alpha;
     float mybeta = beta;
 
-    long long nflops;
     double tt_incl, tt_incl_start, tt_incl_end;
     double tt_excl, tt_excl_start, tt_excl_end;
 
@@ -66,15 +65,6 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
     float* da;
     float* db;
     float* dc;
-
-    nflops = 0;
-    if      (alpha==0.0){  nflops += 0; }
-    else if (alpha==1.0){  nflops += dim*dim*dim; }
-    else                {  nflops += 2*dim*dim*dim; }
-
-    if      (beta==0.0){  nflops += 0; }
-    else if (beta==1.0){  nflops += dim*dim; }
-    else               {  nflops += 2*dim*dim; }
 
     ha = alloc_host_floats(dim*dim);
     hb = alloc_host_floats(dim*dim);
@@ -135,8 +125,8 @@ void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time_excl, 
         *time_incl = tt_incl;
         *time_excl = tt_excl;
 
-        *Gflops_incl = 1e-9 * nflops / *time_incl;
-        *Gflops_excl = 1e-9 * nflops / *time_excl;
+        *Gflops_incl = 1e-9 * (2*dim*dim*dim) / *time_incl;
+        *Gflops_excl = 1e-9 * (2*dim*dim*dim) / *time_excl;
 
         fprintf(stderr,"# cublasSgemm took %f seconds (exclusive)\n",*time_excl);
         fprintf(stderr,"# cublasSgemm took %f seconds (inclusive)\n",*time_incl);
@@ -180,7 +170,6 @@ void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time_excl
     double myalpha = alpha;
     double mybeta = beta;
 
-    long long nflops;
     double tt_incl, tt_incl_start, tt_incl_end;
     double tt_excl, tt_excl_start, tt_excl_end;
 
@@ -191,15 +180,6 @@ void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time_excl
     double* da;
     double* db;
     double* dc;
-
-    nflops = 0;
-    if      (alpha==0.0){  nflops += 0; }
-    else if (alpha==1.0){  nflops += dim*dim*dim; }
-    else                {  nflops += 2*dim*dim*dim; }
-
-    if      (beta==0.0){  nflops += 0; }
-    else if (beta==1.0){  nflops += dim*dim; }
-    else               {  nflops += 2*dim*dim; }
 
     ha = alloc_host_doubles(dim*dim);
     hb = alloc_host_doubles(dim*dim);
@@ -260,8 +240,8 @@ void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time_excl
         *time_incl = tt_incl;
         *time_excl = tt_excl;
 
-        *Gflops_incl = 1e-9 * nflops / *time_incl;
-        *Gflops_excl = 1e-9 * nflops / *time_excl;
+        *Gflops_incl = 1e-9 * (2*dim*dim*dim) / *time_incl;
+        *Gflops_excl = 1e-9 * (2*dim*dim*dim) / *time_excl;
 
         fprintf(stderr,"# cublasDgemm took %f seconds (exclusive)\n",*time_excl);
         fprintf(stderr,"# cublasDgemm took %f seconds (inclusive)\n",*time_incl);
