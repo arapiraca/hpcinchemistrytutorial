@@ -123,19 +123,8 @@ int main(int argc, char **argv)
 #else
     printf("Not using OpenMP threads with BLAS\n");
 #endif
-    fflush(stdout);
-
-    for ( t = 0 ; t < ntests ; t++)
-    {
-        if ( precision==1 ) { 
-            run_blas_sgemm_test2(dim[t][0], dim[t][1], dim[t][2], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]);
-        } else if (precision==2 ) {
-            run_blas_dgemm_test2(dim[t][0], dim[t][1], dim[t][2], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]);
-        }
-    }
 
 #ifdef CUDA
-
     double cublas_excl_time[ntests];
     double cublas_excl_Gflops[ntests];
     double cublas_incl_time[ntests];
@@ -150,22 +139,26 @@ int main(int argc, char **argv)
     } else {
         printf("! failure at line %d of %s\n",__LINE__,__FILE__);
         printf("! cublasInit failed\n");
-        fflush(stdout);
     }
+#endif
+    fflush(stdout);
 
     for ( t = 0 ; t < ntests ; t++)
     {
-        if ( precision==1 ) {
+        if ( precision==1 ) { 
+            run_blas_sgemm_test2(dim[t][0], dim[t][1], dim[t][2], f_alpha, f_beta, &blas_time[t], &blas_Gflops[t]);
             run_cublas_sgemm_test2(dim[t][0], dim[t][1], dim[t][2], f_alpha, f_beta,
                                    &cublas_excl_time[t], &cublas_excl_Gflops[t],
                                    &cublas_incl_time[t], &cublas_incl_Gflops[t]);
-        } else if  (precision==2 ) {
+        } else if (precision==2 ) {
+            run_blas_dgemm_test2(dim[t][0], dim[t][1], dim[t][2], d_alpha, d_beta, &blas_time[t], &blas_Gflops[t]);
             run_cublas_dgemm_test2(dim[t][0], dim[t][1], dim[t][2], d_alpha, d_beta,
                                    &cublas_excl_time[t], &cublas_excl_Gflops[t],
                                    &cublas_incl_time[t], &cublas_incl_Gflops[t]);
         }
     }
 
+#ifdef CUDA
     status = cublasShutdown();
     if (status == CUBLAS_STATUS_SUCCESS) {
 //         printf("cublasShutdown succeeded\n");
@@ -181,26 +174,13 @@ int main(int argc, char **argv)
     printf("major version:        %20d\n",cudaProp.major);
     printf("minor version:        %20d\n",cudaProp.minor);
     printf("canMapHostMemory:     %20d\n",cudaProp.canMapHostMemory);
-    printf("totalGlobalMem:       %20ld MiB\n",cudaProp.totalGlobalMem/(1024*1024));
+    printf("totalGlobalMem:       %20ld MB\n",cudaProp.totalGlobalMem/1.0e6);
     printf("sharedMemPerBlock:    %20ld\n",cudaProp.sharedMemPerBlock);
     printf("clockRate:            %20.3f GHz\n",cudaProp.clockRate/1.0e6); /* kHz is base unit */
     printf("regsPerBlock:         %20d\n",cudaProp.regsPerBlock);
     printf("warpSize:             %20d\n",cudaProp.warpSize);
     printf("maxThreadsPerBlock:   %20d\n",cudaProp.maxThreadsPerBlock);
     printf("=========================================================\n");
-//     struct cudaDeviceProp {
-//         size_t memPitch;
-//         int maxThreadsDim[3];
-//         int maxGridSize[3];
-//         size_t totalConstMem;
-//         size_t textureAlignment;
-//         int deviceOverlap;
-//         int multiProcessorCount;
-//         int kernelExecTimeoutEnabled;
-//         int integrated;
-//         int computeMode;
-//     }
-
 #endif
 
     if ( precision==1 ) printf("  dim  dim2  dim3        SGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");

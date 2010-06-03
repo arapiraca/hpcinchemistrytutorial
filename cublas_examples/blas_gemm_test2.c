@@ -85,7 +85,7 @@ void run_blas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float beta,
     tt_blas /= (double) count;
 
     *time = tt_blas;
-    *Gflops = 1e-9 * (2*dim1*dim2*dim3) / tt_blas;
+    *Gflops = 2*(1e-3*dim1)*(1e-3*dim2)*(1e-3*dim3) / tt_blas;
 
     fprintf(stderr,"# sgemm took %f seconds\n",*time);
     fprintf(stderr,"# sgemm Gflops %f\n",*Gflops);
@@ -141,7 +141,7 @@ void run_blas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double bet
     tt_blas /= (double) count;
 
     *time = tt_blas;
-    *Gflops = 1e-9 * (2*dim1*dim2*dim3) / tt_blas;
+    *Gflops = 2*(1e-3*dim1)*(1e-3*dim2)*(1e-3*dim3) / tt_blas;
 
     fprintf(stderr,"# dgemm took %f seconds\n",*time);
     fprintf(stderr,"# dgemm Gflops %f\n",*Gflops);

@@ -132,8 +132,8 @@ void run_cublas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float bet
         *time_incl = tt_incl;
         *time_excl = tt_excl;
 
-        *Gflops_incl = 1e-9 * (2*dim1*dim2*dim3) / *time_incl;
-        *Gflops_excl = 1e-9 * (2*dim1*dim2*dim3) / *time_excl;
+        *Gflops_incl = 2*(1e-3*dim1)*(1e-3*dim2)*(1e-3*dim3) / *time_incl;
+        *Gflops_excl = 2*(1e-3*dim1)*(1e-3*dim2)*(1e-3*dim3) / *time_excl;
 
         fprintf(stderr,"# cublasSgemm took %f seconds (exclusive)\n",*time_excl);
         fprintf(stderr,"# cublasSgemm took %f seconds (inclusive)\n",*time_incl);
@@ -253,8 +253,8 @@ void run_cublas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double b
         *time_incl = tt_incl;
         *time_excl = tt_excl;
 
-        *Gflops_incl = 1e-9 * (2*dim1*dim2*dim3) / *time_incl;
-        *Gflops_excl = 1e-9 * (2*dim1*dim2*dim3) / *time_excl;
+        *Gflops_incl = 2*(1e-3*dim1)*(1e-3*dim2)*(1e-3*dim3) / *time_incl;
+        *Gflops_excl = 2*(1e-3*dim1)*(1e-3*dim2)*(1e-3*dim3) / *time_excl;
 
         fprintf(stderr,"# cublasDgemm took %f seconds (exclusive)\n",*time_excl);
         fprintf(stderr,"# cublasDgemm took %f seconds (inclusive)\n",*time_incl);
