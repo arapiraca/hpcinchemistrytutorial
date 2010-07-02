@@ -70,6 +70,7 @@ unsigned long long getticks(void);
 #elif defined(NETLIB)
     #define BLAS_NAME "Netlib"
 #else
+    #define BLAS_NAME "NULL"
     #error "What BLAS are you using?"
 #endif
 
