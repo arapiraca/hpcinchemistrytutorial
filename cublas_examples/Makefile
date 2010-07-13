@@ -158,6 +158,18 @@
    endif
 
    # Lincoln
+   ifeq ($(HOSTNAME),cvrsvc01)
+      MACHINE=DIRAC
+   endif
+   ifeq ($(HOSTNAME),cvrsvc02)
+      MACHINE=DIRAC
+   endif
+   ifeq ($(HOSTNAME),cvrsvc03)
+      MACHINE=DIRAC
+   endif
+   ifeq ($(HOSTNAME),cvrsvc04)
+      MACHINE=DIRAC
+   endif
    ifeq ($(HOSTNAME),cvrsvc05)
       MACHINE=DIRAC
    endif

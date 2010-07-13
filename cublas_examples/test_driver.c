@@ -183,24 +183,16 @@ int main(int argc, char **argv)
     printf("=========================================================\n");
 #endif
 
-    if ( precision==1 ) printf("  dim  dim2  dim3        SGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
-    if ( precision==2 ) printf("  dim  dim2  dim3        DGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==1 ) printf("  dim  dim2  dim3        SGEMM     RATIO    CUBLAS (incl)   CUBLAS (excl)\n");
+    if ( precision==2 ) printf("  dim  dim2  dim3        DGEMM     RATIO    CUBLAS (incl)   CUBLAS (excl)\n");
     for ( t = 0 ; t < ntests ; t++ )
     {
 #ifdef CUDA
         ratio = cublas_incl_Gflops[t] / blas_Gflops[t];
-        if ( blas_Gflops[t] > cublas_incl_Gflops[t] ){
-            printf("%5d %5d %5d %8.3f Gflops <== %6.3f     %8.3f Gflops %8.3f Gflops\n",
-                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
-
-        else if ( blas_Gflops[t] < cublas_incl_Gflops[t] ) {
-            printf("%5d %5d %5d %8.3f Gflops     %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
-                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
-        else {
-            printf("%5d %5d %5d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
-                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]); }
+            printf("%5d %5d %5d %8.3f Gflops %6.3f %8.3f Gflops %8.3f Gflops\n",
+                    dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]);
 #else
-            printf("%5d %5d %5d %8.3f Gflops <== %6.3f ==> %8.3f Gflops %8.3f Gflops\n",
+            printf("%5d %5d %5d %8.3f Gflops %6.3f %8.3f Gflops %8.3f Gflops\n",
                     dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],0.0,0.0,0.0);
 #endif
     }

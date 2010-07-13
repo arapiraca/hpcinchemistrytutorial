@@ -1,0 +1,707 @@
+! MPI_Init_thread succeeded
+! ARMCI_Init succeeded
+0: provided = MPI_THREAD_SINGLE
+=========================================================
+CUDA device properties:
+name:                          Tesla C2050
+major version:                           2
+minor version:                           0
+canMapHostMemory:                        1
+totalGlobalMem:                       2687 MiB
+sharedMemPerBlock:                   49152
+clockRate:                           1.147 GHz
+regsPerBlock:                        32768
+warpSize:                               32
+maxThreadsPerBlock:                   1024
+=========================================================
+Hostname: dirac34
+Hostname: dirac34
+You have requested single-precision.
+@ dim[0] = (1,1,1)
+@ dim[1] = (1024,1024,1024)
+@ dim[2] = (1040,1040,1040)
+@ dim[3] = (1056,1056,1056)
+@ dim[4] = (1072,1072,1072)
+@ dim[5] = (1088,1088,1088)
+@ dim[6] = (1104,1104,1104)
+@ dim[7] = (1120,1120,1120)
+@ dim[8] = (1136,1136,1136)
+@ dim[9] = (1152,1152,1152)
+@ dim[10] = (1168,1168,1168)
+@ dim[11] = (1184,1184,1184)
+@ dim[12] = (1200,1200,1200)
+@ dim[13] = (1216,1216,1216)
+@ dim[14] = (1232,1232,1232)
+@ dim[15] = (1248,1248,1248)
+@ dim[16] = (1264,1264,1264)
+@ dim[17] = (1280,1280,1280)
+@ dim[18] = (1296,1296,1296)
+@ dim[19] = (1312,1312,1312)
+@ dim[20] = (1328,1328,1328)
+@ dim[21] = (1344,1344,1344)
+@ dim[22] = (1360,1360,1360)
+@ dim[23] = (1376,1376,1376)
+@ dim[24] = (1392,1392,1392)
+@ dim[25] = (1408,1408,1408)
+@ dim[26] = (1424,1424,1424)
+@ dim[27] = (1440,1440,1440)
+@ dim[28] = (1456,1456,1456)
+@ dim[29] = (1472,1472,1472)
+@ dim[30] = (1488,1488,1488)
+@ dim[31] = (1504,1504,1504)
+@ dim[32] = (1520,1520,1520)
+@ dim[33] = (1536,1536,1536)
+@ dim[34] = (1552,1552,1552)
+@ dim[35] = (1568,1568,1568)
+@ dim[36] = (1584,1584,1584)
+@ dim[37] = (1600,1600,1600)
+@ dim[38] = (1616,1616,1616)
+@ dim[39] = (1632,1632,1632)
+@ dim[40] = (1648,1648,1648)
+@ dim[41] = (1664,1664,1664)
+@ dim[42] = (1680,1680,1680)
+@ dim[43] = (1696,1696,1696)
+@ dim[44] = (1712,1712,1712)
+@ dim[45] = (1728,1728,1728)
+@ dim[46] = (1744,1744,1744)
+@ dim[47] = (1760,1760,1760)
+@ dim[48] = (1776,1776,1776)
+@ dim[49] = (1792,1792,1792)
+@ dim[50] = (1808,1808,1808)
+@ dim[51] = (1824,1824,1824)
+@ dim[52] = (1840,1840,1840)
+@ dim[53] = (1856,1856,1856)
+@ dim[54] = (1872,1872,1872)
+@ dim[55] = (1888,1888,1888)
+@ dim[56] = (1904,1904,1904)
+@ dim[57] = (1920,1920,1920)
+@ dim[58] = (1936,1936,1936)
+@ dim[59] = (1952,1952,1952)
+@ dim[60] = (1968,1968,1968)
+@ dim[61] = (1984,1984,1984)
+@ dim[62] = (2000,2000,2000)
+@ dim[63] = (2016,2016,2016)
+@ dim[64] = (2032,2032,2032)
+@ dim[65] = (2048,2048,2048)
+Not using OpenMP threads with BLAS
+# calling sgemm for (dim1,dim2,dim3) = (    1,    1,    1)
+# sgemm took 0.000000 seconds
+# sgemm Gflops 0.020972
+# calling sgemm for (dim1,dim2,dim3) = ( 1024, 1024, 1024)
+# sgemm took 0.016132 seconds
+# sgemm Gflops 133.117745
+# calling sgemm for (dim1,dim2,dim3) = ( 1040, 1040, 1040)
+# sgemm took 0.016617 seconds
+# sgemm Gflops 135.386453
+# calling sgemm for (dim1,dim2,dim3) = ( 1056, 1056, 1056)
+# sgemm took 0.017267 seconds
+# sgemm Gflops 136.398797
+# calling sgemm for (dim1,dim2,dim3) = ( 1072, 1072, 1072)
+# sgemm took 0.018060 seconds
+# sgemm Gflops 136.428767
+# calling sgemm for (dim1,dim2,dim3) = ( 1088, 1088, 1088)
+# sgemm took 0.018784 seconds
+# sgemm Gflops 137.126525
+# calling sgemm for (dim1,dim2,dim3) = ( 1104, 1104, 1104)
+# sgemm took 0.019645 seconds
+# sgemm Gflops 136.988842
+# calling sgemm for (dim1,dim2,dim3) = ( 1120, 1120, 1120)
+# sgemm took 0.020418 seconds
+# sgemm Gflops 137.615969
+# calling sgemm for (dim1,dim2,dim3) = ( 1136, 1136, 1136)
+# sgemm took 0.021355 seconds
+# sgemm Gflops 137.299855
+# calling sgemm for (dim1,dim2,dim3) = ( 1152, 1152, 1152)
+# sgemm took 0.022182 seconds
+# sgemm Gflops 137.845938
+# calling sgemm for (dim1,dim2,dim3) = ( 1168, 1168, 1168)
+# sgemm took 0.023155 seconds
+# sgemm Gflops 137.629078
+# calling sgemm for (dim1,dim2,dim3) = ( 1184, 1184, 1184)
+# sgemm took 0.024015 seconds
+# sgemm Gflops 138.232001
+# calling sgemm for (dim1,dim2,dim3) = ( 1200, 1200, 1200)
+# sgemm took 0.025078 seconds
+# sgemm Gflops 137.808402
+# calling sgemm for (dim1,dim2,dim3) = ( 1216, 1216, 1216)
+# sgemm took 0.025966 seconds
+# sgemm Gflops 138.489767
+# calling sgemm for (dim1,dim2,dim3) = ( 1232, 1232, 1232)
+# sgemm took 0.027109 seconds
+# sgemm Gflops 137.961083
+# calling sgemm for (dim1,dim2,dim3) = ( 1248, 1248, 1248)
+# sgemm took 0.028046 seconds
+# sgemm Gflops 138.614580
+# calling sgemm for (dim1,dim2,dim3) = ( 1264, 1264, 1264)
+# sgemm took 0.029218 seconds
+# sgemm Gflops 138.234369
+# calling sgemm for (dim1,dim2,dim3) = ( 1280, 1280, 1280)
+# sgemm took 0.030312 seconds
+# sgemm Gflops 138.371012
+# calling sgemm for (dim1,dim2,dim3) = ( 1296, 1296, 1296)
+# sgemm took 0.031670 seconds
+# sgemm Gflops 137.465493
+# calling sgemm for (dim1,dim2,dim3) = ( 1312, 1312, 1312)
+# sgemm took 0.032687 seconds
+# sgemm Gflops 138.185207
+# calling sgemm for (dim1,dim2,dim3) = ( 1328, 1328, 1328)
+# sgemm took 0.033943 seconds
+# sgemm Gflops 137.996406
+# calling sgemm for (dim1,dim2,dim3) = ( 1344, 1344, 1344)
+# sgemm took 0.035024 seconds
+# sgemm Gflops 138.633056
+# calling sgemm for (dim1,dim2,dim3) = ( 1360, 1360, 1360)
+# sgemm took 0.036445 seconds
+# sgemm Gflops 138.039776
+# calling sgemm for (dim1,dim2,dim3) = ( 1376, 1376, 1376)
+# sgemm took 0.037586 seconds
+# sgemm Gflops 138.630724
+# calling sgemm for (dim1,dim2,dim3) = ( 1392, 1392, 1392)
+# sgemm took 0.038955 seconds
+# sgemm Gflops 138.480550
+# calling sgemm for (dim1,dim2,dim3) = ( 1408, 1408, 1408)
+# sgemm took 0.040213 seconds
+# sgemm Gflops 138.827160
+# calling sgemm for (dim1,dim2,dim3) = ( 1424, 1424, 1424)
+# sgemm took 0.041677 seconds
+# sgemm Gflops 138.568186
+# calling sgemm for (dim1,dim2,dim3) = ( 1440, 1440, 1440)
+# sgemm took 0.043008 seconds
+# sgemm Gflops 138.855624
+# calling sgemm for (dim1,dim2,dim3) = ( 1456, 1456, 1456)
+# sgemm took 0.044539 seconds
+# sgemm Gflops 138.604520
+# calling sgemm for (dim1,dim2,dim3) = ( 1472, 1472, 1472)
+# sgemm took 0.045909 seconds
+# sgemm Gflops 138.948694
+# calling sgemm for (dim1,dim2,dim3) = ( 1488, 1488, 1488)
+# sgemm took 0.047545 seconds
+# sgemm Gflops 138.590432
+# calling sgemm for (dim1,dim2,dim3) = ( 1504, 1504, 1504)
+# sgemm took 0.048976 seconds
+# sgemm Gflops 138.927815
+# calling sgemm for (dim1,dim2,dim3) = ( 1520, 1520, 1520)
+# sgemm took 0.050694 seconds
+# sgemm Gflops 138.548766
+# calling sgemm for (dim1,dim2,dim3) = ( 1536, 1536, 1536)
+# sgemm took 0.052781 seconds
+# sgemm Gflops 137.316961
+# calling sgemm for (dim1,dim2,dim3) = ( 1552, 1552, 1552)
+# sgemm took 0.054253 seconds
+# sgemm Gflops 137.810496
+# calling sgemm for (dim1,dim2,dim3) = ( 1568, 1568, 1568)
+# sgemm took 0.055649 seconds
+# sgemm Gflops 138.550962
+# calling sgemm for (dim1,dim2,dim3) = ( 1584, 1584, 1584)
+# sgemm took 0.057447 seconds
+# sgemm Gflops 138.365890
+# calling sgemm for (dim1,dim2,dim3) = ( 1600, 1600, 1600)
+# sgemm took 0.059006 seconds
+# sgemm Gflops 138.833620
+# calling sgemm for (dim1,dim2,dim3) = ( 1616, 1616, 1616)
+# sgemm took 0.060922 seconds
+# sgemm Gflops 138.541773
+# calling sgemm for (dim1,dim2,dim3) = ( 1632, 1632, 1632)
+# sgemm took 0.062600 seconds
+# sgemm Gflops 138.872475
+# calling sgemm for (dim1,dim2,dim3) = ( 1648, 1648, 1648)
+# sgemm took 0.064575 seconds
+# sgemm Gflops 138.623651
+# calling sgemm for (dim1,dim2,dim3) = ( 1664, 1664, 1664)
+# sgemm took 0.066353 seconds
+# sgemm Gflops 138.875782
+# calling sgemm for (dim1,dim2,dim3) = ( 1680, 1680, 1680)
+# sgemm took 0.068354 seconds
+# sgemm Gflops 138.736960
+# calling sgemm for (dim1,dim2,dim3) = ( 1696, 1696, 1696)
+# sgemm took 0.070209 seconds
+# sgemm Gflops 138.967175
+# calling sgemm for (dim1,dim2,dim3) = ( 1712, 1712, 1712)
+# sgemm took 0.072433 seconds
+# sgemm Gflops 138.549961
+# calling sgemm for (dim1,dim2,dim3) = ( 1728, 1728, 1728)
+# sgemm took 0.074208 seconds
+# sgemm Gflops 139.062471
+# calling sgemm for (dim1,dim2,dim3) = ( 1744, 1744, 1744)
+# sgemm took 0.076462 seconds
+# sgemm Gflops 138.747868
+# calling sgemm for (dim1,dim2,dim3) = ( 1760, 1760, 1760)
+# sgemm took 0.078436 seconds
+# sgemm Gflops 139.011507
+# calling sgemm for (dim1,dim2,dim3) = ( 1776, 1776, 1776)
+# sgemm took 0.080725 seconds
+# sgemm Gflops 138.787811
+# calling sgemm for (dim1,dim2,dim3) = ( 1792, 1792, 1792)
+# sgemm took 0.082866 seconds
+# sgemm Gflops 138.889409
+# calling sgemm for (dim1,dim2,dim3) = ( 1808, 1808, 1808)
+# sgemm took 0.085308 seconds
+# sgemm Gflops 138.560054
+# calling sgemm for (dim1,dim2,dim3) = ( 1824, 1824, 1824)
+# sgemm took 0.087207 seconds
+# sgemm Gflops 139.172666
+# calling sgemm for (dim1,dim2,dim3) = ( 1840, 1840, 1840)
+# sgemm took 0.089658 seconds
+# sgemm Gflops 138.960888
+# calling sgemm for (dim1,dim2,dim3) = ( 1856, 1856, 1856)
+# sgemm took 0.091756 seconds
+# sgemm Gflops 139.357085
+# calling sgemm for (dim1,dim2,dim3) = ( 1872, 1872, 1872)
+# sgemm took 0.094292 seconds
+# sgemm Gflops 139.146174
+# calling sgemm for (dim1,dim2,dim3) = ( 1888, 1888, 1888)
+# sgemm took 0.096497 seconds
+# sgemm Gflops 139.483402
+# calling sgemm for (dim1,dim2,dim3) = ( 1904, 1904, 1904)
+# sgemm took 0.099255 seconds
+# sgemm Gflops 139.084085
+# calling sgemm for (dim1,dim2,dim3) = ( 1920, 1920, 1920)
+# sgemm took 0.101423 seconds
+# sgemm Gflops 139.571227
+# calling sgemm for (dim1,dim2,dim3) = ( 1936, 1936, 1936)
+# sgemm took 0.104290 seconds
+# sgemm Gflops 139.155913
+# calling sgemm for (dim1,dim2,dim3) = ( 1952, 1952, 1952)
+# sgemm took 0.106636 seconds
+# sgemm Gflops 139.496702
+# calling sgemm for (dim1,dim2,dim3) = ( 1968, 1968, 1968)
+# sgemm took 0.109537 seconds
+# sgemm Gflops 139.169642
+# calling sgemm for (dim1,dim2,dim3) = ( 1984, 1984, 1984)
+# sgemm took 0.111959 seconds
+# sgemm Gflops 139.506664
+# calling sgemm for (dim1,dim2,dim3) = ( 2000, 2000, 2000)
+# sgemm took 0.115321 seconds
+# sgemm Gflops 138.743169
+# calling sgemm for (dim1,dim2,dim3) = ( 2016, 2016, 2016)
+# sgemm took 0.117489 seconds
+# sgemm Gflops 139.477876
+# calling sgemm for (dim1,dim2,dim3) = ( 2032, 2032, 2032)
+# sgemm took 0.120715 seconds
+# sgemm Gflops 139.007916
+# calling sgemm for (dim1,dim2,dim3) = ( 2048, 2048, 2048)
+# sgemm took 0.124704 seconds
+# sgemm Gflops 137.764835
+# calling cublasSgemm for (dim1,dim2,dim3) = (    1,    1,    1)
+# cublasSgemm took 0.000024 seconds (exclusive)
+# cublasSgemm took 0.000082 seconds (inclusive)
+# cublasSgemm Gflops 0.000084 (exclusive)
+# cublasSgemm Gflops 0.000024 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1024, 1024, 1024)
+# cublasSgemm took 0.006719 seconds (exclusive)
+# cublasSgemm took 0.012718 seconds (inclusive)
+# cublasSgemm Gflops 319.595760 (exclusive)
+# cublasSgemm Gflops 168.860396 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1040, 1040, 1040)
+# cublasSgemm took 0.005362 seconds (exclusive)
+# cublasSgemm took 0.011470 seconds (inclusive)
+# cublasSgemm Gflops 419.538188 (exclusive)
+# cublasSgemm Gflops 196.147396 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1056, 1056, 1056)
+# cublasSgemm took 0.007707 seconds (exclusive)
+# cublasSgemm took 0.013927 seconds (inclusive)
+# cublasSgemm Gflops 305.599420 (exclusive)
+# cublasSgemm Gflops 169.113717 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1072, 1072, 1072)
+# cublasSgemm took 0.008543 seconds (exclusive)
+# cublasSgemm took 0.014872 seconds (inclusive)
+# cublasSgemm Gflops 288.402865 (exclusive)
+# cublasSgemm Gflops 165.671454 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1088, 1088, 1088)
+# cublasSgemm took 0.008156 seconds (exclusive)
+# cublasSgemm took 0.014594 seconds (inclusive)
+# cublasSgemm Gflops 315.815665 (exclusive)
+# cublasSgemm Gflops 176.497804 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1104, 1104, 1104)
+# cublasSgemm took 0.009517 seconds (exclusive)
+# cublasSgemm took 0.016193 seconds (inclusive)
+# cublasSgemm Gflops 282.763212 (exclusive)
+# cublasSgemm Gflops 166.189385 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1120, 1120, 1120)
+# cublasSgemm took 0.006329 seconds (exclusive)
+# cublasSgemm took 0.013248 seconds (inclusive)
+# cublasSgemm Gflops 443.934301 (exclusive)
+# cublasSgemm Gflops 212.091043 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1136, 1136, 1136)
+# cublasSgemm took 0.009905 seconds (exclusive)
+# cublasSgemm took 0.017067 seconds (inclusive)
+# cublasSgemm Gflops 296.027642 (exclusive)
+# cublasSgemm Gflops 171.793412 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1152, 1152, 1152)
+# cublasSgemm took 0.009495 seconds (exclusive)
+# cublasSgemm took 0.016858 seconds (inclusive)
+# cublasSgemm Gflops 322.024031 (exclusive)
+# cublasSgemm Gflops 181.379672 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1168, 1168, 1168)
+# cublasSgemm took 0.010972 seconds (exclusive)
+# cublasSgemm took 0.018460 seconds (inclusive)
+# cublasSgemm Gflops 290.457233 (exclusive)
+# cublasSgemm Gflops 172.633866 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1184, 1184, 1184)
+# cublasSgemm took 0.010635 seconds (exclusive)
+# cublasSgemm took 0.018228 seconds (inclusive)
+# cublasSgemm Gflops 312.149352 (exclusive)
+# cublasSgemm Gflops 182.119615 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1200, 1200, 1200)
+# cublasSgemm took 0.007880 seconds (exclusive)
+# cublasSgemm took 0.015599 seconds (inclusive)
+# cublasSgemm Gflops 438.588175 (exclusive)
+# cublasSgemm Gflops 221.552149 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1216, 1216, 1216)
+# cublasSgemm took 0.010910 seconds (exclusive)
+# cublasSgemm took 0.018862 seconds (inclusive)
+# cublasSgemm Gflops 329.625456 (exclusive)
+# cublasSgemm Gflops 190.649725 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1232, 1232, 1232)
+# cublasSgemm took 0.012608 seconds (exclusive)
+# cublasSgemm took 0.020835 seconds (inclusive)
+# cublasSgemm Gflops 296.627689 (exclusive)
+# cublasSgemm Gflops 179.497456 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1248, 1248, 1248)
+# cublasSgemm took 0.012189 seconds (exclusive)
+# cublasSgemm took 0.020689 seconds (inclusive)
+# cublasSgemm Gflops 318.939259 (exclusive)
+# cublasSgemm Gflops 187.903569 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1264, 1264, 1264)
+# cublasSgemm took 0.013607 seconds (exclusive)
+# cublasSgemm took 0.022305 seconds (inclusive)
+# cublasSgemm Gflops 296.826522 (exclusive)
+# cublasSgemm Gflops 181.081797 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1280, 1280, 1280)
+# cublasSgemm took 0.009528 seconds (exclusive)
+# cublasSgemm took 0.018345 seconds (inclusive)
+# cublasSgemm Gflops 440.228371 (exclusive)
+# cublasSgemm Gflops 228.633258 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1296, 1296, 1296)
+# cublasSgemm took 0.014854 seconds (exclusive)
+# cublasSgemm took 0.023801 seconds (inclusive)
+# cublasSgemm Gflops 293.084707 (exclusive)
+# cublasSgemm Gflops 182.916720 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1312, 1312, 1312)
+# cublasSgemm took 0.014445 seconds (exclusive)
+# cublasSgemm took 0.023572 seconds (inclusive)
+# cublasSgemm Gflops 312.699373 (exclusive)
+# cublasSgemm Gflops 191.615583 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1328, 1328, 1328)
+# cublasSgemm took 0.015459 seconds (exclusive)
+# cublasSgemm took 0.024869 seconds (inclusive)
+# cublasSgemm Gflops 303.006891 (exclusive)
+# cublasSgemm Gflops 188.346591 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1344, 1344, 1344)
+# cublasSgemm took 0.014799 seconds (exclusive)
+# cublasSgemm took 0.024514 seconds (inclusive)
+# cublasSgemm Gflops 328.084996 (exclusive)
+# cublasSgemm Gflops 198.066273 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1360, 1360, 1360)
+# cublasSgemm took 0.011388 seconds (exclusive)
+# cublasSgemm took 0.021341 seconds (inclusive)
+# cublasSgemm Gflops 441.761385 (exclusive)
+# cublasSgemm Gflops 235.734387 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1376, 1376, 1376)
+# cublasSgemm took 0.016319 seconds (exclusive)
+# cublasSgemm took 0.026412 seconds (inclusive)
+# cublasSgemm Gflops 319.285623 (exclusive)
+# cublasSgemm Gflops 197.278752 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1392, 1392, 1392)
+# cublasSgemm took 0.018007 seconds (exclusive)
+# cublasSgemm took 0.028239 seconds (inclusive)
+# cublasSgemm Gflops 299.580418 (exclusive)
+# cublasSgemm Gflops 191.029325 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1408, 1408, 1408)
+# cublasSgemm took 0.017195 seconds (exclusive)
+# cublasSgemm took 0.027614 seconds (inclusive)
+# cublasSgemm Gflops 324.659635 (exclusive)
+# cublasSgemm Gflops 202.163294 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1424, 1424, 1424)
+# cublasSgemm took 0.019495 seconds (exclusive)
+# cublasSgemm took 0.030202 seconds (inclusive)
+# cublasSgemm Gflops 296.230375 (exclusive)
+# cublasSgemm Gflops 191.216571 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1440, 1440, 1440)
+# cublasSgemm took 0.013184 seconds (exclusive)
+# cublasSgemm took 0.024218 seconds (inclusive)
+# cublasSgemm Gflops 452.982374 (exclusive)
+# cublasSgemm Gflops 246.587155 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1456, 1456, 1456)
+# cublasSgemm took 0.020226 seconds (exclusive)
+# cublasSgemm took 0.031494 seconds (inclusive)
+# cublasSgemm Gflops 305.219856 (exclusive)
+# cublasSgemm Gflops 196.011728 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1472, 1472, 1472)
+# cublasSgemm took 0.019285 seconds (exclusive)
+# cublasSgemm took 0.030706 seconds (inclusive)
+# cublasSgemm Gflops 330.768696 (exclusive)
+# cublasSgemm Gflops 207.746742 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1488, 1488, 1488)
+# cublasSgemm took 0.021903 seconds (exclusive)
+# cublasSgemm took 0.033465 seconds (inclusive)
+# cublasSgemm Gflops 300.838877 (exclusive)
+# cublasSgemm Gflops 196.899311 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1504, 1504, 1504)
+# cublasSgemm took 0.021664 seconds (exclusive)
+# cublasSgemm took 0.033471 seconds (inclusive)
+# cublasSgemm Gflops 314.071590 (exclusive)
+# cublasSgemm Gflops 203.287146 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1520, 1520, 1520)
+# cublasSgemm took 0.015538 seconds (exclusive)
+# cublasSgemm took 0.027678 seconds (inclusive)
+# cublasSgemm Gflops 452.031755 (exclusive)
+# cublasSgemm Gflops 253.762445 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1536, 1536, 1536)
+# cublasSgemm took 0.022079 seconds (exclusive)
+# cublasSgemm took 0.034552 seconds (inclusive)
+# cublasSgemm Gflops 328.264880 (exclusive)
+# cublasSgemm Gflops 209.765626 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1552, 1552, 1552)
+# cublasSgemm took 0.024889 seconds (exclusive)
+# cublasSgemm took 0.037532 seconds (inclusive)
+# cublasSgemm Gflops 300.399702 (exclusive)
+# cublasSgemm Gflops 199.208264 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1568, 1568, 1568)
+# cublasSgemm took 0.024161 seconds (exclusive)
+# cublasSgemm took 0.036952 seconds (inclusive)
+# cublasSgemm Gflops 319.114023 (exclusive)
+# cublasSgemm Gflops 208.653694 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1584, 1584, 1584)
+# cublasSgemm took 0.026268 seconds (exclusive)
+# cublasSgemm took 0.039266 seconds (inclusive)
+# cublasSgemm Gflops 302.605425 (exclusive)
+# cublasSgemm Gflops 202.431295 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1600, 1600, 1600)
+# cublasSgemm took 0.018210 seconds (exclusive)
+# cublasSgemm took 0.031554 seconds (inclusive)
+# cublasSgemm Gflops 449.865515 (exclusive)
+# cublasSgemm Gflops 259.622489 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1616, 1616, 1616)
+# cublasSgemm took 0.028141 seconds (exclusive)
+# cublasSgemm took 0.041828 seconds (inclusive)
+# cublasSgemm Gflops 299.930126 (exclusive)
+# cublasSgemm Gflops 201.783476 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1632, 1632, 1632)
+# cublasSgemm took 0.027221 seconds (exclusive)
+# cublasSgemm took 0.041112 seconds (inclusive)
+# cublasSgemm Gflops 319.369764 (exclusive)
+# cublasSgemm Gflops 211.458032 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1648, 1648, 1648)
+# cublasSgemm took 0.029146 seconds (exclusive)
+# cublasSgemm took 0.043196 seconds (inclusive)
+# cublasSgemm Gflops 307.129251 (exclusive)
+# cublasSgemm Gflops 207.234956 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1664, 1664, 1664)
+# cublasSgemm took 0.028203 seconds (exclusive)
+# cublasSgemm took 0.042456 seconds (inclusive)
+# cublasSgemm Gflops 326.736608 (exclusive)
+# cublasSgemm Gflops 217.045027 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1680, 1680, 1680)
+# cublasSgemm took 0.020917 seconds (exclusive)
+# cublasSgemm took 0.035544 seconds (inclusive)
+# cublasSgemm Gflops 453.378275 (exclusive)
+# cublasSgemm Gflops 266.802511 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1696, 1696, 1696)
+# cublasSgemm took 0.030582 seconds (exclusive)
+# cublasSgemm took 0.045565 seconds (inclusive)
+# cublasSgemm Gflops 319.039693 (exclusive)
+# cublasSgemm Gflops 214.128842 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1712, 1712, 1712)
+# cublasSgemm took 0.032654 seconds (exclusive)
+# cublasSgemm took 0.047831 seconds (inclusive)
+# cublasSgemm Gflops 307.333100 (exclusive)
+# cublasSgemm Gflops 209.811523 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1728, 1728, 1728)
+# cublasSgemm took 0.031552 seconds (exclusive)
+# cublasSgemm took 0.046901 seconds (inclusive)
+# cublasSgemm Gflops 327.062910 (exclusive)
+# cublasSgemm Gflops 220.028196 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1744, 1744, 1744)
+# cublasSgemm took 0.035304 seconds (exclusive)
+# cublasSgemm took 0.050899 seconds (inclusive)
+# cublasSgemm Gflops 300.503177 (exclusive)
+# cublasSgemm Gflops 208.431132 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1760, 1760, 1760)
+# cublasSgemm took 0.024053 seconds (exclusive)
+# cublasSgemm took 0.040028 seconds (inclusive)
+# cublasSgemm Gflops 453.317167 (exclusive)
+# cublasSgemm Gflops 272.399096 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1776, 1776, 1776)
+# cublasSgemm took 0.036514 seconds (exclusive)
+# cublasSgemm took 0.052862 seconds (inclusive)
+# cublasSgemm Gflops 306.829595 (exclusive)
+# cublasSgemm Gflops 211.940672 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1792, 1792, 1792)
+# cublasSgemm took 0.034732 seconds (exclusive)
+# cublasSgemm took 0.051232 seconds (inclusive)
+# cublasSgemm Gflops 331.371393 (exclusive)
+# cublasSgemm Gflops 224.646698 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1808, 1808, 1808)
+# cublasSgemm took 0.039325 seconds (exclusive)
+# cublasSgemm took 0.056013 seconds (inclusive)
+# cublasSgemm Gflops 300.580476 (exclusive)
+# cublasSgemm Gflops 211.027712 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1824, 1824, 1824)
+# cublasSgemm took 0.037983 seconds (exclusive)
+# cublasSgemm took 0.054996 seconds (inclusive)
+# cublasSgemm Gflops 319.528932 (exclusive)
+# cublasSgemm Gflops 220.683326 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1840, 1840, 1840)
+# cublasSgemm took 0.027540 seconds (exclusive)
+# cublasSgemm took 0.044953 seconds (inclusive)
+# cublasSgemm Gflops 452.404372 (exclusive)
+# cublasSgemm Gflops 277.154478 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1856, 1856, 1856)
+# cublasSgemm took 0.039004 seconds (exclusive)
+# cublasSgemm took 0.056688 seconds (inclusive)
+# cublasSgemm Gflops 327.832444 (exclusive)
+# cublasSgemm Gflops 225.567075 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1872, 1872, 1872)
+# cublasSgemm took 0.043526 seconds (exclusive)
+# cublasSgemm took 0.061394 seconds (inclusive)
+# cublasSgemm Gflops 301.436845 (exclusive)
+# cublasSgemm Gflops 213.707241 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1888, 1888, 1888)
+# cublasSgemm took 0.041995 seconds (exclusive)
+# cublasSgemm took 0.060117 seconds (inclusive)
+# cublasSgemm Gflops 320.507629 (exclusive)
+# cublasSgemm Gflops 223.893088 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1904, 1904, 1904)
+# cublasSgemm took 0.044995 seconds (exclusive)
+# cublasSgemm took 0.063532 seconds (inclusive)
+# cublasSgemm Gflops 306.805336 (exclusive)
+# cublasSgemm Gflops 217.290195 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1920, 1920, 1920)
+# cublasSgemm took 0.031153 seconds (exclusive)
+# cublasSgemm took 0.050049 seconds (inclusive)
+# cublasSgemm Gflops 454.395110 (exclusive)
+# cublasSgemm Gflops 282.838771 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1936, 1936, 1936)
+# cublasSgemm took 0.048069 seconds (exclusive)
+# cublasSgemm took 0.067149 seconds (inclusive)
+# cublasSgemm Gflops 301.915405 (exclusive)
+# cublasSgemm Gflops 216.127065 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1952, 1952, 1952)
+# cublasSgemm took 0.046447 seconds (exclusive)
+# cublasSgemm took 0.065724 seconds (inclusive)
+# cublasSgemm Gflops 320.266585 (exclusive)
+# cublasSgemm Gflops 226.332337 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1968, 1968, 1968)
+# cublasSgemm took 0.049906 seconds (exclusive)
+# cublasSgemm took 0.069610 seconds (inclusive)
+# cublasSgemm Gflops 305.456283 (exclusive)
+# cublasSgemm Gflops 218.994271 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 1984, 1984, 1984)
+# cublasSgemm took 0.047475 seconds (exclusive)
+# cublasSgemm took 0.067604 seconds (inclusive)
+# cublasSgemm Gflops 328.994862 (exclusive)
+# cublasSgemm Gflops 231.038488 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2000, 2000, 2000)
+# cublasSgemm took 0.035243 seconds (exclusive)
+# cublasSgemm took 0.055558 seconds (inclusive)
+# cublasSgemm Gflops 453.990728 (exclusive)
+# cublasSgemm Gflops 287.989357 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2016, 2016, 2016)
+# cublasSgemm took 0.051362 seconds (exclusive)
+# cublasSgemm took 0.071872 seconds (inclusive)
+# cublasSgemm Gflops 319.052503 (exclusive)
+# cublasSgemm Gflops 228.003386 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2032, 2032, 2032)
+# cublasSgemm took 0.054822 seconds (exclusive)
+# cublasSgemm took 0.075751 seconds (inclusive)
+# cublasSgemm Gflops 306.086796 (exclusive)
+# cublasSgemm Gflops 221.521305 (inclusive)
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2048, 2048, 2048)
+# cublasSgemm took 0.052051 seconds (exclusive)
+# cublasSgemm took 0.073427 seconds (inclusive)
+# cublasSgemm Gflops 330.061439 (exclusive)
+# cublasSgemm Gflops 233.971231 (inclusive)
+=========================================================
+CUDA device properties:
+name:                          Tesla C2050
+major version:                           2
+minor version:                           0
+canMapHostMemory:                        1
+totalGlobalMem:                       2687 MiB
+sharedMemPerBlock:                   49152
+clockRate:                           1.147 GHz
+regsPerBlock:                        32768
+warpSize:                               32
+maxThreadsPerBlock:                   1024
+=========================================================
+  dim  dim2  dim3        SGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)
+    1     1     1    0.021 Gflops <==  0.001        0.000 Gflops    0.000 Gflops
+ 1024  1024  1024  133.118 Gflops      1.269 ==>  168.860 Gflops  319.596 Gflops
+ 1040  1040  1040  135.386 Gflops      1.449 ==>  196.147 Gflops  419.538 Gflops
+ 1056  1056  1056  136.399 Gflops      1.240 ==>  169.114 Gflops  305.599 Gflops
+ 1072  1072  1072  136.429 Gflops      1.214 ==>  165.671 Gflops  288.403 Gflops
+ 1088  1088  1088  137.127 Gflops      1.287 ==>  176.498 Gflops  315.816 Gflops
+ 1104  1104  1104  136.989 Gflops      1.213 ==>  166.189 Gflops  282.763 Gflops
+ 1120  1120  1120  137.616 Gflops      1.541 ==>  212.091 Gflops  443.934 Gflops
+ 1136  1136  1136  137.300 Gflops      1.251 ==>  171.793 Gflops  296.028 Gflops
+ 1152  1152  1152  137.846 Gflops      1.316 ==>  181.380 Gflops  322.024 Gflops
+ 1168  1168  1168  137.629 Gflops      1.254 ==>  172.634 Gflops  290.457 Gflops
+ 1184  1184  1184  138.232 Gflops      1.317 ==>  182.120 Gflops  312.149 Gflops
+ 1200  1200  1200  137.808 Gflops      1.608 ==>  221.552 Gflops  438.588 Gflops
+ 1216  1216  1216  138.490 Gflops      1.377 ==>  190.650 Gflops  329.625 Gflops
+ 1232  1232  1232  137.961 Gflops      1.301 ==>  179.497 Gflops  296.628 Gflops
+ 1248  1248  1248  138.615 Gflops      1.356 ==>  187.904 Gflops  318.939 Gflops
+ 1264  1264  1264  138.234 Gflops      1.310 ==>  181.082 Gflops  296.827 Gflops
+ 1280  1280  1280  138.371 Gflops      1.652 ==>  228.633 Gflops  440.228 Gflops
+ 1296  1296  1296  137.465 Gflops      1.331 ==>  182.917 Gflops  293.085 Gflops
+ 1312  1312  1312  138.185 Gflops      1.387 ==>  191.616 Gflops  312.699 Gflops
+ 1328  1328  1328  137.996 Gflops      1.365 ==>  188.347 Gflops  303.007 Gflops
+ 1344  1344  1344  138.633 Gflops      1.429 ==>  198.066 Gflops  328.085 Gflops
+ 1360  1360  1360  138.040 Gflops      1.708 ==>  235.734 Gflops  441.761 Gflops
+ 1376  1376  1376  138.631 Gflops      1.423 ==>  197.279 Gflops  319.286 Gflops
+ 1392  1392  1392  138.481 Gflops      1.379 ==>  191.029 Gflops  299.580 Gflops
+ 1408  1408  1408  138.827 Gflops      1.456 ==>  202.163 Gflops  324.660 Gflops
+ 1424  1424  1424  138.568 Gflops      1.380 ==>  191.217 Gflops  296.230 Gflops
+ 1440  1440  1440  138.856 Gflops      1.776 ==>  246.587 Gflops  452.982 Gflops
+ 1456  1456  1456  138.605 Gflops      1.414 ==>  196.012 Gflops  305.220 Gflops
+ 1472  1472  1472  138.949 Gflops      1.495 ==>  207.747 Gflops  330.769 Gflops
+ 1488  1488  1488  138.590 Gflops      1.421 ==>  196.899 Gflops  300.839 Gflops
+ 1504  1504  1504  138.928 Gflops      1.463 ==>  203.287 Gflops  314.072 Gflops
+ 1520  1520  1520  138.549 Gflops      1.832 ==>  253.762 Gflops  452.032 Gflops
+ 1536  1536  1536  137.317 Gflops      1.528 ==>  209.766 Gflops  328.265 Gflops
+ 1552  1552  1552  137.810 Gflops      1.446 ==>  199.208 Gflops  300.400 Gflops
+ 1568  1568  1568  138.551 Gflops      1.506 ==>  208.654 Gflops  319.114 Gflops
+ 1584  1584  1584  138.366 Gflops      1.463 ==>  202.431 Gflops  302.605 Gflops
+ 1600  1600  1600  138.834 Gflops      1.870 ==>  259.622 Gflops  449.866 Gflops
+ 1616  1616  1616  138.542 Gflops      1.456 ==>  201.783 Gflops  299.930 Gflops
+ 1632  1632  1632  138.872 Gflops      1.523 ==>  211.458 Gflops  319.370 Gflops
+ 1648  1648  1648  138.624 Gflops      1.495 ==>  207.235 Gflops  307.129 Gflops
+ 1664  1664  1664  138.876 Gflops      1.563 ==>  217.045 Gflops  326.737 Gflops
+ 1680  1680  1680  138.737 Gflops      1.923 ==>  266.803 Gflops  453.378 Gflops
+ 1696  1696  1696  138.967 Gflops      1.541 ==>  214.129 Gflops  319.040 Gflops
+ 1712  1712  1712  138.550 Gflops      1.514 ==>  209.812 Gflops  307.333 Gflops
+ 1728  1728  1728  139.062 Gflops      1.582 ==>  220.028 Gflops  327.063 Gflops
+ 1744  1744  1744  138.748 Gflops      1.502 ==>  208.431 Gflops  300.503 Gflops
+ 1760  1760  1760  139.012 Gflops      1.960 ==>  272.399 Gflops  453.317 Gflops
+ 1776  1776  1776  138.788 Gflops      1.527 ==>  211.941 Gflops  306.830 Gflops
+ 1792  1792  1792  138.889 Gflops      1.617 ==>  224.647 Gflops  331.371 Gflops
+ 1808  1808  1808  138.560 Gflops      1.523 ==>  211.028 Gflops  300.580 Gflops
+ 1824  1824  1824  139.173 Gflops      1.586 ==>  220.683 Gflops  319.529 Gflops
+ 1840  1840  1840  138.961 Gflops      1.994 ==>  277.154 Gflops  452.404 Gflops
+ 1856  1856  1856  139.357 Gflops      1.619 ==>  225.567 Gflops  327.832 Gflops
+ 1872  1872  1872  139.146 Gflops      1.536 ==>  213.707 Gflops  301.437 Gflops
+ 1888  1888  1888  139.483 Gflops      1.605 ==>  223.893 Gflops  320.508 Gflops
+ 1904  1904  1904  139.084 Gflops      1.562 ==>  217.290 Gflops  306.805 Gflops
+ 1920  1920  1920  139.571 Gflops      2.026 ==>  282.839 Gflops  454.395 Gflops
+ 1936  1936  1936  139.156 Gflops      1.553 ==>  216.127 Gflops  301.915 Gflops
+ 1952  1952  1952  139.497 Gflops      1.622 ==>  226.332 Gflops  320.267 Gflops
+ 1968  1968  1968  139.170 Gflops      1.574 ==>  218.994 Gflops  305.456 Gflops
+ 1984  1984  1984  139.507 Gflops      1.656 ==>  231.038 Gflops  328.995 Gflops
+ 2000  2000  2000  138.743 Gflops      2.076 ==>  287.989 Gflops  453.991 Gflops
+ 2016  2016  2016  139.478 Gflops      1.635 ==>  228.003 Gflops  319.053 Gflops
+ 2032  2032  2032  139.008 Gflops      1.594 ==>  221.521 Gflops  306.087 Gflops
+ 2048  2048  2048  137.765 Gflops      1.698 ==>  233.971 Gflops  330.061 Gflops
+# the test driver has finished in  81.3 seconds !!!
+
+                         GA Statistics for process    0
+                         ------------------------------
+
+       create   destroy   get      put      acc     scatter   gather  read&inc
+calls:    0        0        0        0        0        0        0        0     
+number of processes/call 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00
+bytes total:             0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00
+bytes remote:            0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00
+Max memory consumed for GA by this process: 0 bytes
+! GA_Terminate succeeded
+! MPI_Finalize succeeded
