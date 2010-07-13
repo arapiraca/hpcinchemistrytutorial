@@ -1,0 +1,280 @@
+Using threaded BLAS
+! MPI_Init_thread succeeded
+! ARMCI_Init succeeded
+0: provided = MPI_THREAD_SINGLE
+=========================================================
+CUDA device properties:
+name:                          Tesla C2050
+major version:                           2
+minor version:                           0
+canMapHostMemory:                        1
+totalGlobalMem:                       3071 MiB
+sharedMemPerBlock:                   49152
+clockRate:                           1.147 GHz
+regsPerBlock:                        32768
+warpSize:                               32
+maxThreadsPerBlock:                   1024
+=========================================================
+Hostname: dirac34
+Hostname: dirac34
+You have requested single-precision.
+@ dim[0] = (1,1,1)
+@ dim[1] = (2000,2000,2000)
+@ dim[2] = (2100,2100,2100)
+@ dim[3] = (2200,2200,2200)
+@ dim[4] = (2300,2300,2300)
+@ dim[5] = (2400,2400,2400)
+@ dim[6] = (2500,2500,2500)
+@ dim[7] = (2600,2600,2600)
+@ dim[8] = (2700,2700,2700)
+@ dim[9] = (2800,2800,2800)
+@ dim[10] = (2900,2900,2900)
+@ dim[11] = (3000,3000,3000)
+@ dim[12] = (3100,3100,3100)
+@ dim[13] = (3200,3200,3200)
+@ dim[14] = (3300,3300,3300)
+@ dim[15] = (3400,3400,3400)
+@ dim[16] = (3500,3500,3500)
+@ dim[17] = (3600,3600,3600)
+@ dim[18] = (3700,3700,3700)
+@ dim[19] = (3800,3800,3800)
+@ dim[20] = (3900,3900,3900)
+@ dim[21] = (4000,4000,4000)
+Not using OpenMP threads with BLAS
+# calling sgemm for (dim1,dim2,dim3) = (    1,    1,    1)
+# sgemm took 0.000000 seconds
+# sgemm Gflops 0.004934
+# calling cublasSgemm for (dim1,dim2,dim3) = (    1,    1,    1)
+# cublasSgemm took 0.000012 seconds (exclusive)
+# cublasSgemm took 0.000046 seconds (inclusive)
+# cublasSgemm Gflops 0.000169 (exclusive)
+# cublasSgemm Gflops 0.000044 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2000, 2000, 2000)
+# sgemm took 0.204294 seconds
+# sgemm Gflops 78.318496
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2000, 2000, 2000)
+# cublasSgemm took 0.034143 seconds (exclusive)
+# cublasSgemm took 0.052216 seconds (inclusive)
+# cublasSgemm Gflops 468.610485 (exclusive)
+# cublasSgemm Gflops 306.418757 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2100, 2100, 2100)
+# sgemm took 0.239919 seconds
+# sgemm Gflops 77.200927
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2100, 2100, 2100)
+# cublasSgemm took 0.080506 seconds (exclusive)
+# cublasSgemm took 0.097366 seconds (inclusive)
+# cublasSgemm Gflops 230.070039 (exclusive)
+# cublasSgemm Gflops 190.230817 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2200, 2200, 2200)
+# sgemm took 0.301479 seconds
+# sgemm Gflops 70.638440
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2200, 2200, 2200)
+# cublasSgemm took 0.092239 seconds (exclusive)
+# cublasSgemm took 0.113018 seconds (inclusive)
+# cublasSgemm Gflops 230.877826 (exclusive)
+# cublasSgemm Gflops 188.430261 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2300, 2300, 2300)
+# sgemm took 0.337961 seconds
+# sgemm Gflops 72.002476
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2300, 2300, 2300)
+# cublasSgemm took 0.105040 seconds (exclusive)
+# cublasSgemm took 0.125173 seconds (inclusive)
+# cublasSgemm Gflops 231.663493 (exclusive)
+# cublasSgemm Gflops 194.402581 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2400, 2400, 2400)
+# sgemm took 0.395845 seconds
+# sgemm Gflops 69.845536
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2400, 2400, 2400)
+# cublasSgemm took 0.059020 seconds (exclusive)
+# cublasSgemm took 0.083803 seconds (inclusive)
+# cublasSgemm Gflops 468.454820 (exclusive)
+# cublasSgemm Gflops 329.917489 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2500, 2500, 2500)
+# sgemm took 0.404316 seconds
+# sgemm Gflops 77.291099
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2500, 2500, 2500)
+# cublasSgemm took 0.135719 seconds (exclusive)
+# cublasSgemm took 0.162565 seconds (inclusive)
+# cublasSgemm Gflops 230.255299 (exclusive)
+# cublasSgemm Gflops 192.230724 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2600, 2600, 2600)
+# sgemm took 0.408165 seconds
+# sgemm Gflops 86.122029
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2600, 2600, 2600)
+# cublasSgemm took 0.152474 seconds (exclusive)
+# cublasSgemm took 0.181405 seconds (inclusive)
+# cublasSgemm Gflops 230.544083 (exclusive)
+# cublasSgemm Gflops 193.776056 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2700, 2700, 2700)
+# sgemm took 0.504844 seconds
+# sgemm Gflops 77.976574
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2700, 2700, 2700)
+# cublasSgemm took 0.170459 seconds (exclusive)
+# cublasSgemm took 0.201466 seconds (inclusive)
+# cublasSgemm Gflops 230.941057 (exclusive)
+# cublasSgemm Gflops 195.398047 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2800, 2800, 2800)
+# sgemm took 0.546267 seconds
+# sgemm Gflops 80.370970
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2800, 2800, 2800)
+# cublasSgemm took 0.093196 seconds (exclusive)
+# cublasSgemm took 0.127574 seconds (inclusive)
+# cublasSgemm Gflops 471.091078 (exclusive)
+# cublasSgemm Gflops 344.144290 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 2900, 2900, 2900)
+# sgemm took 0.605068 seconds
+# sgemm Gflops 80.615683
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 2900, 2900, 2900)
+# cublasSgemm took 0.210494 seconds (exclusive)
+# cublasSgemm took 0.241965 seconds (inclusive)
+# cublasSgemm Gflops 231.731366 (exclusive)
+# cublasSgemm Gflops 201.591133 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3000, 3000, 3000)
+# sgemm took 0.612050 seconds
+# sgemm Gflops 88.228102
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3000, 3000, 3000)
+# cublasSgemm took 0.232528 seconds (exclusive)
+# cublasSgemm took 0.266093 seconds (inclusive)
+# cublasSgemm Gflops 232.230411 (exclusive)
+# cublasSgemm Gflops 202.936246 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3100, 3100, 3100)
+# sgemm took 0.706155 seconds
+# sgemm Gflops 84.375230
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3100, 3100, 3100)
+# cublasSgemm took 0.256451 seconds (exclusive)
+# cublasSgemm took 0.292166 seconds (inclusive)
+# cublasSgemm Gflops 232.333045 (exclusive)
+# cublasSgemm Gflops 203.931849 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3200, 3200, 3200)
+# sgemm took 0.801520 seconds
+# sgemm Gflops 81.764665
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3200, 3200, 3200)
+# cublasSgemm took 0.138855 seconds (exclusive)
+# cublasSgemm took 0.182184 seconds (inclusive)
+# cublasSgemm Gflops 471.975806 (exclusive)
+# cublasSgemm Gflops 359.724225 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3300, 3300, 3300)
+# sgemm took 0.811125 seconds
+# sgemm Gflops 88.610301
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3300, 3300, 3300)
+# cublasSgemm took 0.313063 seconds (exclusive)
+# cublasSgemm took 0.353461 seconds (inclusive)
+# cublasSgemm Gflops 229.582902 (exclusive)
+# cublasSgemm Gflops 203.343466 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3400, 3400, 3400)
+# sgemm took 0.910868 seconds
+# sgemm Gflops 86.300130
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3400, 3400, 3400)
+# cublasSgemm took 0.339336 seconds (exclusive)
+# cublasSgemm took 0.388130 seconds (inclusive)
+# cublasSgemm Gflops 231.652345 (exclusive)
+# cublasSgemm Gflops 202.530144 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3500, 3500, 3500)
+# sgemm took 1.004950 seconds
+# sgemm Gflops 85.327610
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3500, 3500, 3500)
+# cublasSgemm took 0.370037 seconds (exclusive)
+# cublasSgemm took 0.421486 seconds (inclusive)
+# cublasSgemm Gflops 231.733713 (exclusive)
+# cublasSgemm Gflops 203.446612 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3600, 3600, 3600)
+# sgemm took 1.071880 seconds
+# sgemm Gflops 87.054503
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3600, 3600, 3600)
+# cublasSgemm took 0.196807 seconds (exclusive)
+# cublasSgemm took 0.244765 seconds (inclusive)
+# cublasSgemm Gflops 474.128838 (exclusive)
+# cublasSgemm Gflops 381.230612 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3700, 3700, 3700)
+# sgemm took 1.165543 seconds
+# sgemm Gflops 86.917431
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3700, 3700, 3700)
+# cublasSgemm took 0.437365 seconds (exclusive)
+# cublasSgemm took 0.487992 seconds (inclusive)
+# cublasSgemm Gflops 231.628218 (exclusive)
+# cublasSgemm Gflops 207.597493 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3800, 3800, 3800)
+# sgemm took 1.234645 seconds
+# sgemm Gflops 88.887063
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3800, 3800, 3800)
+# cublasSgemm took 0.474721 seconds (exclusive)
+# cublasSgemm took 0.535466 seconds (inclusive)
+# cublasSgemm Gflops 231.175981 (exclusive)
+# cublasSgemm Gflops 204.950581 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 3900, 3900, 3900)
+# sgemm took 1.340533 seconds
+# sgemm Gflops 88.500599
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 3900, 3900, 3900)
+# cublasSgemm took 0.512802 seconds (exclusive)
+# cublasSgemm took 0.568944 seconds (inclusive)
+# cublasSgemm Gflops 231.352450 (exclusive)
+# cublasSgemm Gflops 208.523228 (inclusive)
+# calling sgemm for (dim1,dim2,dim3) = ( 4000, 4000, 4000)
+# sgemm took 1.419802 seconds
+# sgemm Gflops 90.153446
+# calling cublasSgemm for (dim1,dim2,dim3) = ( 4000, 4000, 4000)
+# cublasSgemm took 0.269774 seconds (exclusive)
+# cublasSgemm took 0.328839 seconds (inclusive)
+# cublasSgemm Gflops 474.471672 (exclusive)
+# cublasSgemm Gflops 389.248328 (inclusive)
+=========================================================
+CUDA device properties:
+name:                          Tesla C2050
+major version:                           2
+minor version:                           0
+canMapHostMemory:                        1
+totalGlobalMem:                          0 MB
+sharedMemPerBlock:                   49152
+clockRate:                           1.147 GHz
+regsPerBlock:                        32768
+warpSize:                               32
+maxThreadsPerBlock:                   1024
+=========================================================
+  dim  dim2  dim3        SGEMM         RATIO        CUBLAS (incl)   CUBLAS (excl)
+    1     1     1    0.005 Gflops      0.009        0.000 Gflops    0.000 Gflops
+ 2000  2000  2000   78.318 Gflops      3.912      306.419 Gflops  468.610 Gflops
+ 2100  2100  2100   77.201 Gflops      2.464      190.231 Gflops  230.070 Gflops
+ 2200  2200  2200   70.638 Gflops      2.668      188.430 Gflops  230.878 Gflops
+ 2300  2300  2300   72.002 Gflops      2.700      194.403 Gflops  231.663 Gflops
+ 2400  2400  2400   69.846 Gflops      4.724      329.917 Gflops  468.455 Gflops
+ 2500  2500  2500   77.291 Gflops      2.487      192.231 Gflops  230.255 Gflops
+ 2600  2600  2600   86.122 Gflops      2.250      193.776 Gflops  230.544 Gflops
+ 2700  2700  2700   77.977 Gflops      2.506      195.398 Gflops  230.941 Gflops
+ 2800  2800  2800   80.371 Gflops      4.282      344.144 Gflops  471.091 Gflops
+ 2900  2900  2900   80.616 Gflops      2.501      201.591 Gflops  231.731 Gflops
+ 3000  3000  3000   88.228 Gflops      2.300      202.936 Gflops  232.230 Gflops
+ 3100  3100  3100   84.375 Gflops      2.417      203.932 Gflops  232.333 Gflops
+ 3200  3200  3200   81.765 Gflops      4.400      359.724 Gflops  471.976 Gflops
+ 3300  3300  3300   88.610 Gflops      2.295      203.343 Gflops  229.583 Gflops
+ 3400  3400  3400   86.300 Gflops      2.347      202.530 Gflops  231.652 Gflops
+ 3500  3500  3500   85.328 Gflops      2.384      203.447 Gflops  231.734 Gflops
+ 3600  3600  3600   87.055 Gflops      4.379      381.231 Gflops  474.129 Gflops
+ 3700  3700  3700   86.917 Gflops      2.388      207.597 Gflops  231.628 Gflops
+ 3800  3800  3800   88.887 Gflops      2.306      204.951 Gflops  231.176 Gflops
+ 3900  3900  3900   88.501 Gflops      2.356      208.523 Gflops  231.352 Gflops
+ 4000  4000  4000   90.153 Gflops      4.318      389.248 Gflops  474.472 Gflops
+# the test driver has finished in 242.7 seconds !!!
+
+                         GA Statistics for process    0
+                         ------------------------------
+
+       create   destroy   get      put      acc     scatter   gather  read&inc
+calls:    0        0        0        0        0        0        0        0     
+number of processes/call 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00
+bytes total:             0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00
+bytes remote:            0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00 0.00e+00
+Max memory consumed for GA by this process: 0 bytes
+! GA_Terminate succeeded
+! MPI_Finalize succeeded
+
+----------------------------------------------------------------
+Jobs exit status code is 0
+Job GPU_GEMM_TEST/83751.cvrsvc09-ib completed Mon Jul 12 23:46:49 PDT 2010
+Submitted by jhammond/jhammond using gpgpu
+Job Limits: neednodes=1:ppn=8:fermi,nodes=1:ppn=8:fermi,walltime=00:25:00
+Job Resources used: cput=00:19:11,mem=264484kb,vmem=516528kb,walltime=00:04:06
+Nodes used: dirac34-ib 
+
+Killing any leftover processes...
+
+Job completed.
