@@ -65,6 +65,8 @@ unsigned long long getticks(void);
 
 #ifdef GOTO
     #define BLAS_NAME "GotoBLAS"
+#elif defined(ESSL)
+    #define BLAS_NAME "IBM ESSL"
 #elif defined(MKL)
     #define BLAS_NAME "Intel MKL"
 #elif defined(NETLIB)
@@ -76,7 +78,8 @@ unsigned long long getticks(void);
 
 void* amalloc(size_t size);
 
-#define MEMORY_ALLOCATOR amalloc
+//#define MEMORY_ALLOCATOR amalloc
+#define MEMORY_ALLOCATOR malloc
 
 int gemm_test2(int dim1, int dim2, int dim3)
 {
