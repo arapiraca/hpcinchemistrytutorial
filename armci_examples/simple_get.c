@@ -45,7 +45,7 @@ int simple_get(int me, int nproc, int len)
     int n,i;
     double t0,t1;
 
-    double** addr_vec = (double **) malloc( len * sizeof(double *) );
+    double** addr_vec = (double **) malloc( nproc * sizeof(double *) );
     ARMCI_Malloc((void **) addr_vec, len*sizeof(double));
     MPI_Barrier(MPI_COMM_WORLD);
 
