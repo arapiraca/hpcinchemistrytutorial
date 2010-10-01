@@ -66,13 +66,13 @@ int main(int argc, char **argv)
     }
 
     /* register remote pointers */
-    double** addr_A = (double **) malloc(sizeof(double *) * nproc);
+    double** addr_A = (double **) ARMCI_Malloc_local(sizeof(double *) * nproc);
     if (addr_A == NULL) ARMCI_Error("malloc A failed at line",0);
 
-    double** addr_B = (double **) malloc(sizeof(double *) * nproc);
+    double** addr_B = (double **) ARMCI_Malloc_local(sizeof(double *) * nproc);
     if (addr_B == NULL) ARMCI_Error("malloc B failed at line",0);
 
-    double** addr_C = (double **) malloc(sizeof(double *) * nproc);
+    double** addr_C = (double **) ARMCI_Malloc_local(sizeof(double *) * nproc);
     if (addr_C == NULL) ARMCI_Error("malloc C failed at line",0);
 
 #ifdef DEBUG
@@ -98,15 +98,10 @@ int main(int argc, char **argv)
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-
-
-
-
-
     /* free ARMCI pointers */
-    free(addr_C);
-    free(addr_B);
-    free(addr_A);
+    ARMCI_Free_local(addr_C);
+    ARMCI_Free_local(addr_B);
+    ARMCI_Free_local(addr_A);
 
 #ifdef HPC_PROFILING
     HPM_Print();
