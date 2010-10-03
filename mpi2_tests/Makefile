@@ -1,6 +1,6 @@
-CC       = mpixlc_r
-CFLAGS   = -g -O3 -qarch=450d -qtune=450
-LDFLAGS  = -g -O3 -qarch=450d -qtune=450
+CC       = cc
+CFLAGS   = 
+LDFLAGS  =
 BINARIES = $(shell ls *.c | sed s/"\.c"/"\.x"/g )
 
 all: $(BINARIES)
