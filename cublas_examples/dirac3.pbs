@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N GA_GPU_SGEMM3
+#PBS -l nodes=4:ppn=2:fermi
+#PBS -l walltime=0:25:00
+#PBS -q dirac_reg
+#PBS -A gpgpu
+#PBS -j oe
+
+export OMP_NUM_THREADS=8
+export KMP_NUM_THREADS=8
+echo "Using threaded BLAS"
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 8192  128
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 8192  256
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 8192  512
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 8192 1024
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 8192 2048

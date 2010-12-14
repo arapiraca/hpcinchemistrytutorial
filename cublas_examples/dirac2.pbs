@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N GPU_DGEMM_TEST
+#PBS -l nodes=1:ppn=8:fermi
+#PBS -l walltime=0:25:00
+#PBS -q dirac_reg
+#PBS -A gpgpu
+#PBS -j oe
+
+export OMP_NUM_THREADS=8
+export KMP_NUM_THREADS=8
+echo "Using threaded BLAS"
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1    1 1000 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 1001 1200 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 1201 1400 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 1401 1600 1
+/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 1601 1800 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 1801 2000 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 2000 4000 100
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 2048 3300 16

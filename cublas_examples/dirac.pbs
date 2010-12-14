@@ -1,0 +1,71 @@
+#!/bin/bash
+#PBS -N GPU_GEMM_TEST
+#PBS -l nodes=1:ppn=8:fermi
+#PBS -l walltime=2:00:00
+#PBS -q dirac_reg
+#PBS -A gpgpu
+
+export OMP_NUM_THREADS=8
+export KMP_NUM_THREADS=8
+echo "Using threaded BLAS"
+
+# SINGLE PRECISION
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1    1 1000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 1001 2000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 2001 2500 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 2501 3000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 3001 3300 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 3301 3600 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 3601 3800 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 3801 4000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 4001 4250 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 4251 4500 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 4501 4750 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 4751 5000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5001 5100 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5101 5200 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5201 5300 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5301 5400 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5401 5500 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5501 5600 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5601 5700 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5701 5800 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5801 5900 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 1 1 5901 6000 1
+
+# DOUBLE PRECISION
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1    1 1000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 1001 2000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 2001 2500 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 2501 3000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 3001 3300 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 3301 3600 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 3601 3800 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 3801 4000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 4001 4250 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 4251 4500 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 4501 4750 1
+/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 4751 5000 1
+
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5001 5100 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5101 5200 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5201 5300 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5301 5400 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5401 5500 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5501 5600 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5601 5700 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5701 5800 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5801 5900 1
+#/global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/test_driver_P.x 2 1 5901 6000 1
+

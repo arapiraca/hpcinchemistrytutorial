@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N GA_GPU_SGEMM4
+#PBS -l nodes=8:ppn=2:fermi
+#PBS -l walltime=0:25:00
+#PBS -q dirac_reg
+#PBS -A gpgpu
+#PBS -j oe
+
+export OMP_NUM_THREADS=8
+export KMP_NUM_THREADS=8
+echo "Using threaded BLAS"
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  1024  128
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  1536  256
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  2048  256
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  3072  512
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  4096  512
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  6144  768
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  8192  512
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  8192 1024
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x  8192 2048
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 10240 2048
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 12288 2048
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 14336 2048
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 16384 1024
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 16384 2048
+mpiexec /global/homes/j/jhammond/hpcinchemistrytutorial/cublas_examples/ga_gpu_sgemm.x 16384 4096
