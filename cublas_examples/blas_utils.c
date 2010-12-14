@@ -43,6 +43,8 @@ privately owned rights.
 
 inline double gettime(void)
 {
+    return (double) getticks()/2.67e9;
+/*
 #ifdef MPI
     return MPI_Wtime();
 #else
@@ -52,6 +54,7 @@ inline double gettime(void)
         return (double) time(NULL);
     #endif
 #endif
+*/
 }
 
 void zero_host_floats(int num, float* ptr)
