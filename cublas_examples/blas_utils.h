@@ -65,6 +65,7 @@ privately owned rights.
 #endif
 
 double gettime(void);
+unsigned long long getticks(void);
 
 void zero_host_floats(int num, float* ptr);
 void zero_host_doubles(int num, double* ptr);
