@@ -76,7 +76,7 @@ int main(int argc, char **argv)
     int precision = ( argc>1 ? atoi(argv[1]) : 1 );
     if      ( precision == 1 ) printf("You have requested single-precision.\n");
     else if ( precision == 2 ) printf("You have requested double-precision.\n");
-    else    {                  printf("Defaulting to single-precision.\n"); }
+    else    {                  printf("Defaulting to single-precision.\n"); precision = 1 }
     fflush(stdout);
 
 #ifdef CUDA
