@@ -157,7 +157,7 @@
       OPENMP=YES
    endif
 
-   # Lincoln
+   # Dirac/Carver
    ifeq ($(HOSTNAME),cvrsvc01)
       MACHINE=DIRAC
    endif
@@ -173,16 +173,16 @@
    ifeq ($(HOSTNAME),cvrsvc05)
       MACHINE=DIRAC
    endif
+   ifeq ($(HOSTNAME),cvrsvc06)
+      MACHINE=DIRAC
+   endif
    ifeq ($(MACHINE),DIRAC)
       TARGET=LINUX64
       CC=gcc
       OPT=-g -O3
       CUDA=YES
-      #CUDA_DIR=/usr/common/usg/nvidia-driver-util/3.1b
-      #CUDA_DIR=/usr/common/usg/nvidia-driver-util/3.0
-      #LIB_BITS=64
-      CUDA_DIR=/usr/common/usg/pgi/10.5/linux86-64/2010/cuda/3.0
-      LIB_BITS=
+      CUDA_DIR=/usr/common/usg/cuda/3.2
+      LIB_BITS=64
       MKL=YES
       MKL_DIR=/usr/common/usg/mkl/10.2.2.025
       MPI=YES
@@ -303,7 +303,7 @@ BINARY+=mpicoll_gpu_sgemm.x armci_gpu_sgemm.x ga_gpu_sgemm.x ga_gpu_dgemm.x cuda
 endif
 # BINARY=ga_gpu_sgemm.x
 
-OBJECTS=blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o getticks.o
+OBJECTS=getticks.o blas_gemm_test.o blas_gemm_test2.o cublas_gemm_test.o cublas_gemm_test2.o ga_utils.o blas_utils.o cublas_utils.o
 
 #all: refresh bin
 all: bin
@@ -347,8 +347,8 @@ mpicoll_gpu_sgemm.x: mpicoll_gpu_sgemm.o $(OBJECTS)
 cuda_transfer_benchmark.x: cuda_transfer_benchmark.o $(OBJECTS)
 	$(LD) $(LDFLAGS) cuda_transfer_benchmark.o $(OBJECTS) $(LIB) $(PBLAS) -o cuda_transfer_benchmark.x
 
-gemm_test2.x: gemm_test2.o blas_utils.o
-	$(LD) $(LDFLAGS) gemm_test2.o blas_utils.o $(LIB) $(PBLAS) -o gemm_test2.x
+gemm_test2.x: gemm_test2.o blas_utils.o getticks.o
+	$(LD) $(LDFLAGS) gemm_test2.o blas_utils.o getticks.o $(LIB) $(PBLAS) -o gemm_test2.x
 #
 #
 # OBJECTS
