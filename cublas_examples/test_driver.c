@@ -45,7 +45,7 @@ privately owned rights.
 #include "cublas_gemm_test.h"
 #endif
 
-#include "ga_utils.h"
+//#include "ga_utils.h"
 
 int gethostname(char *name, size_t len);
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 {
     int me, nproc;
     int armci_not_ga = 1;
-    start_parallel(&argc,&argv,&me,&nproc,armci_not_ga,1);
+    //start_parallel(&argc,&argv,&me,&nproc,armci_not_ga,1);
 
     int threads;
     int ntests = 100000;
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
     int precision = ( argc>1 ? atoi(argv[1]) : 1 );
     if      ( precision == 1 ) printf("You have requested single-precision.\n");
     else if ( precision == 2 ) printf("You have requested double-precision.\n");
-    else    {                  printf("Defaulting to single-precision.\n"); precision = 1 }
+    else    {                  printf("Defaulting to single-precision.\n"); precision = 1; }
     fflush(stdout);
 
 #ifdef CUDA
@@ -115,6 +115,7 @@ int main(int argc, char **argv)
     for ( t = 0 ; t < ntests ; t++ ) fprintf(stderr,"@ dim[%d] = (%d,%d,%d)\n",t,dim[t][0],dim[t][1],dim[t][2]);
     fflush(stderr);
 
+/*
     threads = -1;
 #ifdef OPENMP
     if ( threads > 0 ){ omp_set_num_threads(threads); }
@@ -123,6 +124,7 @@ int main(int argc, char **argv)
 #else
     printf("Not using OpenMP threads with BLAS\n");
 #endif
+*/
 
 #ifdef CUDA
     double cublas_excl_time[ntests];
@@ -160,14 +162,13 @@ int main(int argc, char **argv)
 
 #ifdef CUDA
     status = cublasShutdown();
-    if (status == CUBLAS_STATUS_SUCCESS) {
-//         printf("cublasShutdown succeeded\n");
-    } else {
-        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
+    if (status != CUBLAS_STATUS_SUCCESS) {
         printf("! cublasShutdown failed\n");
+        printf("! failure at line %d of %s\n",__LINE__,__FILE__);
         fflush(stdout);
     }
 
+/*
     printf("=========================================================\n");
     printf("CUDA device properties:\n");
     printf("name:                 %20s\n",cudaProp.name);
@@ -176,23 +177,25 @@ int main(int argc, char **argv)
     printf("canMapHostMemory:     %20d\n",cudaProp.canMapHostMemory);
     printf("totalGlobalMem:       %20ld MB\n",cudaProp.totalGlobalMem/1.0e6);
     printf("sharedMemPerBlock:    %20ld\n",cudaProp.sharedMemPerBlock);
-    printf("clockRate:            %20.3f GHz\n",cudaProp.clockRate/1.0e6); /* kHz is base unit */
+    printf("clockRate:            %20.3f GHz\n",cudaProp.clockRate/1.0e6); // kHz is base unit 
     printf("regsPerBlock:         %20d\n",cudaProp.regsPerBlock);
     printf("warpSize:             %20d\n",cudaProp.warpSize);
     printf("maxThreadsPerBlock:   %20d\n",cudaProp.maxThreadsPerBlock);
     printf("=========================================================\n");
+*/
 #endif
 
+    printf("all performance data given in gigaflop/s\n");
     if ( precision==1 ) printf("  dim  dim2  dim3        SGEMM     RATIO    CUBLAS (incl)   CUBLAS (excl)\n");
     if ( precision==2 ) printf("  dim  dim2  dim3        DGEMM     RATIO    CUBLAS (incl)   CUBLAS (excl)\n");
     for ( t = 0 ; t < ntests ; t++ )
     {
 #ifdef CUDA
         ratio = cublas_incl_Gflops[t] / blas_Gflops[t];
-            printf("%5d %5d %5d %8.3f Gflops %6.3f %8.3f Gflops %8.3f Gflops\n",
+            printf("%5d %5d %5d %8.3f %6.3f %8.3f %8.3f \n",
                     dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],ratio,cublas_incl_Gflops[t],cublas_excl_Gflops[t]);
 #else
-            printf("%5d %5d %5d %8.3f Gflops %6.3f %8.3f Gflops %8.3f Gflops\n",
+            printf("%5d %5d %5d %8.3f %6.3f %8.3f %8.3f \n",
                     dim[t][0], dim[t][1], dim[t][2], blas_Gflops[t],0.0,0.0,0.0);
 #endif
     }
@@ -203,7 +206,7 @@ int main(int argc, char **argv)
     fprintf(stderr,"# the test driver has finished in %5.1f seconds !!!\n",finish-start);
     fflush(stderr);
 
-    parallel_sync();
-    stop_parallel(1);
+    //parallel_sync();
+    //stop_parallel(1);
     return 0;
 }
