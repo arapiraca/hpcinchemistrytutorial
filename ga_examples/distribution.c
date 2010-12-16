@@ -78,9 +78,11 @@ int main(int argc, char **argv)
     assert(status!=0);
 
     GA_Sync();
+    double val = 1.0;
     GA_Randomize(g_a, &val);
     GA_Sync();
 
+    int i;
     int lo[ndim];
     int hi[ndim];
     for (i=0;i<size;i++)
@@ -89,8 +91,8 @@ int main(int argc, char **argv)
         if (rank==0)
         {
             fprintf(stdout,
-                    " lo[0] = %d lo[1] = %d \n hi[0] = %d hi[1] = %d \n ",
-                    lo[0],lo[1],hi[0],hi[1]);
+                    " rank %4d: lo[0] = %4d lo[1] = %4d \n            hi[0] = %4d hi[1] = %4d \n",
+                    i,lo[0],lo[1],hi[0],hi[1]);
         }
     }
     fflush(stdout);
