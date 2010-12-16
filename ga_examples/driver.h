@@ -60,8 +60,9 @@ unsigned long long getticks(void);
 #endif
 
 #include "macdecls.h"
-#include "../armci/src/armci.h"
-#include "sndrcv.h"
+//#include "../armci/src/armci.h"
+#include "armci.h"
+//#include "sndrcv.h"
 #include "ga.h"
 #include "mpi.h"
 
