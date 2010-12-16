@@ -30,13 +30,13 @@ ifeq ($(TARGET),LINUX64)
    AR = ar
    ARFLAGS = -r
 
-   MPI_PREFIX=/software/open-mpi/gnu-build
+   MPI_PREFIX=/software/mpich/mpich2-trunk-gnu45-build
    MPI_INC=-I$(MPI_PREFIX)/include
-   MPI_LIB=-L$(MPI_PREFIX)/lib -lmpi
+   MPI_LIB=-L$(MPI_PREFIX)/lib
 
-   GA_PREFIX=/software/ga/ga-cvs-dev
+   GA_PREFIX=/software/ga/ga-5-0-mpich2-trunk-gnu45-build
    GA_INC=-I$(GA_PREFIX)/include
-   GA_LIB=-L$(GA_PREFIX)/lib/LINUX64 -lglobal -lpeigs -lma -larmci -ltcgmsg-mpi
+   GA_LIB=-L$(GA_PREFIX)/lib -lga -larmci
 
    GSL_INC=-I/usr/include/gsl
    GSL_LIB=-L/usr/lib64 -lgslcblas -lgsl
@@ -45,12 +45,12 @@ ifeq ($(TARGET),LINUX64)
 #    BLAS_INC=-DMKL
 #    BLAS_LIB=$(MKL)
 
-   GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
-   BLAS_INC=-DGOTO ###-DBLAS_USES_LONG
-   BLAS_LIB=$(GOTO)
+#   GOTO=-L/software/goto -lgoto2_penryn-r1.09p3_gnu_nothread
+#   BLAS_INC=-DGOTO ###-DBLAS_USES_LONG
+#   BLAS_LIB=$(GOTO)
 
-#    BLAS_INC=-DNETLIB
-#    BLAS_LIB=-llapack -lblas
+   BLAS_INC=-DNETLIB
+   BLAS_LIB=-llapack -lblas
 
    EXTRAS=-lgomp -lgfortran -lm -lpthread
 
@@ -155,9 +155,15 @@ endif
 
 OBJECTS = driver.o hello.o simple.o transpose.o matmul.o matmul2.o matvec.o gemm_test.o overlap.o ga_dgemm_test.o bigtest.o diagonalize.o gemm_test2.o aligned_malloc.o getticks.o ga_sgemm_test.o
 
-all: driver.x
+all: driver.x distribution.x
 
 refresh: realclean all
+
+distribution.x: distribution.o
+	$(LD) $(LDFLAGS) distribution.o $(LIB) -o distribution_$(TARGET).x
+
+distribution.o: distribution.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(INC) $< -o $@
 
 driver.x: $(OBJECTS)
 	$(LD) $(LDFLAGS) $(OBJECTS) $(LIB) -o driver_$(TARGET).x
