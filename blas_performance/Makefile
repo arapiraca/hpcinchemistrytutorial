@@ -57,6 +57,7 @@
       MKL_DIR=/soft/intel/11.1.064/mkl
       GOTO=YES
       GOTO_DIR=/fusion/home/jhammond/goto
+      GOTO_LIB=goto2_nehalem-r1.13
       GOTO_ARCH=
       OPENMP=YES
    endif
@@ -83,11 +84,16 @@
    endif
 
    # Megatron
-   ifeq ($(HOSTNAME),megatron)
+   #ifeq ($(HOSTNAME),megatron)
+   ifeq ($(HOSTNAME),localhost)
       TARGET=LINUX64
       OPT=-O3 -xSSE2,SSE3,SSSE3,SSE4.1
       MKL=YES
       MKL_DIR=/opt/intel/Compiler/11.1/059/mkl
+      GOTO=YES
+      GOTO_DIR=/software/goto
+      GOTO_LIB=goto2_penryn-r1.13_intel_nothread
+      GOTO_ARCH=
       OPENMP=YES
    endif
 
@@ -108,8 +114,8 @@
    endif
 
    ifeq ($(GOTO),YES)
-      MT_GOTO_LIB+=-L${GOTO_DIR} -lgoto2_nehalemp-r1.13 -lpthread
-      ST_GOTO_LIB+=-L${GOTO_DIR} -lgoto2_nehalem-r1.13 -lpthread
+      MT_GOTO_LIB+=-L${GOTO_DIR} -l${GOTO_LIB} -lpthread
+      ST_GOTO_LIB+=-L${GOTO_DIR} -l${GOTO_LIB} -lpthread
    endif
 
    NETLIB_LIB=-lblas -lpthread

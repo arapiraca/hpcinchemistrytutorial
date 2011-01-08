@@ -106,7 +106,7 @@ int main(int argc, char **argv)
     for (i=0;i<(rowa*cola);i++) p_a[i] = (double)rand()/RAND_MAX;
     for (i=0;i<(rowb*colb);i++) p_b[i] = (double)rand()/RAND_MAX;
 
-    if ((dim1==1) && (dim2==1) && (dim3==1))
+    //if ((dim1==1) && (dim2==1) && (dim3==1))
         fprintf(stdout,"%20s %4s %4s %4s %14s %14s\n","BLAS_NAME","dim1","dim2","dim3","seconds","Gflop/s");
 
     double start,finish;
@@ -114,8 +114,14 @@ int main(int argc, char **argv)
 
     long nflops = 2*dim1*dim2*dim3;
 
-    double alpha = 1.0;
-    double beta  = 1.0;
+    int count = 20;
+    if ((dim1<400) && (dim2<400) && (dim3<400)) count = 1; /* disable if checking for correctness */
+
+    double alpha;
+    double beta;
+
+    alpha = 1.0;
+    beta  = 1.0;
 
     if ((dim1<400) && (dim2<400) && (dim3<400)){
         for (i=0;i<(rowc*colc);i++) p_c[i]=0.0;
@@ -133,9 +139,45 @@ int main(int argc, char **argv)
 
     for (i=0;i<(rowc*colc);i++) p_d[i]=0.0;
     start = gettime();
-    dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
+    for (i=0;i<count;i++) dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
     finish = gettime();
-    t_dgemm = finish - start;
+    t_dgemm = (finish - start)/count;
+    fprintf(stdout,"%20s %4d %4d %4d %14.7f %14.7f\n",BLAS_NAME,dim1,dim2,dim3,t_dgemm,((double)nflops/(1000*1000*1000))/t_dgemm);
+
+    if ((dim1<400) && (dim2<400) && (dim3<400)){
+        double error=0.0;
+        for (i=0;i<rowc;i++ ){
+            for (j=0;j<colc;j++ ){
+                error+=abs(p_c[i+j*rowc]-p_d[i+j*rowc]);
+                if (abs(p_c[i+j*rowc]-p_d[i+j*rowc])>1e-14) printf("error in output(%3d,%3d): %f vs %f\n",i,j,p_c[i+j*rowc],p_d[i+j*rowc]);
+                //assert(abs(p_c[i+j*rowc]-p_d[i+j*rowc])<1e-12);
+             }
+        }
+        fprintf(stderr,"dgemm error=%20.14f\n",error);
+    }
+
+    alpha = 1.0;
+    beta  = 0.0;
+
+    if ((dim1<400) && (dim2<400) && (dim3<400)){
+        for (i=0;i<(rowc*colc);i++) p_c[i]=0.0;
+        start = gettime();
+        for (i=0;i<dim1;i++){
+            for (j=0;j<dim2;j++){
+                p_c[i+j*rowc] *= beta;
+                for (k=0;k<dim3;k++ ) p_c[i+j*rowc]+=alpha*p_a[i+k*rowa]*p_b[k+j*rowb];
+            }
+        }
+        finish = gettime();
+        t_loops = finish - start;
+        fprintf(stdout,"%20s %4d %4d %4d %14.7f %14.7f\n","triple-loops",dim1,dim2,dim3,t_loops,((double)nflops/(1000*1000*1000))/t_loops);
+    }
+
+    for (i=0;i<(rowc*colc);i++) p_d[i]=0.0;
+    start = gettime();
+    for (i=0;i<count;i++) dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
+    finish = gettime();
+    t_dgemm = (finish - start)/count;
     fprintf(stdout,"%20s %4d %4d %4d %14.7f %14.7f\n",BLAS_NAME,dim1,dim2,dim3,t_dgemm,((double)nflops/(1000*1000*1000))/t_dgemm);
 
     if ((dim1<400) && (dim2<400) && (dim3<400)){
