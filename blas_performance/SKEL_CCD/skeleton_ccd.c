@@ -242,25 +242,25 @@ int main(int argc, char **argv)
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","v v o^2v",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nvir;    dim2 = no2v;    dim3 = nvir;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","v o^2v v",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nocc;    dim2 = nocc;    dim3 = nov2;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","o o ov^2",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nocc;    dim2 = nov2;    dim3 = nocc;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","o ov^2 o",dim1,dim2,dim3,ngf,time,rate);
     }
 
     return(0);
