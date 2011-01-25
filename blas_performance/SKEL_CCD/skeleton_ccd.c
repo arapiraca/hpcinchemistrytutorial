@@ -235,7 +235,7 @@ int main(int argc, char **argv)
         dim1 = nov;    dim2 = nov;    dim3 = nov;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        time *= 6;
+        ngf *= 6;    time *= 6;
         rate = ( time>0.0 ? ngf/time : 0.0 );
         fprintf(stdout,"%20s %7d %7d %7d %14.6lf %14.6lf %14.6lf\n","6 ov ov ov",dim1,dim2,dim3,ngf,time,rate);
 
