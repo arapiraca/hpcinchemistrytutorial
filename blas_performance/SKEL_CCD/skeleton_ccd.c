@@ -212,7 +212,7 @@ int main(int argc, char **argv)
 
         time = 0.0;
 
-        fprintf(stdout,"%20s %4s %4s %4s %14s %14s %14s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
+        fprintf(stdout,"%20s %7s %7s %7s %14s %14s %14s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
 
         dim1 = no2;    dim2 = no2;    dim3 = nv2;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
