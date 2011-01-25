@@ -212,56 +212,56 @@ int main(int argc, char **argv)
 
         time = 0.0;
 
-        fprintf(stdout,"%20s %7s %7s %7s %14s %14s %14s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
+        fprintf(stdout,"%20s %9s %9s %9s %20s %20s %20s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
 
         dim1 = no2;    dim2 = no2;    dim3 = nv2;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","o^2 o^2 v^2",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o^2 o^2 v^2",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = no2;    dim2 = nv2;    dim3 = nv2;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","o^2 v^2 v^2",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o^2 v^2 v^2",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = no2;    dim2 = nv2;    dim3 = no2;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","o^2 v^2 o^2",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o^2 v^2 o^2",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nov;    dim2 = nov;    dim3 = nov;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         ngf *= 6;    time *= 6;
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","6 ov ov ov",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","6 ov ov ov",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nvir;    dim2 = nvir;    dim3 = no2v;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","v v o^2v",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","v v o^2v",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nvir;    dim2 = no2v;    dim3 = nvir;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","v o^2v v",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","v o^2v v",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nocc;    dim2 = nocc;    dim3 = nov2;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","o o ov^2",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o o ov^2",dim1,dim2,dim3,ngf,time,rate);
 
         dim1 = nocc;    dim2 = nov2;    dim3 = nocc;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
         if (n>0) cc_gemm(dim1,dim2,dim3, &time);
         rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d%9d%9d%20.6lf %20.6lf %20.6lf\n","o ov^2 o",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o ov^2 o",dim1,dim2,dim3,ngf,time,rate);
     }
 
     return(0);
