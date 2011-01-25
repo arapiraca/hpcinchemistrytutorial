@@ -125,7 +125,7 @@ void cc_gemm(int M, int N, int K, double* rtime)
     dzero(rowb*colb,p_b);
     dzero(rowc*colc,p_c);
     finish = gettime();
-    fprintf(stderr,"time for dzero = %30.14lf\n",finish-start);
+//    fprintf(stderr,"time for dzero = %30.14lf\n",finish-start);
 
 //    time = 0.0;
 //    start = gettime();
@@ -140,7 +140,7 @@ void cc_gemm(int M, int N, int K, double* rtime)
     dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_c,&rowc);
     finish = gettime();
     time = (finish - start);
-    fprintf(stderr,"time for dgemm = %30.14lf\n",finish-start);
+//    fprintf(stderr,"time for dgemm = %30.14lf\n",finish-start);
 
     free(p_c);
     free(p_b);
