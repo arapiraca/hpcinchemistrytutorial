@@ -127,13 +127,13 @@ void cc_gemm(int M, int N, int K, double* rtime)
     finish = gettime();
     fprintf(stderr,"time for dzero = %30.14lf\n",finish-start);
 
-    time = 0.0;
-    start = gettime();
-    drand(rowa*cola,p_a);
-    drand(rowb*colb,p_b);
-    drand(rowc*colc,p_c);
-    finish = gettime();
-    fprintf(stderr,"time for drand = %30.14lf\n",finish-start);
+//    time = 0.0;
+//    start = gettime();
+//    drand(rowa*cola,p_a);
+//    drand(rowb*colb,p_b);
+//    drand(rowc*colc,p_c);
+//    finish = gettime();
+//    fprintf(stderr,"time for drand = %30.14lf\n",finish-start);
 
     time = 0.0;
     start = gettime();
