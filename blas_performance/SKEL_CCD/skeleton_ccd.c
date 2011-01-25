@@ -73,12 +73,12 @@ inline int imax(int a, int b)
     return ( (a>b) ? a : b );
 }
 
-/****** ESSL documentation ******
+/****** BLAS documentation ******
  *
  * syntax:
  * 
  * dgemm(transa, transb, 
- *       l, n, m, 
+ *       m, n, k,
  *       alpha, 
  *       a, lda, 
  *       b, ldb, 
@@ -95,28 +95,59 @@ inline int imax(int a, int b)
  *        &beta,
  *        p_d,&rowc);
  *
- * syntax:
- * 
- * dgemms(a, lda, transa, 
- *        b, ldb, transb, 
- *        c, ldc, 
- *        l, m, n, 
- *        aux, naux);
- * 
- * naux = max( n*l , 0.7*m*(l+n) )
- *
- * usage:
- *
- * dgemms_(p_a,&rowa,"n",
- *         p_b,&rowb,"n",
- *         p_e,&rowc,
- *         &rowa,&cola,&colb,
- *         aux,&naux);
- *
- * naux = max( rowa*colb,0.7*cola*(rowa+colb) )
- *
  ********************************/
 
+void cc_gemm(int M, int N, int K, double* time)
+{
+    int rowa = M;
+    int cola = K;
+    int rowb = K;
+    int colb = N;
+    int rowc = M;
+    int colc = N;
+
+    double* p_a;
+    double* p_b;
+    double* p_c;
+
+    double start,finish;
+
+    double alpha = 1.0;
+    double beta = 1.0;
+
+    p_a = (double *) malloc(rowa*cola*sizeof(double));
+    p_b = (double *) malloc(rowb*colb*sizeof(double));
+    p_c = (double *) malloc(rowc*colc*sizeof(double));
+
+    time = 0.0;
+    start = gettime();
+    dzero(rowa*cola,p_a);
+    dzero(rowb*colb,p_b);
+    dzero(rowc*colc,p_c);
+    finish = gettime();
+    // fprintf(stderr,"time for dzero = %30.14lf\n",finish-start);
+
+    time = 0.0;
+    start = gettime();
+    drand(rowa*cola,p_a);
+    drand(rowb*colb,p_b);
+    drand(rowc*colc,p_c);
+    finish = gettime();
+    // fprintf(stderr,"time for drand = %30.14lf\n",finish-start);
+
+    time = 0.0;
+    start = gettime();
+    dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_c,&rowc);
+    finish = gettime();
+    time = (finish - start);
+    // fprintf(stderr,"time for dgemm = %30.14lf\n",finish-start);
+
+    free(p_c);
+    free(p_b);
+    free(p_a);
+
+    return;
+}
 
 int main(int argc, char **argv)
 {
@@ -126,197 +157,108 @@ int main(int argc, char **argv)
     fprintf(stdout,"using %d OpenMP threads\n",num_threads);
 #endif
 
-    if (argc!=6) fprintf(stderr,"./dgemm_performance.x <dim1> <dim2> <dim3> <timings> <check>\n");
+    if (argc!=4) fprintf(stderr,"./dgemm_performance.x <nocc> <nvir> <iter>\n");
 
-    int dim1 = ( argc>1 ? atoi(argv[1]) : 50 );
-    int dim2 = ( argc>2 ? atoi(argv[2]) : 50 );
-    int dim3 = ( argc>3 ? atoi(argv[3]) : 50 );
+    int nocc = ( argc>1 ? atoi(argv[1]) : 10 );
+    int nvir = ( argc>2 ? atoi(argv[2]) : 60 );
+    int iter = ( argc>3 ? atoi(argv[3]) : 0 );
 
-    int count = ( argc>4 ? atoi(argv[4]) : 10 );
-    int check = ( argc>5 ? atoi(argv[5]) : 0 );
-    //if (check==1) count = 1; /* disable if checking for correctness, unnecessary for beta = 0.0 */
+    fprintf(stdout,"nocc = %d\n",nocc);
+    fprintf(stdout,"nvir = %d\n",nvir);
+    fprintf(stdout,"iter = %d\n",iter);
 
-    fprintf(stdout,"dim1 = %d\n",dim1);
-    fprintf(stdout,"dim2 = %d\n",dim2);
-    fprintf(stdout,"dim3 = %d\n",dim3);
-    fprintf(stdout,"number of timings = %d\n",count);
-    fprintf(stdout,"validate against dmatmul = %d\n",check);
+    if (nocc<2) || (nvir<2) return(1);
 
-    if ((dim1<1) || (dim2<1) || (dim3<1)) return(1);
-    if ((check!=0) && (check!=1)) return(1);
+    int no2 = nocc*nocc;
+    int nov = nocc*nvir;
+    int nv2 = nvir*nvir;
+    int no2v = nocc*nocc*nvir;
+    int nov2 = nocc*nvir*nvir;
 
-    int rowc = dim1;
-    int rowa = dim1;
-    int cola = dim3;
-    int rowb = dim3;
-    int colb = dim2;
-    int colc = dim2;
+    int dim1, dim2, dim3;
 
-    int i,j,k;
-    int naux = imax( rowa*colb , 0.7*cola*(rowa+colb) );
-    fprintf(stdout,"naux = %d\n",naux);
-
-    double* p_a;
-    double* p_b;
-    double* p_c; /* output from dmatmul (loops)       */
-    double* p_d; /* output from dgemm   (standard)    */
-    double* p_e; /* output from dgemul  (alternative) */
-    double* p_f; /* output from dgemms  (Strassen)    */
-    double* aux; /* dgemms scratch space              */
-
-    double start,finish;
-    double t_loops = 0.0;
-    double t_dgemm = 0.0;
-    double t_dgemul = 0.0;
-    double t_dgemms = 0.0;
-
-    double error = 0.0;
-    double alpha = 1.0;
-    double beta = 0.0;
-
+    double start,finish,time;
     double ngf;
-    if (alpha==0.0)
-        ngf = 2.0 * dim1 * dim2 * 1e-9;
-    else
+    double rate;
+
+    /********************************
+     *
+     *          M       N       K
+     * count    dim1    dim2    dim3
+     *  1       o^2     o^2     v^2
+     *  1       o^2     v^2     v^2
+     *  1       o^2     v^2     o^2
+     *  6       ov      ov      ov
+     *  1       v       v       o^2v
+     *  1       v       o^2v    v
+     *  1       o       o       ov^2
+     *  1       o       ov^2    o
+     *
+     ********************************/
+
+    for (n=0;n<=iter;n++)
+    {
+        if (n==0)
+        {
+            fprintf(stdout,"!!!!!!!! DRY RUN - NO COMPUTATION !!!!!!!!\n");
+        }
+        else
+        {
+            fprintf(stdout,"iteration %d\n",iter);
+        }
+
+        time = 0.0;
+
+        fprintf(stdout,"%20s %4s %4s %4s %14s %14s %14s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
+
+        dim1 = no2;    dim2 = no2;    dim3 = nv2;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-    fprintf(stdout,"alpha = %30.14lf\n",alpha);
-    fprintf(stdout,"beta  = %30.14lf\n",beta);
-    fprintf(stdout,"2*M*N*K = %10.5lf gigaflops\n",ngf);
-    fprintf(stdout,"\n");
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","o^2 o^2 v^2",dim1,dim2,dim3,ngf,time,rate);
 
-    /* START UP */
+        dim1 = no2;    dim2 = nv2;    dim3 = nv2;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","o^2 v^2 v^2",dim1,dim2,dim3,ngf,time,rate);
 
-    p_a = (double *) malloc(rowa*cola*sizeof(double));
-    p_b = (double *) malloc(rowb*colb*sizeof(double));
-    p_c = (double *) malloc(rowc*colc*sizeof(double));
-    p_d = (double *) malloc(rowc*colc*sizeof(double));
-    p_e = (double *) malloc(rowc*colc*sizeof(double));
-    p_f = (double *) malloc(rowc*colc*sizeof(double));
-    aux = (double *) malloc(naux*sizeof(double));
+        dim1 = no2;    dim2 = nv2;    dim3 = no2;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","o^2 v^2 o^2",dim1,dim2,dim3,ngf,time,rate);
 
-    start = gettime();
-    dzero(rowa*cola,p_a); /* zero using threaded call to spread across memory controllers (hopefully) */
-    dzero(rowb*colb,p_b); /* zero using threaded call to spread across memory controllers (hopefully) */
-    dzero(rowc*colc,p_c); /* output from dmatmul (loops)    */
-    dzero(rowc*colc,p_d); /* output from dgemm   (standard) */
-    dzero(rowc*colc,p_e); /* output from dgemms  (Strassen) */
-    finish = gettime();
-    fprintf(stdout,"time for dzero (x5) = %30.14lf\n",finish-start);
-    dzero(naux,aux);      /* dgemms scratch space           */
+        dim1 = nov;    dim2 = nov;    dim3 = nov;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n","ov ov ov",dim1,dim2,dim3,ngf,time,rate);
 
-    start = gettime();
-    drand(rowa*cola,p_a);
-    drand(rowb*colb,p_b);
-    finish = gettime();
-    fprintf(stdout,"time for drand (x2) = %30.14lf\n",finish-start);
+        dim1 = nvir;    dim2 = nvir;    dim3 = no2v;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
 
-    printf("max val in p_a = %30.14lf\n",dmax(rowa*cola,p_a));
-    printf("max val in p_b = %30.14lf\n",dmax(rowb*colb,p_b));
+        dim1 = nvir;    dim2 = no2v;    dim3 = nvir;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
 
-    fprintf(stdout,"\n");
-    fprintf(stdout,"%20s %4s %4s %4s %14s %20s %20s\n","ESSL","dim1","dim2","dim3","seconds","gigaflop/s","error");
+        dim1 = nocc;    dim2 = nocc;    dim3 = nov2;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
 
-    /* PASS 1 */
-
-    /* Loops */
-    if (check==1){
-        dzero(rowc*colc,p_c);
-        if (beta==0.0) /* if C is not accumulated, no need to run more than once */
-        {
-            start = gettime();
-            dmatmul(dim1,dim2,dim3,alpha,p_a,p_b,beta,p_c);
-            finish = gettime();
-            t_loops = (finish - start);
-        }
-        else
-        {
-            start = gettime();
-            for (i=0;i<count;i++) dmatmul(dim1,dim2,dim3,alpha,p_a,p_b,beta,p_c);
-            finish = gettime();
-            t_loops = (finish - start)/count;
-        }
-        fprintf(stdout,"%20s %4d %4d %4d %20.14lf %20.14lf\n","dmatmul",dim1,dim2,dim3,t_loops,ngf/t_loops);
+        dim1 = nocc;    dim2 = nov2;    dim3 = nocc;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+        fprintf(stdout,"%20s %4d %4d %4d %14.6lf %14.6lf %14.6lf\n",dim1,dim2,dim3,ngf,time,rate);
     }
-    t_loops = 0.0;
-
-    /* Standard */
-    dzero(rowc*colc,p_d);
-    start = gettime();
-    for (i=0;i<count;i++) dgemm_("n","n",&rowa,&colb,&cola,&alpha,p_a,&rowa,p_b,&rowb,&beta,p_d,&rowc);
-    finish = gettime();
-    t_dgemm = (finish - start)/count;
-
-    if (check==1)
-    {
-        error = ddiff(rowc*colc,p_c,p_d);
-        fprintf(stdout,"%20s %4d %4d %4d %20.14lf %20.14lf %20.14lf\n","DGEMM",dim1,dim2,dim3,t_dgemm,ngf/t_dgemm,error);
-        /*
-        fprintf(stdout,"===================\n");
-        printf("max val in p_c = %30.14lf\n",dmax(rowc*colc,p_c));
-        printf("max val in p_d = %30.14lf\n",dmax(rowc*colc,p_d));
-        dprint2(rowc*colc,p_c,p_d);
-        fprintf(stdout,"===================\n");
-        */
-    }
-    else
-    {
-        fprintf(stdout,"%20s %4d %4d %4d %20.14lf %20.14lf %20s\n","DGEMM",dim1,dim2,dim3,t_dgemm,ngf/t_dgemm,"");
-    }
-    t_dgemm = 0.0;
-
-    /* Alternative */
-    if (alpha==1.0 && beta==0.0)
-    {
-        dzero(rowc*colc,p_e);
-        start = gettime();
-        for (i=0;i<count;i++) dgemul_(p_a,&rowa,"n", p_b,&rowb,"n", p_e,&rowc, &rowa,&cola,&colb);
-        finish = gettime();
-        t_dgemul = (finish - start)/count;
-
-        if (check==1)
-        {
-            error = ddiff(rowc*colc,p_c,p_d);
-            fprintf(stdout,"%20s %4d %4d %4d %20.14lf %20.14lf %20.14lf\n","DGEMUL",dim1,dim2,dim3,t_dgemul,ngf/t_dgemul,error);
-        }
-        else
-        {
-            fprintf(stdout,"%20s %4d %4d %4d %20.14lf %20.14lf %20s\n","DGEMUL",dim1,dim2,dim3,t_dgemul,ngf/t_dgemul,"");
-        }
-        t_dgemul = 0.0;
-
-        /* Strassen */
-        dzero(rowc*colc,p_f);
-        start = gettime();
-        for (i=0;i<count;i++) dgemms_(p_a,&rowa,"n", p_b,&rowb,"n", p_f,&rowc, &rowa,&cola,&colb, aux,&naux);
-        finish = gettime();
-        t_dgemms = (finish - start)/count;
-
-        if (check==1)
-        {
-            error = ddiff(rowc*colc,p_c,p_d);
-            fprintf(stdout,"%20s %4d %4d %4d %20.14lf %20.14lf %20.14lf\n","DGEMMS",dim1,dim2,dim3,t_dgemms,ngf/t_dgemms,error);
-        }
-        else
-        {
-            fprintf(stdout,"%20s %4d %4d %4d %20.14lf %20.14lf %20s\n","DGEMMS",dim1,dim2,dim3,t_dgemms,ngf/t_dgemms,"");
-        }
-        t_dgemms = 0.0;
-    }
-    else
-    {
-        fprintf(stdout,"DGEMUL and DGEMMS only work for alpha=1.0 and beta=0.0!\n");
-    }
-
-    /* PASS 2 */
-
-    /* CLEAN UP */
-
-    free(p_f);
-    free(p_e);
-    free(p_d);
-    free(p_c);
-    free(p_b);
-    free(p_a);
 
     return(0);
 }
