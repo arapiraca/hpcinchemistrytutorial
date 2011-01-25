@@ -39,7 +39,7 @@ XLF_LIB=-L$(XL_DIR)/xlf/13.1/lib64 -lxlf90_r
 
 LIBS=$(ESSL_LIB) $(MASS_LIB) $(XLF_LIB) $(OTHER_LIB)
 
-all: essl_strassen_test.x
+all: skeleton_ccd.x
 
 %.x: %.o mymath.o
 	$(LD) $(LDFLAGS) $< mymath.o $(LIBS) -o $@

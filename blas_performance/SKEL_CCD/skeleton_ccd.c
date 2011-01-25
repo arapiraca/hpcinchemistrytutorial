@@ -97,7 +97,7 @@ inline int imax(int a, int b)
  *
  ********************************/
 
-void cc_gemm(int M, int N, int K, double* time)
+void cc_gemm(int M, int N, int K, double* rtime)
 {
     int rowa = M;
     int cola = K;
@@ -110,7 +110,7 @@ void cc_gemm(int M, int N, int K, double* time)
     double* p_b;
     double* p_c;
 
-    double start,finish;
+    double start,finish,time;
 
     double alpha = 1.0;
     double beta = 1.0;
@@ -146,6 +146,8 @@ void cc_gemm(int M, int N, int K, double* time)
     free(p_b);
     free(p_a);
 
+    *rtime = time;
+
     return;
 }
 
@@ -167,7 +169,7 @@ int main(int argc, char **argv)
     fprintf(stdout,"nvir = %d\n",nvir);
     fprintf(stdout,"iter = %d\n",iter);
 
-    if (nocc<2) || (nvir<2) return(1);
+    if ((nocc<2) || (nvir<2)) return(1);
 
     int no2 = nocc*nocc;
     int nov = nocc*nvir;
@@ -175,6 +177,7 @@ int main(int argc, char **argv)
     int no2v = nocc*nocc*nvir;
     int nov2 = nocc*nvir*nvir;
 
+    int n;
     int dim1, dim2, dim3;
 
     double start,finish,time;
