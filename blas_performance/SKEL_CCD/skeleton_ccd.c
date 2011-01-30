@@ -68,7 +68,7 @@ inline double gettime(void)
 #endif
 }
 
-inline int imax(int a, int b)
+inline long imax(long a, long b)
 {
     return ( (a>b) ? a : b );
 }
@@ -97,14 +97,42 @@ inline int imax(int a, int b)
  *
  ********************************/
 
-void cc_gemm(int M, int N, int K, double* rtime)
+double gemm_perf_est(long M, long N, long K)
 {
-    int rowa = M;
-    int cola = K;
-    int rowb = K;
-    int colb = N;
-    int rowc = M;
-    int colc = N;
+    int hug =  3000; /* huge   */
+    int big =   600; /* big    */
+    int med =   200; /* medium */
+    int sml =    20; /* small  */
+
+    if ( M>big && N>big && K>big) return 0.9;
+
+    if ( M>med && N>hug && K>hug) return 0.9;
+    if ( M>hug && N>med && K>hug) return 0.9;
+    if ( M>hug && N>hug && K>med) return 0.9;
+
+    if ( M>med && N>med && K>hug) return 0.7;
+    if ( M>med && N>hug && K>med) return 0.7;
+    if ( M>hug && N>med && K>med) return 0.7;
+
+    if ( M>med && N>med && K>med) return 0.3;
+
+    if ( M>sml && N>sml && K>hug) return 0.2;
+    if ( M>sml && N>hug && K>sml) return 0.2;
+    if ( M>hug && N>sml && K>sml) return 0.2;
+
+    if ( M<med || N<med && K<med) return 0.1;
+
+    return 0.01;
+}
+
+void cc_gemm(long M, long N, long K, double* rtime)
+{
+    long rowa = M;
+    long cola = K;
+    long rowb = K;
+    long colb = N;
+    long rowc = M;
+    long colc = N;
 
     double* p_a;
     double* p_b;
@@ -154,35 +182,40 @@ void cc_gemm(int M, int N, int K, double* rtime)
 int main(int argc, char **argv)
 {
 #ifdef _OPENMP
-    int num_threads = omp_get_max_threads();
+    long num_threads = omp_get_max_threads();
     omp_set_num_threads(num_threads);
-    fprintf(stdout,"using %d OpenMP threads\n",num_threads);
+    fprintf(stdout,"using %ld OpenMP threads\n",num_threads);
 #endif
 
-    if (argc!=4) fprintf(stderr,"./dgemm_performance.x <nocc> <nvir> <iter>\n");
+    if (argc!=5) fprintf(stderr,"./dgemm_performance.x <nocc> <nvir> <iter> <perf>\n");
 
-    int nocc = ( argc>1 ? atoi(argv[1]) : 10 );
-    int nvir = ( argc>2 ? atoi(argv[2]) : 60 );
-    int iter = ( argc>3 ? atoi(argv[3]) : 0 );
+    long nocc = ( argc>1 ? atoi(argv[1]) : 10 );
+    long nvir = ( argc>2 ? atoi(argv[2]) : 60 );
+    long iter = ( argc>3 ? atoi(argv[3]) : 0 );
+    double perf = ( argc>4 ? atoi(argv[4]) : 20.0 );
 
-    fprintf(stdout,"nocc = %d\n",nocc);
-    fprintf(stdout,"nvir = %d\n",nvir);
-    fprintf(stdout,"iter = %d\n",iter);
+    fprintf(stdout,"nocc = %ld\n",nocc);
+    fprintf(stdout,"nvir = %ld\n",nvir);
+    fprintf(stdout,"iter = %ld\n",iter);
+    fprintf(stdout,"perf = %lf\n",perf);
+    fprintf(stdout,"\n");
 
-    if ((nocc<2) || (nvir<2)) return(1);
+    if ( (nocc<1) || (nvir<1) || (perf<0.0) ) return(1);
 
-    int no2 = nocc*nocc;
-    int nov = nocc*nvir;
-    int nv2 = nvir*nvir;
-    int no2v = nocc*nocc*nvir;
-    int nov2 = nocc*nvir*nvir;
+    long no2 = nocc*nocc;
+    long nov = nocc*nvir;
+    long nv2 = nvir*nvir;
+    long no2v = nocc*nocc*nvir;
+    long nov2 = nocc*nvir*nvir;
 
-    int n;
-    int dim1, dim2, dim3;
+    long n;
+    long dim1, dim2, dim3;
 
-    double start,finish,time;
+    double memtotal;
+    double time;
     double ngf;
     double rate;
+    double factor;
 
     /********************************
      *
@@ -203,65 +236,152 @@ int main(int argc, char **argv)
     {
         if (n==0)
         {
-            fprintf(stdout,"!!!!!!!! DRY RUN - NO COMPUTATION !!!!!!!!\n");
+            memtotal = 0.0;
+            fprintf(stdout,"double-precision memory usage:\n");
+            fprintf(stdout,"T1      = %16.2lf GB\n",1e-9*nocc*nvir*sizeof(double));
+            fprintf(stdout,"T2      = %16.2lf GB\n",1e-9*no2*nv2*sizeof(double));
+            fprintf(stdout,"F1      = %16.2lf GB\n",1e-9*(nocc+nvir)*(nocc+nvir)*sizeof(double));
+            fprintf(stdout,"V2oooo  = %16.2lf GB\n",1e-9*no2*no2*sizeof(double));
+            fprintf(stdout,"V2ooov  = %16.2lf GB\n",1e-9*no2*nov*sizeof(double));
+            fprintf(stdout,"V2ovov  = %16.2lf GB\n",1e-9*nov*nov*sizeof(double));
+            fprintf(stdout,"V2oovv  = %16.2lf GB\n",1e-9*no2*nv2*sizeof(double));
+            fprintf(stdout,"V2ovvv  = %16.2lf GB\n",1e-9*nov*nv2*sizeof(double));
+            fprintf(stdout,"V2vvvv  = %16.2lf GB\n",1e-9*nv2*nv2*sizeof(double));
+            memtotal += 1e-9*no2*nv2*sizeof(double);
+            memtotal += 1e-9*(nocc+nvir)*(nocc+nvir)*sizeof(double);
+            memtotal += 1e-9*no2*no2*sizeof(double);
+            memtotal += 1e-9*no2*nov*sizeof(double);
+            memtotal += 1e-9*nov*nov*sizeof(double);
+            memtotal += 1e-9*no2*nv2*sizeof(double);
+            fprintf(stdout,"Total 1 = %16.2lf GB\n",memtotal);
+            memtotal += 1e-9*nov*nv2*sizeof(double);
+            memtotal += 1e-9*nv2*nv2*sizeof(double);
+            fprintf(stdout,"Total 2 = %16.2lf GB\n",memtotal);
+            fprintf(stdout,"\n");
+
+            fprintf(stdout,"!!!!!!!! DRY RUN - PERFORMANCE ESTIMATED CRUDELY !!!!!!!!\n");
+            fprintf(stdout,"\n");
         }
         else
         {
-            fprintf(stdout,"iteration %d\n",iter);
+            fprintf(stdout,"iteration %ld\n",iter);
+            fprintf(stdout,"\n");
         }
+        fflush(stdout);
 
         time = 0.0;
 
-        fprintf(stdout,"%20s %9s %9s %9s %20s %20s %20s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
-
-        dim1 = no2;    dim2 = no2;    dim3 = nv2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o^2 o^2 v^2",dim1,dim2,dim3,ngf,time,rate);
-
-        dim1 = no2;    dim2 = nv2;    dim3 = nv2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o^2 v^2 v^2",dim1,dim2,dim3,ngf,time,rate);
-
-        dim1 = no2;    dim2 = nv2;    dim3 = no2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o^2 v^2 o^2",dim1,dim2,dim3,ngf,time,rate);
-
-        dim1 = nov;    dim2 = nov;    dim3 = nov;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        ngf *= 6;    time *= 6;
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","6 ov ov ov",dim1,dim2,dim3,ngf,time,rate);
-
-        dim1 = nvir;    dim2 = nvir;    dim3 = no2v;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","v v o^2v",dim1,dim2,dim3,ngf,time,rate);
-
-        dim1 = nvir;    dim2 = no2v;    dim3 = nvir;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","v o^2v v",dim1,dim2,dim3,ngf,time,rate);
-
-        dim1 = nocc;    dim2 = nocc;    dim3 = nov2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o o ov^2",dim1,dim2,dim3,ngf,time,rate);
+        fprintf(stdout,"%20s %9s %9s %9s %10s %10s %10s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
+        fflush(stdout);
 
         dim1 = nocc;    dim2 = nov2;    dim3 = nocc;
         ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) cc_gemm(dim1,dim2,dim3, &time);
-        rate = ( time>0.0 ? ngf/time : 0.0 );
-        fprintf(stdout,"%20s %9d %9d %9d %20.6lf %20.6lf %20.6lf\n","o ov^2 o",dim1,dim2,dim3,ngf,time,rate);
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o ov^2 o",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        dim1 = nocc;    dim2 = nocc;    dim3 = nov2;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o o ov^2",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        dim1 = nvir;    dim2 = no2v;    dim3 = nvir;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","v o^2v v",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        dim1 = nvir;    dim2 = nvir;    dim3 = no2v;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","v v o^2v",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        dim1 = no2;    dim2 = nv2;    dim3 = no2;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o^2 v^2 o^2",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        dim1 = no2;    dim2 = no2;    dim3 = nv2;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o^2 o^2 v^2",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        dim1 = no2;    dim2 = nv2;    dim3 = nv2;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o^2 v^2 v^2",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        dim1 = nov;    dim2 = nov;    dim3 = nov;
+        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+        ngf *= 6;
+        if (n>0) {
+            cc_gemm(dim1,dim2,dim3, &time);
+            time *= 6;
+            rate = ( time>0.0 ? ngf/time : 0.0 );
+        } else {
+            factor = gemm_perf_est(dim1, dim2, dim3);
+            rate = perf*factor;
+            time = ngf/rate;
+            time *= 6;
+        }
+        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","6 ov ov ov",dim1,dim2,dim3,ngf,time,rate);
+        fflush(stdout);
+
+        fprintf(stdout,"\n");
     }
 
     return(0);

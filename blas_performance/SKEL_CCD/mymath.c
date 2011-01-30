@@ -172,9 +172,9 @@ void dmatmul_alpha_beta(const int M, const int N, const int K, const double alph
 
 void dmatmul(int M, int N, int K, const double alpha, double* A, double* B, const double beta, double* C)
 {
-
-    int i,j,k;
-    double c;
+    const int cM = M;
+    const int cN = N;
+    const int cK = K;
 
     /* special case optimizations */
     if (alpha==0.0)
@@ -189,10 +189,6 @@ void dmatmul(int M, int N, int K, const double alpha, double* A, double* B, cons
         }
         return;
     } 
-
-    const int cM = M;
-    const int cN = N;
-    const int cK = K;
 
     /* actually doing something */
     if (alpha==1.0)
