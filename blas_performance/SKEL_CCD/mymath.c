@@ -60,13 +60,13 @@ void dscal(const int n, double* p, double scale)
 void drand(const int n, double* p)
 {
 #if 0
-/* my serial RNG */
+/* serial RNG */
     int i;
     for (i=0;i<n;i++) p[i] = ( (double)rand() )/RAND_MAX;
 #endif
 
 #if 1
-/* my threaded RNG */
+/* threaded RNG */
     int i;
     unsigned int seed;
     #pragma omp parallel private(i,seed)
@@ -98,6 +98,7 @@ double dmax(int n, double* a)
 {
     int i;
     double max = 0.0;
+    /* if only OpenMP supported MAX reduction in C... */
     for (i=0;i<n;i++) max = ( max > a[i] ? max : a[i] );
     return max;
 }
@@ -195,7 +196,6 @@ void dmatmul(int M, int N, int K, const double alpha, double* A, double* B, cons
     {
         if (beta==0.0)
         {
-            //fprintf(stderr,"dmatmul_noalpha_nobeta\n");
             dmatmul_noalpha_nobeta(cM, cN, cK, A, B, C);
         }
         else
