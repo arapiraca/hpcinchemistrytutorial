@@ -99,30 +99,7 @@ inline long imax(long a, long b)
 
 double gemm_perf_est(long M, long N, long K)
 {
-    int hug =  3000; /* huge   */
-    int big =   600; /* big    */
-    int med =   200; /* medium */
-    int sml =    20; /* small  */
-
-    if ( M>big && N>big && K>big) return 0.9;
-
-    if ( M>med && N>hug && K>hug) return 0.9;
-    if ( M>hug && N>med && K>hug) return 0.9;
-    if ( M>hug && N>hug && K>med) return 0.9;
-
-    if ( M>med && N>med && K>hug) return 0.7;
-    if ( M>med && N>hug && K>med) return 0.7;
-    if ( M>hug && N>med && K>med) return 0.7;
-
-    if ( M>med && N>med && K>med) return 0.3;
-
-    if ( M>sml && N>sml && K>hug) return 0.2;
-    if ( M>sml && N>hug && K>sml) return 0.2;
-    if ( M>hug && N>sml && K>sml) return 0.2;
-
-    if ( M<med || N<med && K<med) return 0.1;
-
-    return 0.01;
+    return 0.5;
 }
 
 void cc_gemm(long M, long N, long K, double* rtime)
@@ -179,6 +156,27 @@ void cc_gemm(long M, long N, long K, double* rtime)
     return;
 }
 
+void cc_perf(int n, int dim1, int dim2, int dim3, double perf, char** name)
+{
+    double time;
+    double ngf;
+    double rate;
+    double factor;
+
+    ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
+    if (n>0) {
+        cc_gemm(dim1,dim2,dim3, &time);
+        rate = ( time>0.0 ? ngf/time : 0.0 );
+    } else {
+        factor = gemm_perf_est(dim1, dim2, dim3);
+        rate = perf*factor;
+        time = ngf/rate;
+    }
+    fprintf(stdout,"%12s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n",*name,dim1,dim2,dim3,ngf,time,rate);
+    fflush(stdout);
+    return;
+}
+
 int main(int argc, char **argv)
 {
 #ifdef _OPENMP
@@ -210,6 +208,7 @@ int main(int argc, char **argv)
 
     long n;
     long dim1, dim2, dim3;
+    char* name = malloc(12*sizeof(char));
 
     double memtotal;
     double time;
@@ -271,115 +270,33 @@ int main(int argc, char **argv)
 
         time = 0.0;
 
-        fprintf(stdout,"%20s %9s %9s %9s %10s %10s %10s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
+        fprintf(stdout,"%10s %9s %9s %9s %10s %10s %10s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
         fflush(stdout);
 
         dim1 = nocc;    dim2 = nov2;    dim3 = nocc;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o ov^2 o",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
-
+        name="o ov^2 o";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
         dim1 = nocc;    dim2 = nocc;    dim3 = nov2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o o ov^2",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
-
+        name="o o ov^2";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
         dim1 = nvir;    dim2 = no2v;    dim3 = nvir;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","v o^2v v",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
-
+        name="v o^2v v";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
         dim1 = nvir;    dim2 = nvir;    dim3 = no2v;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","v v o^2v",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
-
+        name="v v o^2v";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
         dim1 = no2;    dim2 = nv2;    dim3 = no2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o^2 v^2 o^2",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
-
+        name="o^2 v^2 o^2";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
         dim1 = no2;    dim2 = no2;    dim3 = nv2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o^2 o^2 v^2",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
-
+        name="o^2 o^2 v^2";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
         dim1 = no2;    dim2 = nv2;    dim3 = nv2;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","o^2 v^2 v^2",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
-
+        name="o^2 v^2 v^2";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
         dim1 = nov;    dim2 = nov;    dim3 = nov;
-        ngf = 2.0 * dim1 * dim2 * dim3 * 1e-9;
-        ngf *= 6;
-        if (n>0) {
-            cc_gemm(dim1,dim2,dim3, &time);
-            time *= 6;
-            rate = ( time>0.0 ? ngf/time : 0.0 );
-        } else {
-            factor = gemm_perf_est(dim1, dim2, dim3);
-            rate = perf*factor;
-            time = ngf/rate;
-            time *= 6;
-        }
-        fprintf(stdout,"%20s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n","6 ov ov ov",dim1,dim2,dim3,ngf,time,rate);
-        fflush(stdout);
+        name="6 ov ov ov";
+        cc_perf(n,dim1,dim2,dim3,perf,&name);
 
         fprintf(stdout,"\n");
     }
