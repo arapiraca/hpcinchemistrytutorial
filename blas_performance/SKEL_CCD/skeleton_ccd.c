@@ -172,7 +172,7 @@ void cc_perf(int n, int dim1, int dim2, int dim3, double perf, char** name)
         rate = perf*factor;
         time = ngf/rate;
     }
-    fprintf(stdout,"%12s %9ld %9ld %9ld %10.2lf %10.6lf %10.3lf\n",*name,dim1,dim2,dim3,ngf,time,rate);
+    fprintf(stdout,"%12s %12ld %12ld %12ld %14.2lf %14.6lf %14.3lf\n",*name,dim1,dim2,dim3,ngf,time,rate);
     fflush(stdout);
     return;
 }
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
 
         time = 0.0;
 
-        fprintf(stdout,"%10s %9s %9s %9s %10s %10s %10s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
+        fprintf(stdout,"%10s %12s %12s %12s %14s %14s %14s\n","term","M","N","K","gigaflops","seconds","gigaflop/s");
         fflush(stdout);
 
         dim1 = nocc;    dim2 = nov2;    dim3 = nocc;

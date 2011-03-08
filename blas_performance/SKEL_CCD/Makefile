@@ -32,7 +32,7 @@ COPT=$(GCCFLAGS)
 LD=$(CC)
 LDFLAGS=$(GCCFLAGS)
 
-GOTO_LIB=-L/software/goto -lgoto2_penrynp-r1.13_gnu_2threads -lgomp -lpthread
+GOTO_LIB=-L/software/goto -lgoto2_core2p-r1.13 -lgomp -lpthread
 OTHER_LIB=-lm
 
 LIBS=$(GOTO_LIB) $(OTHER_LIB)
