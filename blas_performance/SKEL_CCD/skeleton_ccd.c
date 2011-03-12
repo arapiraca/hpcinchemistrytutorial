@@ -263,7 +263,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            fprintf(stdout,"iteration %ld\n",iter);
+            fprintf(stdout,"iteration %ld\n",n);
             fprintf(stdout,"\n");
         }
         fflush(stdout);
