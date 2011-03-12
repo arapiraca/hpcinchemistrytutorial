@@ -21,44 +21,44 @@
 #
 # Megatron
 #
-
-GCCFLAGS=-O3 -m64 -march=core2 -mtune=core2 -msse -msse2 -msse3 -mssse3 -malign-double -funroll-loops -fprefetch-loop-arrays -fvariable-expansion-in-unroller -ffast-math -mfpmath=sse --param l2-cache-size=4096 --param l1-cache-size=64 -fopenmp
-#GCCFLAGS=-g -Wall -m64 -O3 -march=core2 -mtune=core2 -ffast-math -mfpmath=sse -fopenmp
-
-CC=gcc
-CFLAGS=$(GCCFLAGS)
-COPT=$(GCCFLAGS)
-
-LD=$(CC)
-LDFLAGS=$(GCCFLAGS)
-
-GOTO_LIB=-L/software/goto -lgoto2_core2p-r1.13 -lgomp -lpthread
-OTHER_LIB=-lm
-
-LIBS=$(GOTO_LIB) $(OTHER_LIB)
-
+#
+#GCCFLAGS=-O3 -m64 -march=core2 -mtune=core2 -msse -msse2 -msse3 -mssse3 -malign-double -funroll-loops -fprefetch-loop-arrays -fvariable-expansion-in-unroller -ffast-math -mfpmath=sse --param l2-cache-size=4096 --param l1-cache-size=64 -fopenmp
+##GCCFLAGS=-g -Wall -m64 -O3 -march=core2 -mtune=core2 -ffast-math -mfpmath=sse -fopenmp
+#
+#CC=gcc
+#CFLAGS=$(GCCFLAGS)
+#COPT=$(GCCFLAGS)
+#
+#LD=$(CC)
+#LDFLAGS=$(GCCFLAGS)
+#
+#GOTO_LIB=-L/software/goto -lgoto2_core2p-r1.13 -lgomp -lpthread
+#OTHER_LIB=-lm
+#
+#LIBS=$(GOTO_LIB) $(OTHER_LIB)
+#
 #########################################################
 #
 # Intrepid or Surveyor
 #
-# CC=bgxlc_r
-# CFLAGS=-O3 -qnoipa -qstrict -qtune=450 -qarch=450d -qsmp=omp 
-# COPT=-O5 -qtune=450 -qarch=450d -qsmp=omp
-#
-# LD=$(CC)
-# LDFLAGS=-O3 -qnoipa -qstrict -qtune=450 -qarch=450d -qsmp=omp
-#
-# ESSL_DIR=/soft/apps/ESSL-4.4.1-1
-# XL_DIR=/soft/apps/ibmcmp-dec2010
-#
-# ESSL_LIB=-L$(ESSL_DIR)/lib -lesslsmpbg
-# MASS_LIB=-L$(XL_DIR)/xlmass/bg/4.4/lib -lmass
-# XLF_LIB=-L$(XL_DIR)/xlf/bg/11.1/lib -lxlf90_r
-#
-# OTHER_LIB=-L/bgsys/drivers/ppcfloor/gnu-linux/powerpc-bgp-linux/lib -lrt
-#
-#LIBS=$(ESSL_LIB) $(MASS_LIB) $(XLF_LIB) $(OTHER_LIB)
-#
+CC=bgxlc_r
+CFLAGS=-O3 -qnoipa -qstrict -qtune=450 -qarch=450d -qsmp=omp 
+COPT=-O5 -qtune=450 -qarch=450d -qsmp=omp
+
+LD=$(CC)
+LDFLAGS=-O3 -qnoipa -qstrict -qtune=450 -qarch=450d -qsmp=omp
+
+ESSL_DIR=/soft/apps/ESSL-4.4.1-1
+XL_DIR=/soft/apps/ibmcmp-dec2010
+
+ESSL_LIB=-L$(ESSL_DIR)/lib -lesslsmpbg
+MASS_LIB=-L$(XL_DIR)/xlmass/bg/4.4/lib -lmass
+XLF_LIB=-L$(XL_DIR)/xlf/bg/11.1/lib -lxlf90_r
+
+OTHER_LIB=-L/bgsys/drivers/ppcfloor/gnu-linux/powerpc-bgp-linux/lib -lrt
+
+LIBS=$(ESSL_LIB) $(MASS_LIB) $(XLF_LIB) $(OTHER_LIB)
+
 #########################################################
 
 all: skeleton_ccd.x
