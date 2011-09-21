@@ -43,11 +43,15 @@ privately owned rights.
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <unistd.h>
 #include "pthread.h"
 #include "omp.h"
 
+#define NAPTIME 30
+
 #define MAX_OMP_THREADS 2
 #define MAX_POSIX_THREADS 2
+
 static pthread_t thread_pool[MAX_POSIX_THREADS];
 
 void* foo(void* dummy)
@@ -58,16 +62,24 @@ void* foo(void* dummy)
     for (i=0 ; i<MAX_POSIX_THREADS ; i++){
         if (my_pthread==thread_pool[i]) my_pth = i;
     }
-    fprintf(stderr, "hello from pthread %d!\n" , my_pth );
+    fprintf(stdout, "hello from pthread %d!\n" , my_pth );
+
+    sleep(NAPTIME);
 
     int my_omp, num_omp, max_omp;
     #pragma omp parallel private(my_omp,num_omp,max_omp) shared(my_pth)
     {
+        sleep(NAPTIME);
+
         my_omp  = omp_get_thread_num();
         num_omp = omp_get_num_threads();
         max_omp = omp_get_max_threads();
-        fprintf(stderr,"hello from OpenMP thread %d of %d (max=%d) on pthread %d\n",my_omp,num_omp,max_omp,my_pth);
+        fprintf(stdout,"hello from OpenMP thread %d of %d (max=%d) on pthread %d\n",my_omp,num_omp,max_omp,my_pth);
+
+        sleep(NAPTIME);
     }
+
+    sleep(NAPTIME);
 
     pthread_exit(0);
 }
@@ -76,11 +88,12 @@ int main(int argc, char** argv)
 {
     int i,rc;
 
-    fprintf(stderr,"forcing OpenMP to use only %d threads\n",MAX_OMP_THREADS);
+    //fprintf(stdout,"omp_get_max_threads() = %d\n",omp_get_max_threads());
+    fprintf(stdout,"forcing OpenMP to use only %d threads\n",MAX_OMP_THREADS);
     omp_set_num_threads(MAX_OMP_THREADS);
-    fprintf(stderr,"omp_get_max_threads() = %d\n",omp_get_max_threads());
+    fprintf(stdout,"omp_get_max_threads() = %d\n",omp_get_max_threads());
 
-    fprintf(stderr,"creating %d threads\n",MAX_POSIX_THREADS);
+    fprintf(stdout,"creating %d threads\n",MAX_POSIX_THREADS);
     for (i=0 ; i<MAX_POSIX_THREADS ; i++){
         rc = pthread_create(&thread_pool[i], NULL, foo, NULL);
         assert(rc==0);
@@ -90,8 +103,8 @@ int main(int argc, char** argv)
         rc = pthread_join(thread_pool[i],NULL);
         assert(rc==0);
     }
-    fprintf(stderr,"joined %d threads\n",MAX_POSIX_THREADS);
+    fprintf(stdout,"joined %d threads\n",MAX_POSIX_THREADS);
 
-    fflush(stderr);
+    fflush(stdout);
     return(0);
 }
