@@ -38,28 +38,8 @@
 #include <math.h>
 #include <time.h>
 
-#ifdef DCMF
-#include "dcmf.h"
-#else
-unsigned long long DCMF_Timebase(void)
-{
-    return (unsigned long long) clock();
-}
-#endif
-
-#include "armci.h"
 #include "mpi.h"
-
-/*
-#ifdef USE_GSL
-    #include "essl.h"
-#endif
-
-#ifdef USE_GSL
-    #include "gsl_math.h"
-    #include "gsl_cblas.h"
-#endif
-*/
+#include "../armci/src/armci.h"
 
 #ifdef HPM_PROFILING
     void HPM_Init(void);
