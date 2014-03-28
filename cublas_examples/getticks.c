@@ -1,9 +1,20 @@
+#ifdef HAVE_DCMF_TIMEBASE
+
+#include "dcmf.h"
+
+static __inline__ unsigned long long getticks(void)
+{
+     return DCMF_Timebase();
+}
+
+
+#else
+
 /*
 author: azutomo Yoshii kazutomo@mcs.anl.gov
 from http://www.mcs.anl.gov/~kazutomo/getticks.html
 */
 
-/*
 #if defined(__i386__)
 
 static __inline__ unsigned long long getticks(void)
@@ -12,17 +23,16 @@ static __inline__ unsigned long long getticks(void)
      __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
      return x;
 }
-*/
-//#elif defined(__x86_64__)
 
-__inline__ unsigned long long getticks(void)
+#elif defined(__x86_64__)
+
+static __inline__ unsigned long long getticks(void)
 {
   unsigned hi, lo;
   __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
   return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
 }
 
-/*
 #elif defined(__powerpc__)
 
 static __inline__ unsigned long long getticks(void)
@@ -45,6 +55,12 @@ static __inline__ unsigned long long getticks(void)
   return(result);
 }
 
-#endif
-*/
+#else
+
+#include <time.h>
+unsigned long long getticks(void) { return (unsigned long long) clock(); }
+
+#endif // targets
+
+#endif // HAVE_DCMF_TIMEBASE
 
