@@ -8,9 +8,12 @@ nodes=${2}
 size=${3}
 debug=${4}
 mode=smp
-interrupt=0
+interrupt=1
 directory=${binary}_${nodes}_${mode}_i${interrupt}_`date +%d%b%Y_%Hh%Mm`
 mkdir ${directory}
 cp ${binary}.x ${directory}
 cd ${directory}
-qsub -n ${nodes} -t 10 --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_VERBOSE=0:DCMF_STATISTICS=0:DCMF_THREADED_TREE=0:DCMF_RMA_PENDING=10000:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${binary}.x ${size} ${debug}
+qsub -n ${nodes} -t 10 --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_INTERRUPTS=${interrupt}:DCMF_EAGER=0 ${binary}.x ${size} ${debug}
+qsub -n ${nodes} -t 10 --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_INTERRUPTS=${interrupt}:DCMF_EAGER=99999999999 ${binary}.x ${size} ${debug}
+#qsub -n ${nodes} -t 10 --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_THREADED_TREE=1 ${binary}.x ${size} ${debug}
+#qsub -n ${nodes} -t 10 --mode ${mode} --env MPIRUN_VERBOSE=2:DCMF_VERBOSE=0:DCMF_STATISTICS=0:DCMF_THREADED_TREE=1:DCMF_RMA_PENDING=10000:DCMF_RECFIFO=33554432:DCMF_INJFIFO=65536 ${binary}.x ${size} ${debug}
