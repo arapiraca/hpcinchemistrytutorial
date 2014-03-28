@@ -1,125 +1,279 @@
-#DEBUG=YES
-#HPM_PROFILING=YES
-
-#############################################
-#
-#               Linux (32-bit)
-#
-#############################################
-
-ifeq ($(TARGET),LINUX32)
-
-endif
-
 #############################################
 #
 #               Linux (64-bit)
 #
 #############################################
 
-ifeq ($(TARGET),LINUX64)
-
-   CPPFLAGS=
-
-   RM = rm
-   RMFLAGS = -f
-
-   AR = ar
-   ARFLAGS = -r
-
-   MPI_PREFIX=/software/open-mpi/gnu-build
-   MPI_INC=-I$(MPI_PREFIX)/include
-   MPI_LIB=-L$(MPI_PREFIX)/lib -lmpi -lpthread
-
-   ARMCI_PREFIX=/software/ga/ga-trunk
-   ARMCI_INC=-I$(ARMCI_PREFIX)/include
-   ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/LINUX64 -larmci
-
-   OPT = -O3 -m64 -malign-double
-   OPT+= -march=core2 -mtune=core2
-   OPT+= -msse -msse2 -msse3 -mssse3
-   OPT+= -fprefetch-loop-arrays -funroll-loops -fvariable-expansion-in-unroller
-   OPT+= -ffast-math -mfpmath=sse
-   OPT+= --param l2-cache-size=4096 --param l1-cache-size=64
-   OPT+= -fopenmp
-
-   CC=$(MPI_PREFIX)/bin/mpicc
-   COPT = $(OPT)
-   CFLAGS=-g $(COPT) -Wall
-   CPP=$(CC) -E
-   ifeq ($(DEBUG),YES)
-      CPPFLAGS+=-DDEBUG
+   ifeq ($(HOSTNAME),mist.cs.uoregon.edu)
+     MACHINE=MIST
+   endif
+   ifeq ($(MACHINE),MIST)
+      TARGET=LINUX64
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/opt/openmpi
+      MPI_VENDOR=OMPI
+      GA=YES
+      GA_PREFIX=/mnt/netapp/home1/jhammond/ga-cvs-dev
    endif
 
-   LIB=$(ARMCI_LIB) $(MPI_LIB)
-   INC=$(ARMCI_INC) $(MPI_INC)
+   ifeq ($(HOSTNAME),krakenpf11)
+     MACHINE=KRAKEN
+   endif
+   ifeq ($(MACHINE),KRAKEN)
+      TARGET=LINUX64
+      CC=cc
+      OPT=-O3
+      MPI=NO
+      GA=YES
+      GA_PREFIX=/nics/b/home/hammond/ga-cvs-dev
+   endif
 
+   ifeq ($(HOSTNAME),cu0login1)
+      MACHINE=CHINOOK
+   endif
+   ifeq ($(HOSTNAME),cu0login2)
+      MACHINE=CHINOOK
+   endif
+   ifeq ($(HOSTNAME),cu0login3)
+      MACHINE=CHINOOK
+   endif
+   ifeq ($(HOSTNAME),cu0login4)
+      MACHINE=CHINOOK
+   endif
+   ifeq ($(HOSTNAME),cu0login5)
+      MACHINE=CHINOOK
+   endif
+   ifeq ($(MACHINE),CHINOOK)
+      TARGET=LINUX64
+      CC=pathcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/apps/mpi/hp/2.03.00.00-20081112
+      MPI_VENDOR=HP 
+      GA=YES
+      GA_PREFIX=/home/jhammond/ga-cvs-dev
+   endif
 
-   CPPFLAGS+=$(INC)
+   ifeq ($(HOSTNAME),login1.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login2.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login3.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login4.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login5.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login6.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login7.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login8.intrepid.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login1.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login2.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login3.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login4.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login5.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login6.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login7.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(HOSTNAME),login8.surveyor.alcf.anl.gov)
+      MACHINE=BGP
+   endif
+   ifeq ($(MACHINE),BGP)
+      TARGET=BGP
+      CC=mpixlc_r
+      OPT=-O3
+      MPI=BGP
+      GA=YES
+      #GA_PREFIX=/gpfs/home/jhammond/ga-cvs-dev
+      GA_PREFIX=/gpfs/home/jhammond/ga-dev-ibm
+   endif
+
+   # Eureka
+   ifeq ($(HOSTNAME),login1.eureka.alcf.anl.gov)
+      MACHINE=EUREKA
+   endif
+   ifeq ($(MACHINE),EUREKA)
+      TARGET=LINUX64
+      CC = gcc
+      OPT = -O3
+      MPI = YES
+      MPI_PREFIX = /soft/apps/mpich2-1.2.1
+      MPI_VENDOR = MPICH
+      GA = YES
+      GA_PREFIX = /home/jhammond/eureka/ga-cvs-dev
+      EXTRA_LIBS = -L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc #-lmpl
+   endif
+
+   # Gadzooks
+   ifeq ($(HOSTNAME),login1.gadzooks.alcf.anl.gov)
+      MACHINE=GADZOOKS
+   endif
+   ifeq ($(MACHINE),GADZOOKS)
+      TARGET=LINUX64
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/soft/apps/mpich2-1.2.1
+      #MPI_PREFIX=/home/jhammond/gadzooks
+      MPI_VENDOR=MPICH
+      GA=YES
+      GA_PREFIX=/home/jhammond/gadzooks/ga-cvs-dev
+      EXTRA_LIBS=-L/soft/apps/intel-fc-11.0.074/lib/intel64 -lirc #-lmpl
+   endif
+
+   # Fusion
+   ifeq ($(HOSTNAME),flogin1.lcrc.anl.gov)
+      MACHINE=FUSION
+   endif
+   ifeq ($(HOSTNAME),flogin2.lcrc.anl.gov)
+      MACHINE=FUSION
+   endif
+   ifeq ($(HOSTNAME),flogin3.lcrc.anl.gov)
+      MACHINE=FUSION
+   endif
+   ifeq ($(HOSTNAME),flogin1)
+      MACHINE=FUSION
+   endif
+   ifeq ($(HOSTNAME),flogin2)
+      MACHINE=FUSION
+   endif
+   ifeq ($(HOSTNAME),flogin3)
+      MACHINE=FUSION
+   endif
+   ifeq ($(MACHINE),FUSION)
+      TARGET=LINUX64
+      CC=icc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/soft/mvapich2/1.4-intel-11.1.059
+      MPI_VENDOR=MVAPICH
+      GA=YES
+      GA_PREFIX=/homes/jhammond/ga-cvs-dev
+   endif
+
+   # Lincoln
+   ifeq ($(HOSTNAME),honest1.ncsa.uiuc.edu)
+      MACHINE=LINCOLN
+   endif
+   ifeq ($(HOSTNAME),honest2.ncsa.uiuc.edu)
+      MACHINE=LINCOLN
+   endif
+   ifeq ($(HOSTNAME),honest3.ncsa.uiuc.edu)
+      MACHINE=LINCOLN
+   endif
+   ifeq ($(HOSTNAME),honest4.ncsa.uiuc.edu)
+      MACHINE=LINCOLN
+   endif
+   ifeq ($(MACHINE),LINCOLN)
+      TARGET=LINUX64
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/usr/local/mvapich2-1.2-intel-ofed-1.2.5.5/
+      MPI_VENDOR=MVAPICH
+      EXTRA_LIBS=-L/usr/local/ofed-1.2.5.5-patch/lib64
+      GA=YES
+      GA_PREFIX=/u/ac/jhammond/ga-cvs-dev
+   endif
+
+   # Megatron
+   ifeq ($(HOSTNAME),megatron)
+      TARGET=LINUX64
+      CC=gcc
+      OPT=-O3
+      MPI=YES
+      MPI_PREFIX=/software/open-mpi/gnu-build
+      MPI_VENDOR=OMPI
+      GA=YES
+      GA_PREFIX=/software/ga/ga-4-2
+   endif
+
+   DEFINES =
+   INC =
+   LIB =
+
+   ifeq ($(GA),YES)
+      DEFINES+=-DGA
+      INC+=-I$(GA_PREFIX)/include
+      LIB+=-L$(GA_PREFIX)/lib/$(TARGET) -lglobal -lma -larmci -ltcgmsg-mpi
+   endif
+
+   ifeq ($(MPI),YES)
+      DEFINES+=-DMPI
+      ifeq ($(MPI_VENDOR),OMPI)
+         LIB+=-L$(MPI_PREFIX)/lib -lmpi -lopen-rte -lopen-pal -ldl -lutil
+      else
+         ifeq ($(MPI_VENDOR),MVAPICH)
+            LIB+=-L$(MPI_PREFIX)/lib -lmpich -lrdmacm -libverbs -libumad -L/usr/lib64/ -libverbs -lrt
+         else
+            ifeq ($(MPI_VENDOR),HP)
+               INC+=-I$(MPI_PREFIX)/include/64
+               LIB+=-L$(MPI_PREFIX)/lib/linux_amd64 -lmpi -lmpio $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isi8.o $(MPI_PREFIX)/lib/linux_amd64/hpmpautodbl_isr8.o
+            else # MPICH
+               LIB+=-L$(MPI_PREFIX)/lib -lmpich -lopa -lrt
+            endif
+         endif
+      endif
+      INC+=-I$(MPI_PREFIX)/include
+   else
+      ifeq ($(MPI),BGP)
+         DEFINES+=-DMPI
+      endif
+   endif
+
+   ifeq ($(TARGET),LINUX64)
+      GCC=gcc
+   endif
+   ifeq ($(TARGET),BGP)
+      GCC=$(CC)
+      DEFINES+=-DHAVE_DCMF_TIMEBASE
+      DEFINES+=-DHAVE_BGP_PERSONALITY
+      INC+=-I/bgsys/drivers/ppcfloor/arch/include
+   endif
+
+   LIB+=-lm -lpthread $(EXTRA_LIBS)
+
+   COPT=$(OPT)
+   CFLAGS=-g $(COPT)
+   ifeq ($(CC),mpixlc_r)
+      CFLAGS+=-qlanglvl=extc99
+   else
+      ifeq ($(CC),cc)
+         CFLAGS+=
+      else
+         CFLAGS+=-std=c99 
+      endif
+   endif
+   CFLAGS+=$(INC) $(DEFINES)
 
    LD=$(CC)
-   LDFLAGS=-g -O3 -m64 -march=core2 -mtune=core2
-
-endif
-
-#############################################
-#
-#               BlueGene/P
-#
-#############################################
-
-ifeq ($(TARGET),BGP)
-
-   CPPFLAGS=-DDCMF
-
-   RM = rm
-   RMFLAGS = -f
-
-   AR = /bgsys/drivers/ppcfloor/gnu-linux/bin/powerpc-bgp-linux-ar
-   ARFLAGS = -r
-
-   BGP_SYS=/bgsys/drivers/ppcfloor
-
-   MPI_PREFIX=$(BGP_SYS)/comm
-   MPI_INC=-I$(MPI_PREFIX)/include
-   MPI_LIB=-L$(MPI_PREFIX)/lib -lfmpich_.cnk -lmpich.cnk -ldcmf.cnk -ldcmfcoll.cnk -lrt -L$(BGP_SYS)/runtime/SPI -lSPI.cna
-
-   ARMCI_PREFIX=/home/projects/nwchem/ga-cvs-dev
-   ARMCI_INC=-I$(ARMCI_PREFIX)/armci/src
-   ARMCI_LIB=-L$(ARMCI_PREFIX)/lib/$(TARGET) -larmci
-
-   LIB=$(ARMCI_LIB) $(MPI_LIB)
-   INC=$(ARMCI_INC) $(MPI_INC)
-
-   CC=$(MPI_PREFIX)/bin/mpixlc_r
-   COPT=-g -O5 -qarch=450d -qtune=450 -qthreaded -qstrict
-   CFLAGS=$(INC) $(COPT) $(CDEF)
-   CPP=$(CC) -E
-   ifeq ($(DEBUG),YES)
-      CPPFLAGS+=-DDEBUG
-   endif
-
-   ifdef HPM_PROFILING
-      EXTRAS += /soft/apps/UPC/lib/libhpm.a
-      CPPFLAGS+=-DHPM_PROFILING
-   endif
-
-   CPPFLAGS+=$(INC)
-
-   LD=$(CC)
-   LFLAGS=-g -O3 -qarch=450d -qtune=450 -qthreaded
-
-endif
-
-#############################################
-#
-#               Custom
-#
-#############################################
-
-ifeq ($(TARGET),CUSTOM)
-
-endif
+   LDFLAGS=-g $(OPT)
 
 #############################################
 #
@@ -127,14 +281,7 @@ endif
 #
 #############################################
 
-OBJECTS = driver.o simple_get.o simple_put.o overlap_b.o overlap_nb.o overlap_b_ring.o overlap_nb_ring.o
-
-ifeq ($(TARGET),BGP)
-  OBJECTS += getticks_bgp.o
-endif
-ifeq ($(TARGET),LINUX64)
-  OBJECTS += getticks_linux.o
-endif
+OBJECTS = driver.o simple_get.o simple_put.o overlap_b.o overlap_nb.o overlap_b_ring.o overlap_nb_ring.o getticks.o
 
 all: driver.x matmul.x
 
