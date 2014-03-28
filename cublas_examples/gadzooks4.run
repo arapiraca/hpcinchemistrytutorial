@@ -7,6 +7,13 @@ export KMP_NUM_THREADS=8
 
 $MPI_HOME/bin/mpdboot -n 4 -f $COBALT_NODEFILE
 
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 1024 512
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 1536 768
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 2048 1024
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 3072 1536
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 4096 2048
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 6144 3072
+$MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 8192 4096
 $MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 10240 5120
 $MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 11264 5632
 $MPI_HOME/bin/mpirun -np 4 ga_cpu_sgemm.x 12288 6144
