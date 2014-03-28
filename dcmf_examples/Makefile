@@ -12,8 +12,8 @@
    RM = rm
    RMFLAGS = -f
 
-   CC=mpixlc_r
-   COPT=-g -O3 -qarch=450d -qtune=450 -qthreaded -qstrict
+   CC=mpicc
+   COPT=-g -O0 -Wall
    CFLAGS=$(INC) $(COPT)
 
    ifeq ($(DEBUG),YES)
@@ -31,18 +31,22 @@
 #
 #############################################
 
-all: driver.x rma_test.x am_test1.x
+#all: driver.x rma_test.x am_test1.x
+all: am_test1.x am_test2.x
 
 refresh: realclean all
 
 driver.x: driver.o
-	$(CC) $(CCFLAGS) driver.o $(LIB) -o driver.x
+	$(CC) $(CFLAGS) driver.o $(LIB) -o driver.x
 
 rma_test.x: rma_test.o
-	$(CC) $(CCFLAGS) rma_test.o $(LIB) -o rma_test.x
+	$(CC) $(CFLAGS) rma_test.o $(LIB) -o rma_test.x
 
 am_test1.x: am_test1.o
-	$(CC) $(CCFLAGS) am_test1.o $(LIB) -o am_test1.x
+	$(CC) $(CFLAGS) am_test1.o $(LIB) -o am_test1.x
+
+am_test2.x: am_test2.o
+	$(CC) $(CFLAGS) am_test2.o $(LIB) -o am_test2.x
 
 $%.o: %.c
 	$(CC) -c $(CFLAGS) $(INC) $< -o $@

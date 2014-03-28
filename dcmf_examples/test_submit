@@ -1,5 +1,5 @@
 #!/bin/bash
 input=$1
 name=${input%.*}
-cqsub -p Catalyst -t 10 -n 1 -m smp ${name}.x
+cqsub -p Catalyst -e BG_COREDUMPONEXIT=1 -t 10 -n 1 -m smp ${name}.x
 
