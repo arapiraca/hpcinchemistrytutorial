@@ -49,14 +49,13 @@ privately owned rights.
 
 #include "blas_utils.h"
 
-#ifdef CUDA
-#include "cublas_utils.h"
-
 void run_cublas_sgemm_test(int dim, float alpha, float beta, double* time0, double* time1, double* Gflops0, double* Gflops1);
 void run_cublas_dgemm_test(int dim, double alpha, double beta, double* time0, double* time1, double* Gflops0, double* Gflops1);
 void run_cublas_sgemm_test2(int dim1, int dim2, int dim3, float alpha, float beta, double* time0, double* time1, double* Gflops0, double* Gflops1);
 void run_cublas_dgemm_test2(int dim1, int dim2, int dim3, double alpha, double beta, double* time0, double* time1, double* Gflops0, double* Gflops1);
 
+#ifdef CUDA
+#include "cublas_utils.h"
 #endif
 
 #endif

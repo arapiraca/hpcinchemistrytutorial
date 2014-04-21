@@ -1,5 +1,8 @@
 #ifdef HAVE_DCMF_TIMEBASE
 
+/* the motivation here is that although DCMF_Timebase() uses PPC ASM like the one below,
+ * this one does not require the compiler to understand inline assembly */
+
 #include "dcmf.h"
 
 __inline__ unsigned long long getticks(void)

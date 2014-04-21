@@ -49,17 +49,85 @@ int getpagesize(void);
 int posix_memalign(void **memptr, size_t alignment, size_t size);
 
 #ifdef CUDA
-  #include "cuda.h"
-  #include "cuda_runtime.h"
-  #include "cublas.h"
+  #include <cuda.h>
+  #include <cuda_runtime.h>
+  #include <cublas.h>
 #endif
 
-#ifdef OPENMP
-  #include "omp.h"
+#ifdef _OPENMP
+  #include <omp.h>
 #else
   #include <time.h>
 #endif
 
+#ifdef USE_MPI
+#include <mpi.h>
+#endif
+
+/******************************************************************
+ * author: azutomo Yoshii kazutomo@mcs.anl.gov
+ * from http://www.mcs.anl.gov/~kazutomo/getticks.html 
+ ******************************************************************/
+
+#if defined(__i386__)
+
+static __inline__ unsigned long long getticks(void)
+{
+  unsigned long long int x;
+     __asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
+     return x;
+}
+
+#elif defined(__x86_64__)
+
+__inline__ unsigned long long getticks(void)
+{
+  unsigned hi, lo;
+  __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+  return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+}
+
+#elif defined(__powerpc__)
+
+static __inline__ unsigned long long getticks(void)
+{
+  unsigned long long int result=0;
+  unsigned long int upper, lower,tmp;
+  __asm__ volatile(
+                "0:                  \n"
+                "\tmftbu   %0           \n"
+                "\tmftb    %1           \n"
+                "\tmftbu   %2           \n"
+                "\tcmpw    %2,%0        \n"
+                "\tbne     0b         \n"
+                : "=r"(upper),"=r"(lower),"=r"(tmp)
+                );
+  result = upper;
+  result = result<<32;
+  result = result|lower;
+
+  return(result);
+}
+
+#endif
+
+/******************************************************************/
+
+inline double gettime(void)
+{
+#if defined(MPI_VERSION) && defined(USE_MPI)
+    return MPI_Wtime();
+#elif defined(_OPENMP)
+    return omp_get_wtime();
+#elif defined(USE_TIME)
+    return (double) time(NULL);
+#elif defined(USE_GETTICKS)
+    /* this is a terrible hack */
+    return (double) getticks()/2.67e9;
+#else
+#warning No timer available!
+#endif
+}
 int main(int argc, char **argv)
 {
     printf("Testing CUDA transfer bandwidth...\n");
@@ -162,7 +230,6 @@ int main(int argc, char **argv)
         cuStatus = cudaFreeHost(h_ptr);
         assert(cuStatus==CUDA_SUCCESS);
     }
-
 
     printf("...all done.\n");
     return(0);
